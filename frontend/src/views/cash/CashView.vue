@@ -6,11 +6,24 @@
     <Transition name="fade">
       <div
         v-if="!cashPasswordVerified"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 backdrop-blur-sm"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4"
+        @click.self="goBack"
       >
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md mx-4 overflow-hidden border border-slate-200">
+        <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-200">
+          <!-- Tombol Silang (X) Kembali -->
+          <button
+            type="button"
+            @click="goBack"
+            class="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition"
+            title="Batal & Kembali"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
           <!-- Header hijau -->
-          <div class="bg-gradient-to-br from-[#059669] to-[#047857] px-7 py-7 text-white text-center">
+          <div class="bg-gradient-to-br from-[#059669] to-[#047857] px-7 py-7 text-white text-center relative">
             <div class="w-16 h-16 rounded-2xl bg-white/20 border border-white/30 flex items-center justify-center mx-auto mb-4">
               <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -45,6 +58,7 @@
                   :type="showCashPwd ? 'text' : 'password'"
                   v-model="cashPasswordInput"
                   @keyup.enter="verifyCashPassword"
+                  @keyup.esc="goBack"
                   placeholder="Masukkan kata sandi..."
                   class="w-full px-4 py-3 pr-10 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none transition"
                   :disabled="verifyingPassword"
@@ -82,7 +96,19 @@
               <span>{{ verifyingPassword ? 'Memverifikasi...' : 'Buka Rekap Uang' }}</span>
             </button>
 
-            <p class="text-center text-[11px] text-slate-400">
+            <!-- Tombol Batal & Kembali -->
+            <button
+              type="button"
+              @click="goBack"
+              class="w-full py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 font-semibold text-xs transition flex items-center justify-center space-x-2"
+            >
+              <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              <span>Batal &amp; Kembali</span>
+            </button>
+
+            <p class="text-center text-[11px] text-slate-400 pt-1">
               Hanya Super Admin &amp; Bendahara yang memiliki akses ke menu ini.
             </p>
           </div>
@@ -489,13 +515,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
+import { useRouter } from 'vue-router';
 import DashboardLayout from '../../layouts/DashboardLayout.vue';
 import { useAuthStore } from '../../stores/auth';
 import { useRealtimeStore } from '../../stores/realtime';
 import api from '../../services/api';
 import { downloadAuthenticatedFile } from '../../utils/fileDownloader';
 
+const router = useRouter();
 const authStore = useAuthStore();
 const realtimeStore = useRealtimeStore();
 
@@ -507,6 +535,16 @@ const cashPasswordInput = ref('');
 const cashPasswordError = ref('');
 const verifyingPassword = ref(false);
 const showCashPwd = ref(false);
+
+const goBack = () => {
+  if (window.history.length > 1) {
+    router.back();
+  } else if (['super_admin', 'admin'].includes(authStore.user?.role)) {
+    router.push('/dashboard');
+  } else {
+    router.push('/member/dashboard');
+  }
+};
 
 const verifyCashPassword = async () => {
   if (!cashPasswordInput.value) return;
@@ -723,12 +761,22 @@ const executeImport = async () => {
   }
 };
 
+const handleEscKey = (e) => {
+  if (e.key === 'Escape' && !cashPasswordVerified.value) {
+    goBack();
+  }
+};
+
 onMounted(() => {
   // Reset verifikasi setiap kali halaman dimuat ulang
   cashPasswordVerified.value = false;
   cashPasswordInput.value = '';
   cashPasswordError.value = '';
-  // Data akan di-fetch setelah password benar (dipanggil watch atau manual)
+  window.addEventListener('keydown', handleEscKey);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleEscKey);
 });
 </script>
 
