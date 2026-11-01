@@ -122,6 +122,19 @@ Route::prefix('v1')->group(function () {
         Route::patch('/reports/{id}/status', [FieldReportController::class, 'updateStatus']);
 
         // Cash Management (Khusus Super Admin & Bendahara)
+        // Verifikasi password akses kas
+        Route::post('/cash/verify-password', function (\Illuminate\Http\Request $request) {
+            if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
+                return response()->json(['message' => 'Akses ditolak.'], 403);
+            }
+            $request->validate(['password' => 'required|string']);
+            $correct = \App\Models\Setting::get('cash_password', 'kas2026');
+            if ($request->password === $correct) {
+                return response()->json(['valid' => true, 'message' => 'Akses kas berhasil diverifikasi.']);
+            }
+            return response()->json(['valid' => false, 'message' => 'Kata sandi salah. Silakan coba lagi.'], 401);
+        });
+
         Route::get('/cash', function (\Illuminate\Http\Request $request) {
             if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
                 return response()->json(['message' => 'Akses ditolak. Hanya Super Admin dan Bendahara.'], 403);

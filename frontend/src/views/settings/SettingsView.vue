@@ -408,6 +408,56 @@
                 </button>
               </div>
             </form>
+
+            <!-- ======================================================= -->
+            <!-- KEAMANAN AKSES REKAP UANG                               -->
+            <!-- ======================================================= -->
+            <div v-if="authStore.user?.role === 'super_admin'" class="mt-5 border-t border-slate-100 pt-5">
+              <div class="mb-4">
+                <h3 class="text-sm font-bold text-slate-900 flex items-center space-x-2">
+                  <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                  <span>Keamanan Akses Rekap Uang</span>
+                </h3>
+                <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                  Atur kata sandi yang harus dimasukkan sebelum membuka halaman Rekap Uang. Default: <code class="bg-slate-100 px-1 rounded text-amber-700">kas2026</code>
+                </p>
+              </div>
+              <div class="space-y-3">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Kata Sandi Baru Rekap Uang</label>
+                  <div class="relative">
+                    <input
+                      :type="showNewCashPwd ? 'text' : 'password'"
+                      v-model="newCashPassword"
+                      placeholder="Masukkan kata sandi baru..."
+                      class="w-full px-3.5 py-2 pr-10 bg-white border border-slate-300 rounded-xl text-slate-800 text-xs focus:outline-none focus:border-emerald-500 transition"
+                    />
+                    <button type="button" @click="showNewCashPwd = !showNewCashPwd"
+                      class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
+                      tabindex="-1">
+                      <svg v-if="!showNewCashPwd" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                      <svg v-else class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  @click="saveCashPassword"
+                  :disabled="savingCashPwd || !newCashPassword"
+                  class="w-full py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow transition disabled:opacity-50 flex items-center justify-center space-x-2"
+                >
+                  <span v-if="savingCashPwd" class="inline-block w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                  <svg v-else class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+                  </svg>
+                  <span>{{ savingCashPwd ? 'Menyimpan...' : 'Simpan Kata Sandi Rekap Uang' }}</span>
+                </button>
+              </div>
+            </div>
           </div>
 
           <!-- Right Column: PRATINJAU LANGSUNG HALAMAN DEPAN (5 cols - Image 8 Match) -->
@@ -1892,6 +1942,24 @@ const profileTab = ref('data'); // 'data', 'security'
 // TAB 1: BRANDING & SYSTEM CONFIGURATION
 // =========================================================================
 const savingSystem = ref(false);
+const newCashPassword = ref('');
+const savingCashPwd = ref(false);
+const showNewCashPwd = ref(false);
+
+const saveCashPassword = async () => {
+  if (!newCashPassword.value) return;
+  savingCashPwd.value = true;
+  try {
+    await api.put('/settings', { cash_password: newCashPassword.value });
+    alert('Kata sandi akses Rekap Uang berhasil diperbarui!');
+    newCashPassword.value = '';
+  } catch (err) {
+    alert(err.response?.data?.message || 'Gagal memperbarui kata sandi rekap uang.');
+  } finally {
+    savingCashPwd.value = false;
+  }
+};
+
 const logoInputRef = ref(null);
 const kopLogoInputRef = ref(null);
 const systemForm = ref({
