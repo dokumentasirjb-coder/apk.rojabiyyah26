@@ -187,36 +187,6 @@
         <p class="text-xs sm:text-sm text-slate-200 font-medium max-w-2xl mx-auto leading-relaxed drop-shadow px-2 mb-6">
           {{ currentSlideData.subtext }}
         </p>
-
-        <!-- 3 Primary Action Pills (User Design Match) -->
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md sm:max-w-xl mx-auto mt-4 px-2">
-          <!-- Button 1: Denah Proyektor (Emerald Green) -->
-          <a
-            href="#denah"
-            class="w-full sm:w-auto flex-1 inline-flex items-center justify-center space-x-2 px-5 py-3 rounded-full bg-[#059669] hover:bg-[#047857] text-white font-bold text-xs sm:text-sm shadow-xl shadow-emerald-900/40 transition transform active:scale-95"
-          >
-            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
-            <span class="whitespace-nowrap">Denah Proyektor</span>
-          </a>
-
-          <!-- Button 2: Jadwal Kerja Tim (Purple/Indigo) -->
-          <router-link
-            to="/jadwal-kerja"
-            class="w-full sm:w-auto flex-1 inline-flex items-center justify-center space-x-2 px-5 py-3 rounded-full bg-[#7c3aed] hover:bg-[#6d28d9] text-white font-bold text-xs sm:text-sm shadow-xl shadow-purple-900/40 transition transform active:scale-95"
-          >
-            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 2v4M8 2v4M3 10h18"/></svg>
-            <span class="whitespace-nowrap">Jadwal Kerja Tim ↗</span>
-          </router-link>
-
-          <!-- Button 3: Tim Proyektor (Blue/Sky) -->
-          <router-link
-            to="/pembagian-proyektor"
-            class="w-full sm:w-auto flex-1 inline-flex items-center justify-center space-x-2 px-5 py-3 rounded-full bg-[#0284c7] hover:bg-[#0369a1] text-white font-bold text-xs sm:text-sm shadow-xl shadow-sky-900/40 transition transform active:scale-95"
-          >
-            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-            <span class="whitespace-nowrap">Tim Proyektor ↗</span>
-          </router-link>
-        </div>
       </div>
     </section>
 
