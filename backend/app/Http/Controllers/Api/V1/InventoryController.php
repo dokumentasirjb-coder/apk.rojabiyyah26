@@ -34,6 +34,10 @@ class InventoryController extends Controller
             $query->where('source', $request->source);
         }
 
+        if ($request->filled('partner_id')) {
+            $query->where('partner_id', $request->partner_id);
+        }
+
         if ($request->filled('condition')) {
             $query->where('condition', $request->condition);
         }
@@ -178,6 +182,10 @@ class InventoryController extends Controller
 
         if ($request->filled('source')) {
             $query->where('source', $request->source);
+        }
+
+        if ($request->filled('partner_id')) {
+            $query->where('partner_id', $request->partner_id);
         }
 
         if ($request->filled('condition')) {

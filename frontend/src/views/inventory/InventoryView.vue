@@ -112,13 +112,18 @@
 
         <select
           v-if="!isMemberOnly"
-          v-model="filters.source"
-          @change="fetchItems"
-          class="px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 focus:outline-none focus:border-emerald-500 transition"
+          v-model="filters.sourceSelection"
+          @change="handleSourceFilterChange"
+          class="px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 focus:outline-none focus:border-emerald-500 transition font-medium"
         >
           <option value="">Semua Sumber Kepemilikan</option>
-          <option value="internal">Milik Internal Saja</option>
-          <option value="mitra">Pinjaman Mitra Saja</option>
+          <option value="internal">Milik Internal (Dokumentasi RJB)</option>
+          <optgroup label="Lembaga / Pondok Pesantren / Mitra:">
+            <option v-for="p in partners" :key="p.id" :value="'partner_' + p.id">
+              {{ p.name }}
+            </option>
+          </optgroup>
+          <option value="mitra">Semua Pinjaman Luar / Mitra</option>
         </select>
 
         <!-- View Mode Toggle for Admin -->
@@ -220,13 +225,22 @@
               </div>
 
               <!-- Button Action -->
-              <div>
+              <div class="grid" :class="!isMemberOnly ? 'grid-cols-2 gap-2' : 'grid-cols-1'">
                 <button
                   @click="openDetailModal(item)"
                   class="w-full py-2 px-3 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 text-xs font-semibold flex items-center justify-center space-x-1.5 transition"
                 >
                   <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                  <span>Lihat Rincian Pendataan</span>
+                  <span>Rincian</span>
+                </button>
+                <button
+                  v-if="!isMemberOnly"
+                  @click="openItemSticker(item)"
+                  class="w-full py-2 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-800 text-xs font-bold flex items-center justify-center space-x-1 transition shadow-xs"
+                  title="Cetak Stiker Penanda Barang Masuk"
+                >
+                  <svg class="w-3.5 h-3.5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                  <span>Cetak Stiker</span>
                 </button>
               </div>
             </div>
@@ -276,16 +290,19 @@
                 </td>
                 <td class="py-3.5 px-4 text-slate-700">{{ item.location || 'Gudang Utama' }}</td>
                 <td class="py-3.5 px-4">
-                  <span class="px-2 py-0.5 rounded-md text-[10px] font-semibold border" :class="item.source === 'mitra' ? 'bg-amber-950/60 text-amber-300 border-amber-800' : 'bg-slate-900 text-slate-700 border-slate-300'">
-                    {{ item.source === 'mitra' ? (item.partner?.name || 'Mitra') : 'Milik Internal Sendiri' }}
+                  <span class="px-2.5 py-1 rounded-lg text-[10px] font-bold border inline-flex items-center space-x-1" :class="item.source === 'mitra' ? 'bg-amber-50 text-amber-800 border-amber-300' : 'bg-emerald-50 text-emerald-800 border-emerald-300'">
+                    <span>{{ item.source === 'mitra' ? (item.partner?.name || 'Pinjaman Mitra Luar') : 'Milik Internal' }}</span>
                   </span>
                 </td>
                 <td class="py-3.5 px-4 text-center">
-                  <div class="flex items-center justify-center space-x-2">
-                    <button @click="openEditModal(item)" title="Edit" class="p-1.5 text-slate-500 hover:text-cyan-400 hover:bg-teal-50 rounded-lg transition">
+                  <div class="flex items-center justify-center space-x-1.5">
+                    <button @click="openItemSticker(item)" title="Cetak Stiker Penanda Barang Masuk" class="p-1.5 text-emerald-700 hover:text-emerald-900 hover:bg-emerald-50 border border-emerald-200 rounded-lg transition">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                    </button>
+                    <button @click="openEditModal(item)" title="Edit" class="p-1.5 text-slate-500 hover:text-cyan-700 hover:bg-teal-50 rounded-lg transition">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                     </button>
-                    <button @click="deleteItem(item)" title="Hapus" class="p-1.5 text-slate-500 hover:text-rose-400 hover:bg-teal-50 rounded-lg transition">
+                    <button @click="deleteItem(item)" title="Hapus" class="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                     </button>
                   </div>
@@ -319,10 +336,19 @@
             <div class="flex justify-between"><span class="text-slate-500">Total Stok Fisik:</span><span class="font-mono font-bold">{{ selectedItem.qty_total }} Unit</span></div>
             <div class="flex justify-between"><span class="text-slate-500">Stok Siap Pakai:</span><span class="font-mono font-bold text-emerald-400">{{ selectedItem.qty_available }} Unit</span></div>
             <div class="flex justify-between"><span class="text-slate-500">Kondisi Fisik:</span><span class="capitalize">{{ selectedItem.condition }}</span></div>
-            <div class="flex justify-between"><span class="text-slate-500">Kepemilikan:</span><span>{{ selectedItem.source === 'mitra' ? 'Pinjaman Mitra' : 'Milik Internal' }}</span></div>
+            <div class="flex justify-between"><span class="text-slate-500">Kepemilikan:</span><span class="font-bold text-slate-900">{{ selectedItem.source === 'mitra' ? (selectedItem.partner?.name || 'Pinjaman Mitra Luar') : 'Milik Internal (Dokumentasi RJB)' }}</span></div>
           </div>
 
           <div class="flex items-center justify-end space-x-2 pt-2">
+            <button
+              v-if="!isMemberOnly"
+              type="button"
+              @click="openItemSticker(selectedItem)"
+              class="px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-800 font-bold rounded-xl text-xs flex items-center space-x-1.5 transition"
+            >
+              <svg class="w-3.5 h-3.5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+              <span>Cetak Stiker Registrasi Masuk</span>
+            </button>
             <router-link
               :to="'/loans?apply_item_id=' + selectedItem.id"
               class="px-4 py-2 bg-gradient-to-r from-[#059669] to-[#10b981] hover:from-[#047857] hover:to-[#059669] text-white font-bold rounded-xl text-xs transition"
@@ -388,36 +414,72 @@
               <input v-model="form.location" type="text" placeholder="Gudang Inventaris Utama" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800" />
             </div>
             <div>
-              <label class="block font-semibold text-slate-700 mb-1">Sumber Kepemilikan</label>
-              <select v-model="form.source" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800">
-                <option value="internal">Milik Internal Sendiri</option>
-                <option value="mitra">Pinjaman Lembaga Mitra</option>
+              <div class="flex items-center justify-between mb-1">
+                <label class="block font-semibold text-slate-700">Sumber Kepemilikan</label>
+                <button
+                  type="button"
+                  @click="showNewPartnerInput = !showNewPartnerInput"
+                  class="text-[11px] font-bold text-emerald-700 hover:text-emerald-800 flex items-center space-x-1"
+                >
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                  <span>+ Tambah Sumber Baru</span>
+                </button>
+              </div>
+              <select
+                v-model="ownershipSelection"
+                class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 text-xs focus:outline-none focus:border-emerald-600 font-medium"
+              >
+                <option value="internal">Milik Internal (Dokumentasi Rojabiyyah 2026)</option>
+                <optgroup label="Lembaga / Pondok Pesantren / Mitra Pemilik:">
+                  <option v-for="p in partners" :key="p.id" :value="String(p.id)">
+                    {{ p.name }} {{ p.contact ? `(PIC: ${p.contact})` : '' }}
+                  </option>
+                </optgroup>
+                <option value="new_partner">+ Buat / Ketik Sumber Baru...</option>
               </select>
             </div>
           </div>
 
-          <!-- Lembaga Mitra Selector (Otomatis Muncul jika Sumber = Mitra) -->
-          <div v-if="form.source === 'mitra'" class="p-3.5 rounded-2xl bg-slate-50 border border-amber-500/60 space-y-1.5 animate-fadeIn">
+          <!-- Quick Add Partner / Lembaga Form -->
+          <div v-if="showNewPartnerInput" class="p-3.5 bg-emerald-50/90 border border-emerald-300 rounded-2xl space-y-2.5 animate-fadeIn">
             <div class="flex items-center justify-between">
-              <label class="block font-bold text-amber-300 text-xs">
-                Lembaga / Mitra Pemilik Aset
-              </label>
-              <router-link to="/settings?tab=partners" class="text-[10px] text-sky-400 hover:text-sky-300 underline font-semibold">
-                + Kelola Mitra
-              </router-link>
+              <span class="text-xs font-black text-emerald-950 flex items-center space-x-1.5">
+                <svg class="w-4 h-4 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                <span>Tambah Sumber Kepemilikan Baru (Kustom)</span>
+              </span>
+              <button type="button" @click="showNewPartnerInput = false" class="text-slate-400 hover:text-slate-700 text-xs font-semibold">✕ Tutup</button>
             </div>
-            <select
-              v-model="form.partner_id"
-              class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 text-xs focus:outline-none focus:border-amber-500"
-            >
-              <option :value="null">-- Pilih Lembaga Mitra (Opsional / Mitra Umum) --</option>
-              <option v-for="p in partners" :key="p.id" :value="p.id">
-                {{ p.name }} {{ p.contact ? `(PIC: ${p.contact})` : '' }}
-              </option>
-            </select>
-            <p v-if="partners.length === 0" class="text-[10px] text-slate-500">
-              Belum ada data lembaga mitra. Anda tetap dapat menyimpan barang ini tanpa memilih mitra.
-            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-700 mb-1">Nama Lembaga / Pondok / Pemilik *</label>
+                <input
+                  v-model="newPartnerForm.name"
+                  type="text"
+                  placeholder="misal: PP. Al-Amanah / PP. AL-Ikhlas"
+                  class="w-full px-3 py-2 bg-white border border-emerald-300 rounded-xl text-slate-900 font-semibold focus:outline-none"
+                />
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-700 mb-1">Kontak / Penanggung Jawab (PIC)</label>
+                <input
+                  v-model="newPartnerForm.contact"
+                  type="text"
+                  placeholder="misal: Ust. Fauzi"
+                  class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-slate-800 focus:outline-none"
+                />
+              </div>
+            </div>
+            <div class="flex justify-end pt-1">
+              <button
+                type="button"
+                @click="saveNewPartner"
+                :disabled="creatingPartner || !newPartnerForm.name.trim()"
+                class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-xl text-xs transition disabled:opacity-50 flex items-center space-x-1.5"
+              >
+                <span v-if="creatingPartner" class="inline-block w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                <span>Simpan &amp; Pilih Sumber Ini</span>
+              </button>
+            </div>
           </div>
 
           <!-- Foto Barang -->
@@ -509,6 +571,363 @@
         </div>
       </div>
     </div>
+
+    <!-- ========================================================================= -->
+    <!-- MODAL: CETAK STIKER PENANDA BARANG MASUK / REGISTRASI INVENTARIS          -->
+    <!-- ========================================================================= -->
+    <div v-if="showItemStickerModal && stampingItem" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-2 sm:p-4 overflow-y-auto">
+      <div class="relative w-full max-w-5xl bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 shadow-sm text-slate-700 my-4 max-h-[96vh] overflow-y-auto">
+        <!-- Top Toolbar -->
+        <div class="no-print flex flex-wrap items-center justify-between pb-4 border-b border-slate-200 gap-3">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700 flex-shrink-0">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+            </div>
+            <div>
+              <h3 class="text-base font-black text-slate-900 tracking-tight">Cetak Stiker Penanda Barang Masuk (Aset Inventaris)</h3>
+              <p class="text-xs text-slate-500 font-mono">Kode: {{ stampingItem.code }} &bull; {{ stampingItem.name }}</p>
+            </div>
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <button
+              @click="triggerItemPrint"
+              class="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-[#be123c] hover:bg-[#a11033] text-white text-xs font-bold shadow-lg shadow-emerald-950/60 transition active:scale-95"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+              <span>Cetak Sekarang (Print F4)</span>
+            </button>
+            <button @click="showItemStickerModal = false" class="text-slate-500 hover:text-slate-800 p-1.5 rounded-lg hover:bg-slate-100 transition">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Toolbar Selector Format Ukuran -->
+        <div class="no-print my-3 space-y-2">
+          <div class="flex flex-wrap items-center justify-between gap-3 p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl text-xs">
+            <div class="flex items-start space-x-3">
+              <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </div>
+              <div>
+                <h4 class="font-bold text-emerald-950 text-sm">Stiker Penanda Aset Masuk Inventaris Ukuran F4</h4>
+                <p class="text-slate-600 text-[11px] mt-0.5">Stiker siap cetak pada kertas label F4 untuk ditempelkan pada hardcase, unit alat, dan aksesoris/kabel penunjang.</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <span class="px-2.5 py-1 rounded-lg bg-emerald-100 border border-emerald-300 text-emerald-900 font-bold text-xs">
+                Sumber: {{ stampingItem.source === 'mitra' ? (stampingItem.partner?.name || 'Pinjaman Mitra Luar') : 'Milik Internal' }}
+              </span>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-between gap-2 p-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+            <span class="text-slate-700 font-bold px-2">Format Stiker:</span>
+            <div class="flex flex-wrap items-center gap-1.5">
+              <button
+                @click="itemStickerSize = 'campur'"
+                :class="itemStickerSize === 'campur' ? 'bg-[#0f766e] text-white font-bold shadow-xs' : 'bg-white text-slate-700 hover:text-emerald-800 border border-slate-300'"
+                class="px-3 py-1.5 rounded-lg transition text-xs"
+              >
+                1 Lembar F4 (Multi-Ukuran: 1 Box + 2 Sedang + 4 Mini)
+              </button>
+              <button
+                @click="itemStickerSize = 'besar'"
+                :class="itemStickerSize === 'besar' ? 'bg-[#0f766e] text-white font-bold shadow-xs' : 'bg-white text-slate-700 hover:text-emerald-800 border border-slate-300'"
+                class="px-3 py-1.5 rounded-lg transition text-xs"
+              >
+                Besar (Boks / Hardcase)
+              </button>
+              <button
+                @click="itemStickerSize = 'sedang'"
+                :class="itemStickerSize === 'sedang' ? 'bg-[#0f766e] text-white font-bold shadow-xs' : 'bg-white text-slate-700 hover:text-emerald-800 border border-slate-300'"
+                class="px-3 py-1.5 rounded-lg transition text-xs"
+              >
+                Sedang (Label Unit)
+              </button>
+              <button
+                @click="itemStickerSize = 'kecil'"
+                :class="itemStickerSize === 'kecil' ? 'bg-[#0f766e] text-white font-bold shadow-xs' : 'bg-white text-slate-700 hover:text-emerald-800 border border-slate-300'"
+                class="px-3 py-1.5 rounded-lg transition text-xs"
+              >
+                Kecil / Mini (Kabel &amp; Aksesoris)
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRINTABLE SHEET CONTAINER (Clean White F4 Paper) -->
+        <div id="printableItemDocument" class="bg-white text-slate-900 rounded-2xl p-6 sm:p-8 shadow-sm my-2 text-xs font-sans border border-slate-200">
+          <div class="space-y-4">
+            <!-- Sheet Header -->
+            <div class="flex items-center justify-between pb-2 border-b-2 border-slate-900">
+              <div class="flex items-center space-x-2.5">
+                <img
+                  :src="settingsStore.settings?.kop_logo_url || settingsStore.settings?.logo_url || '/logo.png'"
+                  alt="Logo"
+                  class="w-10 h-10 object-contain flex-shrink-0"
+                />
+                <div>
+                  <h1 class="text-xs font-black uppercase text-slate-950 tracking-wide">
+                    {{ settingsStore.settings?.kop_name || 'DOKUMENTASI ROJABIYYAH 2026' }}
+                  </h1>
+                  <p class="text-[10px] text-emerald-800 font-bold">
+                    {{ settingsStore.settings?.kop_sub_theme || 'Haul ke-5 Al-Maghfurlah K.H. Moch. Djamaluddin Achmad & Rojabiyyah 2026' }}
+                  </p>
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="text-xs font-black uppercase tracking-wider text-slate-950 block">LABEL REGISTRASI INVENTARIS</span>
+                <span class="text-[10px] font-mono text-slate-600">Kode: {{ stampingItem.code }}</span>
+              </div>
+            </div>
+
+            <!-- LAYOUT MULTI-UKURAN (1 BESAR + 2 SEDANG + 4 MINI) -->
+            <div v-if="itemStickerSize === 'campur'" class="space-y-3.5">
+              <!-- 1. Stiker Boks / Hardcase (Besar) -->
+              <div class="border-2 border-slate-900 rounded-2xl overflow-hidden bg-white shadow-sm">
+                <div class="bg-slate-900 text-white px-3.5 py-2 flex items-center justify-between">
+                  <div class="flex items-center space-x-2">
+                    <img :src="settingsStore.settings?.kop_logo_url || settingsStore.settings?.logo_url || '/logo.png'" alt="Logo" class="w-5 h-5 object-contain bg-white rounded p-0.5" />
+                    <span class="font-black text-xs uppercase tracking-wider">MEDIA ROJABIYYAH 2026</span>
+                  </div>
+                  <span class="px-2 py-0.5 rounded bg-emerald-500 text-slate-950 font-black text-[9px] uppercase tracking-wider">
+                    STIKER BOKS / HARDCASE INVENTARIS
+                  </span>
+                </div>
+
+                <div class="p-3 grid grid-cols-12 gap-3 items-center">
+                  <!-- QR Code -->
+                  <div class="col-span-3 flex flex-col items-center justify-center p-2 border border-slate-300 rounded-xl bg-slate-50 text-center">
+                    <img
+                      :src="`https://api.qrserver.com/v1/create-qr-code/?size=95x95&data=${encodeURIComponent(getItemVerifyUrl(stampingItem.code))}`"
+                      alt="QR"
+                      class="w-18 h-18"
+                    />
+                    <span class="text-[8px] font-black text-slate-700 mt-1 uppercase tracking-tight">SCAN HP UNTUK CEK</span>
+                  </div>
+
+                  <!-- Details -->
+                  <div class="col-span-5 space-y-1 text-xs">
+                    <div class="text-sm font-black text-slate-950 uppercase leading-snug">
+                      {{ stampingItem.name }}
+                    </div>
+                    <div class="text-[11px] font-mono font-black text-emerald-700">
+                      {{ stampingItem.code }}
+                    </div>
+                    <div class="text-[10px] text-slate-600">
+                      Asal: <strong class="text-slate-900">{{ stampingItem.source === 'mitra' ? (stampingItem.partner?.name || 'Pinjaman Mitra Luar') : 'Milik Internal (Dokumentasi RJB)' }}</strong>
+                    </div>
+                    <div class="text-[10px] text-slate-600">
+                      Kategori: <strong class="text-slate-800">{{ stampingItem.category?.name || 'Aset Inventaris' }}</strong>
+                    </div>
+                    <div class="text-[10px] text-slate-500 font-mono">
+                      Lokasi: {{ stampingItem.location || 'Gudang Utama' }} &bull; Total: {{ stampingItem.qty_total }} Unit
+                    </div>
+                    <div class="text-[10px] text-emerald-800 font-bold">
+                      Tgl Registrasi Masuk: {{ formatDate(stampingItem.created_at || new Date()) }}
+                    </div>
+                  </div>
+
+                  <!-- Barcode SVG -->
+                  <div class="col-span-4 flex flex-col items-center justify-center p-2 border-l border-slate-200">
+                    <svg class="w-full h-11" viewBox="0 0 160 40" preserveAspectRatio="none">
+                      <rect x="0" y="0" width="3" height="40" fill="#000" />
+                      <rect x="5" y="0" width="2" height="40" fill="#000" />
+                      <rect x="9" y="0" width="4" height="40" fill="#000" />
+                      <rect x="15" y="0" width="2" height="40" fill="#000" />
+                      <rect x="19" y="0" width="5" height="40" fill="#000" />
+                      <rect x="26" y="0" width="2" height="40" fill="#000" />
+                      <rect x="30" y="0" width="3" height="40" fill="#000" />
+                      <rect x="35" y="0" width="4" height="40" fill="#000" />
+                      <rect x="41" y="0" width="2" height="40" fill="#000" />
+                      <rect x="45" y="0" width="5" height="40" fill="#000" />
+                      <rect x="52" y="0" width="3" height="40" fill="#000" />
+                      <rect x="57" y="0" width="2" height="40" fill="#000" />
+                      <rect x="61" y="0" width="4" height="40" fill="#000" />
+                      <rect x="67" y="0" width="2" height="40" fill="#000" />
+                      <rect x="71" y="0" width="5" height="40" fill="#000" />
+                      <rect x="78" y="0" width="3" height="40" fill="#000" />
+                      <rect x="83" y="0" width="2" height="40" fill="#000" />
+                      <rect x="87" y="0" width="4" height="40" fill="#000" />
+                      <rect x="93" y="0" width="2" height="40" fill="#000" />
+                      <rect x="97" y="0" width="5" height="40" fill="#000" />
+                      <rect x="104" y="0" width="3" height="40" fill="#000" />
+                      <rect x="109" y="0" width="2" height="40" fill="#000" />
+                      <rect x="113" y="0" width="4" height="40" fill="#000" />
+                      <rect x="119" y="0" width="2" height="40" fill="#000" />
+                      <rect x="123" y="0" width="5" height="40" fill="#000" />
+                      <rect x="130" y="0" width="3" height="40" fill="#000" />
+                      <rect x="135" y="0" width="2" height="40" fill="#000" />
+                      <rect x="139" y="0" width="4" height="40" fill="#000" />
+                      <rect x="145" y="0" width="3" height="40" fill="#000" />
+                      <rect x="150" y="0" width="2" height="40" fill="#000" />
+                      <rect x="154" y="0" width="4" height="40" fill="#000" />
+                    </svg>
+                    <span class="font-mono text-[9px] font-bold text-slate-800 mt-1 tracking-wider">
+                      {{ stampingItem.code }} &bull; HAUL5-RJB
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 2. Dua Stiker Sedang (Label Unit) -->
+              <div class="grid grid-cols-2 gap-3">
+                <div
+                  v-for="idx in 2"
+                  :key="'med-stk-' + idx"
+                  class="border-2 border-slate-900 rounded-xl p-3 bg-white flex flex-col justify-between shadow-xs"
+                >
+                  <div class="flex items-center justify-between pb-1.5 border-b border-slate-300">
+                    <span class="font-mono font-black text-xs text-emerald-800">{{ stampingItem.code }}</span>
+                    <span class="px-1.5 py-0.5 rounded bg-slate-900 text-white font-bold text-[8px] uppercase">STIKER UNIT ASET</span>
+                  </div>
+                  <div class="flex items-center space-x-2.5 py-2">
+                    <div class="flex flex-col items-center justify-center flex-shrink-0">
+                      <img
+                        :src="`https://api.qrserver.com/v1/create-qr-code/?size=65x65&data=${encodeURIComponent(getItemVerifyUrl(stampingItem.code))}`"
+                        alt="QR"
+                        class="w-13 h-13 border border-slate-300 p-0.5 rounded"
+                      />
+                      <span class="text-[7px] font-bold text-slate-600 mt-0.5">SCAN HP</span>
+                    </div>
+                    <div class="flex-1 min-w-0 space-y-0.5 text-xs">
+                      <div class="font-black text-slate-950 truncate">{{ stampingItem.name }}</div>
+                      <div class="text-[9px] text-slate-600 truncate">
+                        Asal: <strong class="text-slate-900">{{ stampingItem.source === 'mitra' ? (stampingItem.partner?.name || 'Pinjaman Mitra Luar') : 'Milik Internal' }}</strong>
+                      </div>
+                      <div class="text-[9px] text-slate-500 truncate">Lokasi: {{ stampingItem.location || 'Gudang Utama' }}</div>
+                      <div class="text-[9px] text-emerald-700 font-bold">Kondisi: {{ stampingItem.condition === 'baik' ? 'Baik' : stampingItem.condition }}</div>
+                    </div>
+                  </div>
+                  <div class="text-[8px] text-slate-500 font-mono border-t border-slate-100 pt-1 flex justify-between">
+                    <span>{{ stampingItem.code }}</span>
+                    <span>Haul Ke-5 &bull; Unit {{ idx }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3. Empat Stiker Kecil (Kabel / Aksesoris / Penanda Mini) -->
+              <div class="grid grid-cols-4 gap-2">
+                <div
+                  v-for="kIdx in 4"
+                  :key="'sml-stk-' + kIdx"
+                  class="border-2 border-slate-900 rounded-lg p-2 bg-white flex flex-col justify-between shadow-xs"
+                >
+                  <div class="flex items-center justify-between text-[8px] border-b border-slate-200 pb-1">
+                    <span class="font-black text-slate-900">RJB-26</span>
+                    <span class="font-mono font-bold text-emerald-800">{{ stampingItem.code }}</span>
+                  </div>
+                  <div class="flex items-center space-x-1.5 py-1.5">
+                    <img
+                      :src="`https://api.qrserver.com/v1/create-qr-code/?size=45x45&data=${encodeURIComponent(getItemVerifyUrl(stampingItem.code))}`"
+                      alt="QR"
+                      class="w-9 h-9 border border-slate-200 p-0.5 rounded flex-shrink-0"
+                    />
+                    <div class="flex-1 min-w-0">
+                      <div class="font-black text-[9px] text-slate-900 leading-tight truncate">{{ stampingItem.name }}</div>
+                      <div class="text-[8px] text-slate-500 truncate">{{ stampingItem.source === 'mitra' ? (stampingItem.partner?.name || 'Mitra') : 'Internal' }}</div>
+                    </div>
+                  </div>
+                  <div class="text-[7px] text-slate-500 font-mono text-right border-t border-slate-100 pt-0.5">
+                    Slot {{ kIdx }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- LAYOUT BESAR ONLY -->
+            <div v-else-if="itemStickerSize === 'besar'" class="grid grid-cols-2 gap-3.5">
+              <div
+                v-for="bIdx in 2"
+                :key="'lg-box-' + bIdx"
+                class="border-2 border-slate-900 rounded-2xl overflow-hidden bg-white shadow-sm flex flex-col justify-between"
+              >
+                <div class="bg-slate-900 text-white px-3 py-1.5 flex items-center justify-between">
+                  <div class="flex items-center space-x-1.5">
+                    <img :src="settingsStore.settings?.kop_logo_url || settingsStore.settings?.logo_url || '/logo.png'" alt="Logo" class="w-4 h-4 object-contain bg-white rounded p-0.5" />
+                    <span class="font-black text-[11px] uppercase tracking-wider">MEDIA ROJABIYYAH 2026</span>
+                  </div>
+                  <span class="px-2 py-0.5 rounded bg-emerald-500 text-slate-950 font-black text-[8px] uppercase">BOX / HARDCASE</span>
+                </div>
+                <div class="p-3 grid grid-cols-3 gap-2 items-center">
+                  <div class="flex flex-col items-center justify-center p-1.5 border border-slate-300 rounded-xl bg-slate-50">
+                    <img :src="`https://api.qrserver.com/v1/create-qr-code/?size=85x85&data=${encodeURIComponent(getItemVerifyUrl(stampingItem.code))}`" alt="QR" class="w-16 h-16" />
+                    <span class="text-[7px] font-black text-slate-700 mt-1">SCAN VERIFIKASI</span>
+                  </div>
+                  <div class="col-span-2 space-y-1 text-xs">
+                    <div class="font-mono font-black text-emerald-800 text-xs">{{ stampingItem.code }}</div>
+                    <div class="text-xs font-black text-slate-950 uppercase leading-tight">{{ stampingItem.name }}</div>
+                    <div class="text-[10px] text-slate-600">Asal: <strong class="text-slate-900">{{ stampingItem.source === 'mitra' ? (stampingItem.partner?.name || 'Mitra') : 'Internal' }}</strong></div>
+                    <div class="text-[9px] text-slate-500">Lokasi: {{ stampingItem.location || 'Gudang Utama' }}</div>
+                  </div>
+                </div>
+                <div class="px-3 py-1 bg-slate-50 border-t border-slate-200 text-[8px] font-mono text-slate-500 flex justify-between">
+                  <span>{{ stampingItem.code }}</span>
+                  <span>Aset Logistik Haul Ke-5</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- LAYOUT SEDANG ONLY -->
+            <div v-else-if="itemStickerSize === 'sedang'" class="grid grid-cols-2 gap-2.5">
+              <div
+                v-for="mIdx in 6"
+                :key="'md-stk-rep-' + mIdx"
+                class="border-2 border-slate-900 rounded-xl p-2.5 bg-white flex flex-col justify-between shadow-xs"
+              >
+                <div class="flex items-center justify-between pb-1 border-b border-slate-300">
+                  <span class="font-mono font-black text-xs text-emerald-800">{{ stampingItem.code }}</span>
+                  <span class="px-1.5 py-0.5 rounded bg-slate-900 text-white font-bold text-[8px]">LABEL UNIT</span>
+                </div>
+                <div class="flex items-center space-x-2 py-1.5">
+                  <img :src="`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent(getItemVerifyUrl(stampingItem.code))}`" alt="QR" class="w-12 h-12 border border-slate-200 p-0.5 rounded" />
+                  <div class="flex-1 min-w-0 space-y-0.5 text-xs">
+                    <div class="font-black text-slate-950 text-xs truncate">{{ stampingItem.name }}</div>
+                    <div class="text-[9px] text-slate-600 truncate">Asal: {{ stampingItem.source === 'mitra' ? (stampingItem.partner?.name || 'Mitra') : 'Internal' }}</div>
+                    <div class="text-[9px] text-slate-500 truncate">Lokasi: {{ stampingItem.location || 'Gudang Utama' }}</div>
+                  </div>
+                </div>
+                <div class="text-[8px] text-slate-500 font-mono text-right border-t border-slate-100 pt-0.5">
+                  {{ stampingItem.code }} &bull; Unit {{ mIdx }}
+                </div>
+              </div>
+            </div>
+
+            <!-- LAYOUT KECIL ONLY -->
+            <div v-else-if="itemStickerSize === 'kecil'" class="grid grid-cols-4 gap-2">
+              <div
+                v-for="kIdx in 16"
+                :key="'sm-stk-rep-' + kIdx"
+                class="border-2 border-slate-900 rounded-lg p-1.5 bg-white flex flex-col justify-between shadow-xs"
+              >
+                <div class="flex items-center justify-between text-[8px] border-b border-slate-200 pb-0.5">
+                  <span class="font-black text-slate-900">RJB-26</span>
+                  <span class="font-mono font-bold text-emerald-800">{{ stampingItem.code }}</span>
+                </div>
+                <div class="flex items-center space-x-1 py-1">
+                  <img :src="`https://api.qrserver.com/v1/create-qr-code/?size=40x40&data=${encodeURIComponent(getItemVerifyUrl(stampingItem.code))}`" alt="QR" class="w-8 h-8 rounded" />
+                  <div class="flex-1 min-w-0">
+                    <div class="font-black text-[8px] text-slate-900 leading-tight truncate">{{ stampingItem.name }}</div>
+                    <div class="text-[7px] text-slate-500 truncate">{{ stampingItem.source === 'mitra' ? (stampingItem.partner?.name || 'Mitra') : 'Internal' }}</div>
+                  </div>
+                </div>
+                <div class="text-[7px] text-slate-500 font-mono text-right border-t border-slate-100 pt-0.5">
+                  #{{ kIdx }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom Sheet Footer -->
+            <div class="pt-3 border-t-2 border-slate-900 flex items-center justify-between text-[10px] text-slate-600">
+              <span class="font-semibold">Properti Resmi Logistik MEDIA ROJABIYYAH &bull; Haul Ke-5 &amp; Rojabiyyah 2026</span>
+              <span class="font-mono">Kertas Stiker Standar F4 (Gunting/Kupas sesuai pola kotak)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </DashboardLayout>
 </template>
 
@@ -516,12 +935,16 @@
 import { ref, onMounted, computed } from 'vue';
 import DashboardLayout from '../../layouts/DashboardLayout.vue';
 import { useAuthStore } from '../../stores/auth';
+import { useSettingsStore } from '../../stores/settings';
 import api from '../../services/api';
 import { downloadAuthenticatedFile } from '../../utils/fileDownloader';
 
 const authStore = useAuthStore();
+const settingsStore = useSettingsStore();
+
 const items = ref([]);
 const categories = ref([]);
+const partners = ref([]);
 const loading = ref(false);
 const saving = ref(false);
 const exporting = ref(false);
@@ -536,14 +959,49 @@ const editingId = ref(null);
 const itemPhotoRef = ref(null);
 const viewMode = ref('grid');
 
+// Stamping / Sticker Printing State
+const stampingItem = ref(null);
+const showItemStickerModal = ref(false);
+const itemStickerSize = ref('campur'); // 'campur' | 'besar' | 'sedang' | 'kecil'
+
+// Custom Owner / Partner Quick Add State
+const showNewPartnerInput = ref(false);
+const creatingPartner = ref(false);
+const newPartnerForm = ref({
+  name: '',
+  contact: '',
+  phone: '',
+  description: '',
+});
+
 const isMemberOnly = computed(() => authStore.user?.role === 'anggota');
 
 const filters = ref({
   search: '',
   category_id: '',
   condition: '',
+  sourceSelection: '',
   source: '',
+  partner_id: '',
 });
+
+const handleSourceFilterChange = () => {
+  const val = filters.value.sourceSelection;
+  if (!val) {
+    filters.value.source = '';
+    filters.value.partner_id = '';
+  } else if (val === 'internal') {
+    filters.value.source = 'internal';
+    filters.value.partner_id = '';
+  } else if (val === 'mitra') {
+    filters.value.source = 'mitra';
+    filters.value.partner_id = '';
+  } else if (val.startsWith('partner_')) {
+    filters.value.source = '';
+    filters.value.partner_id = val.replace('partner_', '');
+  }
+  fetchItems();
+};
 
 const form = ref({
   code: '',
@@ -553,8 +1011,101 @@ const form = ref({
   condition: 'baik',
   location: 'Gudang Inventaris Utama',
   source: 'internal',
+  partner_id: null,
   photo_path: null,
 });
+
+const ownershipSelection = computed({
+  get() {
+    if (form.value.source === 'internal') return 'internal';
+    return form.value.partner_id ? String(form.value.partner_id) : 'mitra_general';
+  },
+  set(val) {
+    if (val === 'internal') {
+      form.value.source = 'internal';
+      form.value.partner_id = null;
+    } else if (val === 'new_partner') {
+      showNewPartnerInput.value = true;
+    } else if (val === 'mitra_general') {
+      form.value.source = 'mitra';
+      form.value.partner_id = null;
+    } else {
+      form.value.source = 'mitra';
+      form.value.partner_id = Number(val);
+    }
+  }
+});
+
+const saveNewPartner = async () => {
+  if (!newPartnerForm.value.name.trim()) return;
+  creatingPartner.value = true;
+  try {
+    const res = await api.post('/partners', {
+      name: newPartnerForm.value.name.trim(),
+      contact: newPartnerForm.value.contact || undefined,
+      phone: newPartnerForm.value.phone || undefined,
+      description: newPartnerForm.value.description || undefined,
+    });
+    const created = res.data;
+    partners.value.push(created);
+    form.value.source = 'mitra';
+    form.value.partner_id = created.id;
+    newPartnerForm.value = { name: '', contact: '', phone: '', description: '' };
+    showNewPartnerInput.value = false;
+  } catch (err) {
+    alert(err.response?.data?.message || 'Gagal menambahkan lembaga / mitra baru.');
+  } finally {
+    creatingPartner.value = false;
+  }
+};
+
+const openItemSticker = (item) => {
+  stampingItem.value = item;
+  itemStickerSize.value = 'campur';
+  showItemStickerModal.value = true;
+};
+
+const triggerItemPrint = () => {
+  const printable = document.getElementById('printableItemDocument');
+  if (!printable) {
+    window.print();
+    return;
+  }
+  const oldContainer = document.getElementById('directPrintContainer');
+  if (oldContainer) oldContainer.remove();
+
+  const printDiv = document.createElement('div');
+  printDiv.id = 'directPrintContainer';
+  printDiv.innerHTML = printable.innerHTML;
+  document.body.appendChild(printDiv);
+  document.body.classList.add('is-printing-document');
+
+  const cleanup = () => {
+    document.body.classList.remove('is-printing-document');
+    const el = document.getElementById('directPrintContainer');
+    if (el && el.parentNode) el.parentNode.removeChild(el);
+    window.removeEventListener('afterprint', cleanup);
+  };
+
+  window.addEventListener('afterprint', cleanup);
+  setTimeout(() => {
+    window.print();
+    setTimeout(cleanup, 2500);
+  }, 100);
+};
+
+const formatDate = (dateStr) => {
+  if (!dateStr) return '-';
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+};
+
+const getItemVerifyUrl = (code) => {
+  if (typeof window !== 'undefined' && window.location && window.location.origin) {
+    return `${window.location.origin}/verify/${code || 'INV-01'}`;
+  }
+  return `https://rojabiyyah.id/verify/${code || 'INV-01'}`;
+};
 
 let debounceTimer = null;
 const debounceSearch = () => {
@@ -572,6 +1123,7 @@ const fetchItems = async () => {
       category_id: filters.value.category_id || undefined,
       condition: filters.value.condition || undefined,
       source: filters.value.source || undefined,
+      partner_id: filters.value.partner_id || undefined,
     };
     const res = await api.get('/items', { params });
     items.value = res.data.data;
@@ -609,7 +1161,6 @@ const fetchCategories = async () => {
   }
 };
 
-const partners = ref([]);
 const fetchPartners = async () => {
   try {
     const res = await api.get('/partners');
@@ -637,11 +1188,12 @@ const openDetailModal = (item) => {
 const openAddItemModal = () => {
   isEditing.value = false;
   editingId.value = null;
+  showNewPartnerInput.value = false;
   form.value = {
     code: `INV-${Math.floor(10 + Math.random() * 90)}`,
     name: '',
     category_id: categories.value[0]?.id || null,
-    partner_id: partners.value[0]?.id || null,
+    partner_id: null,
     qty_total: 1,
     condition: 'baik',
     location: 'Gudang Inventaris Utama',
@@ -654,6 +1206,7 @@ const openAddItemModal = () => {
 const openEditModal = (item) => {
   isEditing.value = true;
   editingId.value = item.id;
+  showNewPartnerInput.value = false;
   form.value = {
     code: item.code,
     name: item.name,
@@ -675,13 +1228,19 @@ const saveItem = async () => {
     if (payload.source === 'internal') {
       payload.partner_id = null;
     }
+    let res;
     if (isEditing.value) {
-      await api.put(`/items/${editingId.value}`, payload);
+      res = await api.put(`/items/${editingId.value}`, payload);
     } else {
-      await api.post('/items', payload);
+      res = await api.post('/items', payload);
     }
     showModal.value = false;
-    fetchItems();
+    await fetchItems();
+
+    // Jika tambah barang baru, langsung otomatis buka stiker penanda barang masuk!
+    if (!isEditing.value && res?.data?.item) {
+      openItemSticker(res.data.item);
+    }
   } catch (err) {
     alert(err.response?.data?.message || 'Gagal menyimpan barang.');
   } finally {
@@ -767,3 +1326,44 @@ onMounted(() => {
   fetchPartners();
 });
 </script>
+
+<style scoped>
+@media print {
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  body.is-printing-document > #app {
+    display: none !important;
+  }
+
+  body.is-printing-document > #directPrintContainer {
+    display: block !important;
+    position: static !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 199mm !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    border: none !important;
+    box-shadow: none !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  body.is-printing-document > #directPrintContainer * {
+    visibility: visible !important;
+    box-sizing: border-box !important;
+  }
+
+  body:not(.is-printing-document) .no-print {
+    display: none !important;
+  }
+}
+</style>

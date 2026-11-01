@@ -20,7 +20,7 @@ class LoanController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        $query = Loan::with(['borrower.member.division', 'approver', 'loanItems.item']);
+        $query = Loan::with(['borrower.member.division', 'approver', 'loanItems.item.partner']);
 
         // RBAC Filter: Anggota only sees own loans
         if ($user->role === 'anggota') {
@@ -130,7 +130,7 @@ class LoanController extends Controller
 
     public function show($id)
     {
-        $loan = Loan::with(['borrower.member.division', 'approver', 'loanItems.item'])->findOrFail($id);
+        $loan = Loan::with(['borrower.member.division', 'approver', 'loanItems.item.partner'])->findOrFail($id);
         return response()->json($loan);
     }
 
@@ -446,7 +446,7 @@ class LoanController extends Controller
 
     public function generatePdf($id)
     {
-        $loan = Loan::with(['borrower.member.division', 'approver', 'loanItems.item'])->findOrFail($id);
+        $loan = Loan::with(['borrower.member.division', 'approver', 'loanItems.item.partner'])->findOrFail($id);
 
         $letterhead = Setting::get('letterhead_text', "PANITIA PERINGATAN HARI BESAR ISLAM ROJABIYYAH 2026\nSekretariat Utama");
         $appName = Setting::get('app_name', 'Administrasi Rojabiyyah 2026');
