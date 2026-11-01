@@ -1039,23 +1039,23 @@
           </div>
         </div>
 
-        <!-- Amber Banner & Ukuran Selector for Stiker F4 -->
+        <!-- Banner & Ukuran Selector for Stiker F4 -->
         <div v-if="printTab === 'stiker'" class="no-print my-3 space-y-2">
-          <div class="flex flex-wrap items-center justify-between gap-3 p-3.5 bg-gradient-to-r from-amber-950/50 to-[#14120a] border border-amber-500/40 rounded-2xl text-xs">
+          <div class="flex flex-wrap items-center justify-between gap-3 p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl text-xs">
             <div class="flex items-start space-x-3">
-              <div class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
               </div>
               <div>
-                <h4 class="font-bold text-amber-300 text-sm">Lembar Stiker Penanda Barang Ukuran F4 (Siap Cetak pada Kertas Stiker Label)</h4>
-                <p class="text-slate-500 text-[11px] mt-0.5">Dilengkapi Barcode &amp; QR Code cerdas untuk pelacakan barang fisik di lapangan Haul Ke-5.</p>
+                <h4 class="font-bold text-emerald-950 text-sm">Lembar Stiker Penanda Barang Ukuran F4 (Siap Cetak pada Kertas Stiker Label)</h4>
+                <p class="text-slate-600 text-[11px] mt-0.5">Dilengkapi Barcode &amp; QR Code cerdas untuk pelacakan barang fisik di lapangan Haul Ke-5 &amp; Rojabiyyah 2026.</p>
               </div>
             </div>
             <div class="flex items-center space-x-2 text-right">
-              <span class="px-2.5 py-1 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-300 font-bold text-xs">
-                {{ selectedLoan?.loan_items?.length || 1 }} Barang
+              <span class="px-2.5 py-1 rounded-lg bg-emerald-100 border border-emerald-300 text-emerald-900 font-bold text-xs">
+                {{ selectedLoan?.loan_items?.length || 1 }} Jenis Barang (Total {{ expandedLoanItems.length }} Unit)
               </span>
-              <span class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-700 font-medium text-xs">
+              <span class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 font-medium text-xs">
                 Haul Ke-5 &amp; Rojabiyyah 2026
               </span>
             </div>
@@ -1063,35 +1063,71 @@
 
           <!-- Ukuran Selector Toolbar -->
           <div class="flex flex-wrap items-center justify-between gap-2 p-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
-            <span class="text-slate-500 font-semibold px-2">Ukuran:</span>
+            <span class="text-slate-700 font-bold px-2">Format Ukuran:</span>
             <div class="flex flex-wrap items-center gap-1.5">
               <button
                 @click="stickerSize = 'campur'"
-                :class="stickerSize === 'campur' ? 'bg-[#0f766e] text-white font-bold' : 'bg-slate-50 text-slate-700 hover:text-white border border-slate-300'"
+                :class="stickerSize === 'campur' ? 'bg-[#0f766e] text-white font-bold shadow-xs' : 'bg-white text-slate-700 hover:text-emerald-800 border border-slate-300'"
                 class="px-3 py-1.5 rounded-lg transition text-xs"
               >
-                1 Lembar F4 (Multi-Ukuran)
+                1 Lembar F4 (Multi-Ukuran: 1 Besar + 2 Sedang + 4 Mini)
               </button>
               <button
                 @click="stickerSize = 'besar'"
-                :class="stickerSize === 'besar' ? 'bg-[#0f766e] text-white font-bold' : 'bg-slate-50 text-slate-700 hover:text-white border border-slate-300'"
+                :class="stickerSize === 'besar' ? 'bg-[#0f766e] text-white font-bold shadow-xs' : 'bg-white text-slate-700 hover:text-emerald-800 border border-slate-300'"
                 class="px-3 py-1.5 rounded-lg transition text-xs"
               >
                 Besar (Box)
               </button>
               <button
                 @click="stickerSize = 'sedang'"
-                :class="stickerSize === 'sedang' ? 'bg-[#0f766e] text-white font-bold' : 'bg-slate-50 text-slate-700 hover:text-white border border-slate-300'"
+                :class="stickerSize === 'sedang' ? 'bg-[#0f766e] text-white font-bold shadow-xs' : 'bg-white text-slate-700 hover:text-emerald-800 border border-slate-300'"
                 class="px-3 py-1.5 rounded-lg transition text-xs"
               >
-                Sedang
+                Sedang (Unit)
               </button>
               <button
                 @click="stickerSize = 'kecil'"
-                :class="stickerSize === 'kecil' ? 'bg-[#0f766e] text-white font-bold' : 'bg-slate-50 text-slate-700 hover:text-white border border-slate-300'"
+                :class="stickerSize === 'kecil' ? 'bg-[#0f766e] text-white font-bold shadow-xs' : 'bg-white text-slate-700 hover:text-emerald-800 border border-slate-300'"
                 class="px-3 py-1.5 rounded-lg transition text-xs"
               >
-                Kecil/Mini
+                Kecil / Mini
+              </button>
+            </div>
+          </div>
+
+          <!-- Pilihan Barang Cetak Toolbar (Aktif bila lebih dari 1 barang) -->
+          <div v-if="expandedLoanItems.length > 1 && stickerSize === 'campur'" class="flex flex-wrap items-center justify-between gap-2 p-2.5 bg-emerald-50/80 border border-emerald-200 rounded-xl text-xs">
+            <div class="flex items-center space-x-1.5 px-2">
+              <svg class="w-4 h-4 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+              <span class="text-emerald-950 font-black">Mode Cetak Barang:</span>
+            </div>
+            <div class="flex flex-wrap items-center gap-1.5">
+              <button
+                @click="selectedStickerItem = 'gabungan'"
+                :class="selectedStickerItem === 'gabungan' ? 'bg-[#0f766e] text-white font-bold shadow-xs' : 'bg-white text-slate-700 hover:text-emerald-800 border border-slate-300'"
+                class="px-2.5 py-1.5 rounded-lg transition text-xs flex items-center space-x-1"
+                title="Semua barang gabung dalam 1 lembar F4 hemat kertas"
+              >
+                <span>Gabungan 1 Lembar (Semua Barang)</span>
+              </button>
+              <button
+                @click="selectedStickerItem = 'semua_lembar'"
+                :class="selectedStickerItem === 'semua_lembar' ? 'bg-[#0f766e] text-white font-bold shadow-xs' : 'bg-white text-slate-700 hover:text-emerald-800 border border-slate-300'"
+                class="px-2.5 py-1.5 rounded-lg transition text-xs flex items-center space-x-1"
+                title="Cetak stiker lengkap untuk setiap barang, masing-masing 1 lembar F4 penuh"
+              >
+                <span>Cetak Tiap Barang ({{ expandedLoanItems.length }} Lembar F4 Penuh)</span>
+              </button>
+              <button
+                v-for="(li, idx) in expandedLoanItems"
+                :key="'btn-sel-item-' + idx"
+                @click="selectedStickerItem = idx"
+                :class="selectedStickerItem === idx ? 'bg-emerald-700 text-white font-bold shadow-xs' : 'bg-white text-slate-700 hover:text-emerald-800 border border-slate-300'"
+                class="px-2.5 py-1.5 rounded-lg transition text-xs"
+                :title="`Cetak hanya untuk ${li.item?.name}`"
+              >
+                {{ idx + 1 }}. {{ li.item?.name }} ({{ li.item?.code }})
               </button>
             </div>
           </div>
@@ -1308,182 +1344,545 @@
           <!-- 3. STIKER KERTAS F4 MULTI-UKURAN (TAB STIKER)                             -->
           <!-- ========================================================================= -->
           <div v-else-if="printTab === 'stiker'" class="space-y-4">
-            <!-- Sheet Header -->
-            <div class="flex items-center justify-between pb-2 border-b-2 border-slate-900">
-              <div class="flex items-center space-x-2.5">
-                <img
-                  :src="settingsStore.settings?.kop_logo_url || settingsStore.settings?.logo_url || '/logo.png'"
-                  alt="Logo"
-                  class="w-10 h-10 object-contain flex-shrink-0"
-                />
-                <div>
-                  <h1 class="text-xs font-black uppercase text-slate-950 tracking-wide">
-                    {{ settingsStore.settings?.kop_name || 'DOKUMENTASI ROJABIYYAH 2026' }}
-                  </h1>
-                  <p class="text-[10px] text-emerald-800 font-bold">
-                    {{ settingsStore.settings?.kop_sub_theme || 'Haul ke-5 Al-Maghfurlah K.H. Moch. Djamaluddin Achmad & Rojabiyyah 2026' }}
-                  </p>
+
+            <!-- MODE 1: CAMPURAN 1 LEMBAR F4 / MULTI-UKURAN -->
+            <div v-if="stickerSize === 'campur'">
+
+              <!-- SUB-MODE A: CETAK TIAP BARANG (SEMUA LEMBAR F4 TERPISAH) -->
+              <div v-if="selectedStickerItem === 'semua_lembar'" class="space-y-8">
+                <div
+                  v-for="(sheetLi, sheetIdx) in expandedLoanItems"
+                  :key="'full-sheet-' + sheetIdx"
+                  class="page-break space-y-3.5 pb-6"
+                  :class="sheetIdx > 0 ? 'pt-8 border-t-2 border-dashed border-slate-300' : ''"
+                >
+                  <!-- Sheet Header -->
+                  <div class="flex items-center justify-between pb-2 border-b-2 border-slate-900">
+                    <div class="flex items-center space-x-2.5">
+                      <img
+                        :src="settingsStore.settings?.kop_logo_url || settingsStore.settings?.logo_url || '/logo.png'"
+                        alt="Logo"
+                        class="w-10 h-10 object-contain flex-shrink-0"
+                      />
+                      <div>
+                        <h1 class="text-xs font-black uppercase text-slate-950 tracking-wide">
+                          {{ settingsStore.settings?.kop_name || 'DOKUMENTASI ROJABIYYAH 2026' }}
+                        </h1>
+                        <p class="text-[10px] text-emerald-800 font-bold">
+                          {{ settingsStore.settings?.kop_sub_theme || 'Haul ke-5 Al-Maghfurlah K.H. Moch. Djamaluddin Achmad & Rojabiyyah 2026' }}
+                        </p>
+                      </div>
+                    </div>
+                    <div class="text-right">
+                      <span class="text-xs font-black uppercase tracking-wider text-slate-950 block">LEMBAR STIKER LABEL F4</span>
+                      <span class="text-[10px] font-mono text-slate-600">Barang {{ sheetIdx + 1 }} dari {{ expandedLoanItems.length }} &bull; Ref: {{ selectedLoan?.loan_no }}</span>
+                    </div>
+                  </div>
+
+                  <!-- 1. Stiker Boks / Hardcase (Besar) -->
+                  <div class="border-2 border-slate-900 rounded-2xl overflow-hidden bg-white shadow-sm">
+                    <div class="bg-slate-900 text-white px-3.5 py-2 flex items-center justify-between">
+                      <div class="flex items-center space-x-2">
+                        <img
+                          :src="settingsStore.settings?.kop_logo_url || settingsStore.settings?.logo_url || '/logo.png'"
+                          alt="Logo"
+                          class="w-5 h-5 object-contain bg-white rounded p-0.5"
+                        />
+                        <span class="font-black text-xs uppercase tracking-wider">MEDIA ROJABIYYAH 2026</span>
+                      </div>
+                      <span class="px-2 py-0.5 rounded bg-emerald-500 text-slate-950 font-black text-[9px] uppercase tracking-wider">
+                        STIKER BOKS / HARDCASE
+                      </span>
+                    </div>
+
+                    <div class="p-3 grid grid-cols-12 gap-3 items-center">
+                      <div class="col-span-3 flex flex-col items-center justify-center p-2 border border-slate-300 rounded-xl bg-slate-50 text-center">
+                        <img
+                          :src="`https://api.qrserver.com/v1/create-qr-code/?size=95x95&data=${encodeURIComponent(getVerifyUrl(selectedLoan?.loan_no))}`"
+                          alt="QR"
+                          class="w-18 h-18"
+                        />
+                        <span class="text-[8px] font-black text-slate-700 mt-1 uppercase tracking-tight">SCAN HP UNTUK CEK</span>
+                      </div>
+
+                      <div class="col-span-5 space-y-1 text-xs">
+                        <div class="text-sm font-black text-slate-950 uppercase leading-snug">
+                          {{ sheetLi.item?.name }}
+                        </div>
+                        <div class="text-[11px] font-mono font-black text-emerald-700">
+                          {{ sheetLi.item?.code }}
+                        </div>
+                        <div class="text-[10px] text-slate-600">
+                          Asal: <strong class="text-slate-800">{{ sheetLi.item?.source === 'mitra' ? (sheetLi.item?.partner?.name || 'Pinjaman Mitra Luar') : 'Milik Internal' }}</strong>
+                        </div>
+                        <div class="text-[10px] text-slate-600">
+                          Peminjam: <strong class="text-slate-900 uppercase">{{ selectedLoan?.borrower?.name }}</strong>
+                        </div>
+                        <div class="text-[10px] text-slate-500 font-mono">
+                          No. Pinjam: {{ selectedLoan?.loan_no }}
+                        </div>
+                        <div class="text-[10px] text-rose-700 font-bold">
+                          Tenggat: {{ formatDate(selectedLoan?.due_at) }}
+                        </div>
+                      </div>
+
+                      <div class="col-span-4 flex flex-col items-center justify-center p-2 border-l border-slate-200">
+                        <svg class="w-full h-11" viewBox="0 0 160 40" preserveAspectRatio="none">
+                          <rect x="0" y="0" width="3" height="40" fill="#000" />
+                          <rect x="5" y="0" width="2" height="40" fill="#000" />
+                          <rect x="9" y="0" width="4" height="40" fill="#000" />
+                          <rect x="15" y="0" width="2" height="40" fill="#000" />
+                          <rect x="19" y="0" width="5" height="40" fill="#000" />
+                          <rect x="26" y="0" width="2" height="40" fill="#000" />
+                          <rect x="30" y="0" width="3" height="40" fill="#000" />
+                          <rect x="35" y="0" width="4" height="40" fill="#000" />
+                          <rect x="41" y="0" width="2" height="40" fill="#000" />
+                          <rect x="45" y="0" width="5" height="40" fill="#000" />
+                          <rect x="52" y="0" width="3" height="40" fill="#000" />
+                          <rect x="57" y="0" width="2" height="40" fill="#000" />
+                          <rect x="61" y="0" width="4" height="40" fill="#000" />
+                          <rect x="67" y="0" width="2" height="40" fill="#000" />
+                          <rect x="71" y="0" width="5" height="40" fill="#000" />
+                          <rect x="78" y="0" width="3" height="40" fill="#000" />
+                          <rect x="83" y="0" width="2" height="40" fill="#000" />
+                          <rect x="87" y="0" width="4" height="40" fill="#000" />
+                          <rect x="93" y="0" width="2" height="40" fill="#000" />
+                          <rect x="97" y="0" width="5" height="40" fill="#000" />
+                          <rect x="104" y="0" width="3" height="40" fill="#000" />
+                          <rect x="109" y="0" width="2" height="40" fill="#000" />
+                          <rect x="113" y="0" width="4" height="40" fill="#000" />
+                          <rect x="119" y="0" width="2" height="40" fill="#000" />
+                          <rect x="123" y="0" width="5" height="40" fill="#000" />
+                          <rect x="130" y="0" width="3" height="40" fill="#000" />
+                          <rect x="135" y="0" width="2" height="40" fill="#000" />
+                          <rect x="139" y="0" width="4" height="40" fill="#000" />
+                          <rect x="145" y="0" width="3" height="40" fill="#000" />
+                          <rect x="150" y="0" width="2" height="40" fill="#000" />
+                          <rect x="154" y="0" width="4" height="40" fill="#000" />
+                        </svg>
+                        <span class="font-mono text-[9px] font-bold text-slate-800 mt-1 tracking-wider">
+                          {{ sheetLi.item?.code || 'INV-01' }} &bull; HAUL5-RJB
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 2. Dua Stiker Sedang -->
+                  <div class="grid grid-cols-2 gap-3">
+                    <div
+                      v-for="sIdx in 2"
+                      :key="'sheet-med-' + sheetIdx + '-' + sIdx"
+                      class="border-2 border-slate-900 rounded-xl p-3 bg-white flex flex-col justify-between shadow-xs"
+                    >
+                      <div class="flex items-center justify-between pb-1.5 border-b border-slate-300">
+                        <span class="font-mono font-black text-xs text-emerald-800">{{ sheetLi.item?.code }}</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-900 text-white font-bold text-[8px] uppercase">STIKER UNIT</span>
+                      </div>
+                      <div class="flex items-center space-x-2.5 py-2">
+                        <div class="flex flex-col items-center justify-center flex-shrink-0">
+                          <img
+                            :src="`https://api.qrserver.com/v1/create-qr-code/?size=65x65&data=${encodeURIComponent(getVerifyUrl(selectedLoan?.loan_no))}`"
+                            alt="QR"
+                            class="w-13 h-13 border border-slate-300 p-0.5 rounded"
+                          />
+                          <span class="text-[7px] font-bold text-slate-600 mt-0.5">SCAN HP</span>
+                        </div>
+                        <div class="flex-1 min-w-0 space-y-0.5 text-xs">
+                          <div class="font-black text-slate-950 truncate">{{ sheetLi.item?.name }}</div>
+                          <div class="text-[9px] text-slate-600 truncate">Peminjam: <strong class="text-slate-900">{{ selectedLoan?.borrower?.name }}</strong></div>
+                          <div class="text-[9px] text-slate-500 truncate">Asal: {{ sheetLi.item?.source === 'mitra' ? 'Mitra' : 'Internal' }}</div>
+                          <div class="text-[9px] text-rose-700 font-bold">Kembali: {{ formatDate(selectedLoan?.due_at) }}</div>
+                        </div>
+                      </div>
+                      <div class="text-[8px] text-slate-500 font-mono border-t border-slate-100 pt-1 flex justify-between">
+                        <span>{{ selectedLoan?.loan_no }}</span>
+                        <span>Haul Ke-5</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 3. Empat Stiker Kecil -->
+                  <div class="grid grid-cols-4 gap-2">
+                    <div
+                      v-for="kIdx in 4"
+                      :key="'sheet-sml-' + sheetIdx + '-' + kIdx"
+                      class="border-2 border-slate-900 rounded-lg p-2 bg-white flex flex-col justify-between shadow-xs"
+                    >
+                      <div class="flex items-center justify-between text-[8px] border-b border-slate-200 pb-1">
+                        <span class="font-black text-slate-900">RJB-26</span>
+                        <span class="font-mono font-bold text-emerald-800">{{ sheetLi.item?.code }}</span>
+                      </div>
+                      <div class="flex items-center space-x-1.5 py-1.5">
+                        <img
+                          :src="`https://api.qrserver.com/v1/create-qr-code/?size=45x45&data=${encodeURIComponent(getVerifyUrl(selectedLoan?.loan_no))}`"
+                          alt="QR"
+                          class="w-9 h-9 border border-slate-200 p-0.5 rounded flex-shrink-0"
+                        />
+                        <div class="flex-1 min-w-0">
+                          <div class="font-black text-[9px] text-slate-900 leading-tight truncate">{{ sheetLi.item?.name }}</div>
+                          <div class="text-[8px] text-slate-500 truncate">{{ selectedLoan?.borrower?.name }}</div>
+                        </div>
+                      </div>
+                      <div class="text-[7px] text-slate-500 font-mono text-right border-t border-slate-100 pt-0.5">
+                        {{ selectedLoan?.loan_no }}
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Footer -->
+                  <div class="pt-3 border-t-2 border-slate-900 flex items-center justify-between text-[10px] text-slate-600">
+                    <span class="font-semibold">Properti Resmi Logistik MEDIA ROJABIYYAH &bull; Haul Ke-5 &amp; Rojabiyyah 2026</span>
+                    <span class="font-mono">Kertas Stiker Standar F4 &bull; Barang {{ sheetIdx + 1 }} dari {{ expandedLoanItems.length }}</span>
+                  </div>
                 </div>
               </div>
-              <div class="text-right">
-                <span class="text-xs font-black uppercase tracking-wider text-slate-950 block">LEMBAR STIKER LABEL F4</span>
-                <span class="text-[10px] font-mono text-slate-600">Ref: {{ selectedLoan?.loan_no }}</span>
-              </div>
-            </div>
 
-            <!-- LAYOUT MULTI-UKURAN (CAMPURAN 1 LEMBAR F4: 1 BESAR + 2 SEDANG + 4 KECIL) -->
-            <div v-if="stickerSize === 'campur'" class="space-y-3.5">
-              <!-- 1. Stiker Boks / Hardcase (Besar) with Barcode & QR -->
-              <div
-                v-for="li in expandedLoanItems.slice(0, 1)"
-                :key="'box-' + li.id"
-                class="border-2 border-slate-900 rounded-2xl overflow-hidden bg-white shadow-sm"
-              >
-                <!-- Top Header Bar -->
-                <div class="bg-slate-50 text-white px-3.5 py-2 flex items-center justify-between">
-                  <div class="flex items-center space-x-2">
+              <!-- SUB-MODE B & C: GABUNGAN 1 LEMBAR ATAU PILIH SATU BARANG SPESIFIK -->
+              <div v-else class="space-y-3.5">
+                <!-- Sheet Header -->
+                <div class="flex items-center justify-between pb-2 border-b-2 border-slate-900">
+                  <div class="flex items-center space-x-2.5">
                     <img
                       :src="settingsStore.settings?.kop_logo_url || settingsStore.settings?.logo_url || '/logo.png'"
                       alt="Logo"
-                      class="w-5 h-5 object-contain bg-white rounded p-0.5"
+                      class="w-10 h-10 object-contain flex-shrink-0"
                     />
-                    <span class="font-black text-xs uppercase tracking-wider">MEDIA ROJABIYYAH 2026</span>
-                  </div>
-                  <span class="px-2 py-0.5 rounded bg-emerald-500 text-slate-950 font-black text-[9px] uppercase tracking-wider">
-                    STIKER BOKS / HARDCASE
-                  </span>
-                </div>
-
-                <!-- 3-Column Body -->
-                <div class="p-3 grid grid-cols-12 gap-3 items-center">
-                  <!-- QR Code (Left) -->
-                  <div class="col-span-3 flex flex-col items-center justify-center p-2 border border-slate-300 rounded-xl bg-slate-50 text-center">
-                    <img
-                      :src="`https://api.qrserver.com/v1/create-qr-code/?size=95x95&data=${encodeURIComponent('https://rojabiyyah.id/verify/' + (selectedLoan?.loan_no || 'PJ-001'))}`"
-                      alt="QR"
-                      class="w-18 h-18"
-                    />
-                    <span class="text-[8px] font-black text-slate-700 mt-1 uppercase tracking-tight">SCAN HP UNTUK CEK</span>
-                  </div>
-
-                  <!-- Details (Center) -->
-                  <div class="col-span-5 space-y-1 text-xs">
-                    <div class="text-sm font-black text-slate-950 uppercase leading-snug">
-                      {{ li.item?.name }}
-                    </div>
-                    <div class="text-[11px] font-mono font-black text-emerald-700">
-                      {{ li.item?.code }}
-                    </div>
-                    <div class="text-[10px] text-slate-600">
-                      Asal: <strong class="text-slate-800">{{ li.item?.source === 'mitra' ? (li.item?.partner?.name || 'Pinjaman Mitra Luar') : 'Milik Internal' }}</strong>
-                    </div>
-                    <div class="text-[10px] text-slate-600">
-                      Peminjam: <strong class="text-slate-900 uppercase">{{ selectedLoan?.borrower?.name }}</strong>
-                    </div>
-                    <div class="text-[10px] text-slate-500 font-mono">
-                      No. Pinjam: {{ selectedLoan?.loan_no }}
-                    </div>
-                    <div class="text-[10px] text-rose-700 font-bold">
-                      Tenggat: {{ formatDate(selectedLoan?.due_at) }}
+                    <div>
+                      <h1 class="text-xs font-black uppercase text-slate-950 tracking-wide">
+                        {{ settingsStore.settings?.kop_name || 'DOKUMENTASI ROJABIYYAH 2026' }}
+                      </h1>
+                      <p class="text-[10px] text-emerald-800 font-bold">
+                        {{ settingsStore.settings?.kop_sub_theme || 'Haul ke-5 Al-Maghfurlah K.H. Moch. Djamaluddin Achmad & Rojabiyyah 2026' }}
+                      </p>
                     </div>
                   </div>
-
-                  <!-- Barcode SVG (Right) -->
-                  <div class="col-span-4 flex flex-col items-center justify-center p-2 border-l border-slate-200">
-                    <svg class="w-full h-11" viewBox="0 0 160 40" preserveAspectRatio="none">
-                      <rect x="0" y="0" width="3" height="40" fill="#000" />
-                      <rect x="5" y="0" width="2" height="40" fill="#000" />
-                      <rect x="9" y="0" width="4" height="40" fill="#000" />
-                      <rect x="15" y="0" width="2" height="40" fill="#000" />
-                      <rect x="19" y="0" width="5" height="40" fill="#000" />
-                      <rect x="26" y="0" width="2" height="40" fill="#000" />
-                      <rect x="30" y="0" width="3" height="40" fill="#000" />
-                      <rect x="35" y="0" width="4" height="40" fill="#000" />
-                      <rect x="41" y="0" width="2" height="40" fill="#000" />
-                      <rect x="45" y="0" width="5" height="40" fill="#000" />
-                      <rect x="52" y="0" width="3" height="40" fill="#000" />
-                      <rect x="57" y="0" width="2" height="40" fill="#000" />
-                      <rect x="61" y="0" width="4" height="40" fill="#000" />
-                      <rect x="67" y="0" width="2" height="40" fill="#000" />
-                      <rect x="71" y="0" width="5" height="40" fill="#000" />
-                      <rect x="78" y="0" width="3" height="40" fill="#000" />
-                      <rect x="83" y="0" width="2" height="40" fill="#000" />
-                      <rect x="87" y="0" width="4" height="40" fill="#000" />
-                      <rect x="93" y="0" width="2" height="40" fill="#000" />
-                      <rect x="97" y="0" width="5" height="40" fill="#000" />
-                      <rect x="104" y="0" width="3" height="40" fill="#000" />
-                      <rect x="109" y="0" width="2" height="40" fill="#000" />
-                      <rect x="113" y="0" width="4" height="40" fill="#000" />
-                      <rect x="119" y="0" width="2" height="40" fill="#000" />
-                      <rect x="123" y="0" width="5" height="40" fill="#000" />
-                      <rect x="130" y="0" width="3" height="40" fill="#000" />
-                      <rect x="135" y="0" width="2" height="40" fill="#000" />
-                      <rect x="139" y="0" width="4" height="40" fill="#000" />
-                      <rect x="145" y="0" width="3" height="40" fill="#000" />
-                      <rect x="150" y="0" width="2" height="40" fill="#000" />
-                      <rect x="154" y="0" width="4" height="40" fill="#000" />
-                    </svg>
-                    <span class="font-mono text-[9px] font-bold text-slate-800 mt-1 tracking-wider">
-                      {{ li.item?.code || 'INV-01' }} &bull; HAUL5-RJB
+                  <div class="text-right">
+                    <span class="text-xs font-black uppercase tracking-wider text-slate-950 block">LEMBAR STIKER LABEL F4</span>
+                    <span class="text-[10px] font-mono text-slate-600">
+                      {{ typeof selectedStickerItem === 'number' ? `Barang: ${expandedLoanItems[selectedStickerItem]?.item?.name}` : `Gabungan (${expandedLoanItems.length} Barang)` }} &bull; Ref: {{ selectedLoan?.loan_no }}
                     </span>
                   </div>
                 </div>
+
+                <!-- 1. Stiker Boks / Hardcase (Besar) -->
+                <div
+                  v-for="li in [typeof selectedStickerItem === 'number' ? expandedLoanItems[selectedStickerItem] : (expandedLoanItems[selectedBoxItemIndex] || expandedLoanItems[0])]"
+                  :key="'box-single-' + (li?.id || 0)"
+                  class="border-2 border-slate-900 rounded-2xl overflow-hidden bg-white shadow-sm"
+                >
+                  <!-- Top Header Bar -->
+                  <div class="bg-slate-900 text-white px-3.5 py-2 flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                      <img
+                        :src="settingsStore.settings?.kop_logo_url || settingsStore.settings?.logo_url || '/logo.png'"
+                        alt="Logo"
+                        class="w-5 h-5 object-contain bg-white rounded p-0.5"
+                      />
+                      <span class="font-black text-xs uppercase tracking-wider">MEDIA ROJABIYYAH 2026</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                      <!-- Box Item Switcher (Jika mode gabungan dan lebih dari 1 barang) -->
+                      <div v-if="selectedStickerItem === 'gabungan' && expandedLoanItems.length > 1" class="no-print flex items-center space-x-1 bg-slate-800 px-2 py-0.5 rounded-lg border border-slate-700">
+                        <span class="text-[9px] text-slate-300 font-bold mr-1">Barang Boks:</span>
+                        <button
+                          v-for="(it, bIdx) in expandedLoanItems"
+                          :key="'box-sel-btn-' + bIdx"
+                          @click.stop="selectedBoxItemIndex = bIdx"
+                          :class="selectedBoxItemIndex === bIdx ? 'bg-emerald-500 text-slate-950 font-black shadow-xs' : 'bg-slate-700 text-slate-300 hover:text-white'"
+                          class="px-1.5 py-0.5 rounded text-[8px] uppercase transition font-mono font-bold"
+                          :title="it.item?.name"
+                        >
+                          {{ it.item?.code }}
+                        </button>
+                      </div>
+                      <span class="px-2 py-0.5 rounded bg-emerald-500 text-slate-950 font-black text-[9px] uppercase tracking-wider">
+                        STIKER BOKS / HARDCASE
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- 3-Column Body -->
+                  <div class="p-3 grid grid-cols-12 gap-3 items-center">
+                    <!-- QR Code (Left) -->
+                    <div class="col-span-3 flex flex-col items-center justify-center p-2 border border-slate-300 rounded-xl bg-slate-50 text-center">
+                      <img
+                        :src="`https://api.qrserver.com/v1/create-qr-code/?size=95x95&data=${encodeURIComponent(getVerifyUrl(selectedLoan?.loan_no))}`"
+                        alt="QR"
+                        class="w-18 h-18"
+                      />
+                      <span class="text-[8px] font-black text-slate-700 mt-1 uppercase tracking-tight">SCAN HP UNTUK CEK</span>
+                    </div>
+
+                    <!-- Details (Center) -->
+                    <div class="col-span-5 space-y-1 text-xs">
+                      <div class="text-sm font-black text-slate-950 uppercase leading-snug">
+                        {{ li?.item?.name }}
+                      </div>
+                      <div class="text-[11px] font-mono font-black text-emerald-700">
+                        {{ li?.item?.code }}
+                      </div>
+                      <div class="text-[10px] text-slate-600">
+                        Asal: <strong class="text-slate-800">{{ li?.item?.source === 'mitra' ? (li?.item?.partner?.name || 'Pinjaman Mitra Luar') : 'Milik Internal' }}</strong>
+                      </div>
+                      <div class="text-[10px] text-slate-600">
+                        Peminjam: <strong class="text-slate-900 uppercase">{{ selectedLoan?.borrower?.name }}</strong>
+                      </div>
+                      <div class="text-[10px] text-slate-500 font-mono">
+                        No. Pinjam: {{ selectedLoan?.loan_no }}
+                      </div>
+                      <div class="text-[10px] text-rose-700 font-bold">
+                        Tenggat: {{ formatDate(selectedLoan?.due_at) }}
+                      </div>
+                    </div>
+
+                    <!-- Barcode SVG (Right) -->
+                    <div class="col-span-4 flex flex-col items-center justify-center p-2 border-l border-slate-200">
+                      <svg class="w-full h-11" viewBox="0 0 160 40" preserveAspectRatio="none">
+                        <rect x="0" y="0" width="3" height="40" fill="#000" />
+                        <rect x="5" y="0" width="2" height="40" fill="#000" />
+                        <rect x="9" y="0" width="4" height="40" fill="#000" />
+                        <rect x="15" y="0" width="2" height="40" fill="#000" />
+                        <rect x="19" y="0" width="5" height="40" fill="#000" />
+                        <rect x="26" y="0" width="2" height="40" fill="#000" />
+                        <rect x="30" y="0" width="3" height="40" fill="#000" />
+                        <rect x="35" y="0" width="4" height="40" fill="#000" />
+                        <rect x="41" y="0" width="2" height="40" fill="#000" />
+                        <rect x="45" y="0" width="5" height="40" fill="#000" />
+                        <rect x="52" y="0" width="3" height="40" fill="#000" />
+                        <rect x="57" y="0" width="2" height="40" fill="#000" />
+                        <rect x="61" y="0" width="4" height="40" fill="#000" />
+                        <rect x="67" y="0" width="2" height="40" fill="#000" />
+                        <rect x="71" y="0" width="5" height="40" fill="#000" />
+                        <rect x="78" y="0" width="3" height="40" fill="#000" />
+                        <rect x="83" y="0" width="2" height="40" fill="#000" />
+                        <rect x="87" y="0" width="4" height="40" fill="#000" />
+                        <rect x="93" y="0" width="2" height="40" fill="#000" />
+                        <rect x="97" y="0" width="5" height="40" fill="#000" />
+                        <rect x="104" y="0" width="3" height="40" fill="#000" />
+                        <rect x="109" y="0" width="2" height="40" fill="#000" />
+                        <rect x="113" y="0" width="4" height="40" fill="#000" />
+                        <rect x="119" y="0" width="2" height="40" fill="#000" />
+                        <rect x="123" y="0" width="5" height="40" fill="#000" />
+                        <rect x="130" y="0" width="3" height="40" fill="#000" />
+                        <rect x="135" y="0" width="2" height="40" fill="#000" />
+                        <rect x="139" y="0" width="4" height="40" fill="#000" />
+                        <rect x="145" y="0" width="3" height="40" fill="#000" />
+                        <rect x="150" y="0" width="2" height="40" fill="#000" />
+                        <rect x="154" y="0" width="4" height="40" fill="#000" />
+                      </svg>
+                      <span class="font-mono text-[9px] font-bold text-slate-800 mt-1 tracking-wider">
+                        {{ li?.item?.code || 'INV-01' }} &bull; HAUL5-RJB
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 2. Stiker Sedang (Unit Kamera / Perangkat) - Tampilkan Semua Barang -->
+                <div class="grid grid-cols-2 gap-3">
+                  <div
+                    v-for="(li, idx) in (typeof selectedStickerItem === 'number' ? [expandedLoanItems[selectedStickerItem], expandedLoanItems[selectedStickerItem]] : getDistributedMediumItems(expandedLoanItems))"
+                    :key="'med-' + idx"
+                    class="border-2 border-slate-900 rounded-xl p-3 bg-white flex flex-col justify-between shadow-xs"
+                  >
+                    <div class="flex items-center justify-between pb-1.5 border-b border-slate-300">
+                      <span class="font-mono font-black text-xs text-emerald-800">{{ li?.item?.code }}</span>
+                      <span class="px-1.5 py-0.5 rounded bg-slate-900 text-white font-bold text-[8px] uppercase">STIKER UNIT</span>
+                    </div>
+                    <div class="flex items-center space-x-2.5 py-2">
+                      <div class="flex flex-col items-center justify-center flex-shrink-0">
+                        <img
+                          :src="`https://api.qrserver.com/v1/create-qr-code/?size=65x65&data=${encodeURIComponent(getVerifyUrl(selectedLoan?.loan_no))}`"
+                          alt="QR"
+                          class="w-13 h-13 border border-slate-300 p-0.5 rounded"
+                        />
+                        <span class="text-[7px] font-bold text-slate-600 mt-0.5">SCAN HP</span>
+                      </div>
+                      <div class="flex-1 min-w-0 space-y-0.5 text-xs">
+                        <div class="font-black text-slate-950 truncate">{{ li?.item?.name }}</div>
+                        <div class="text-[9px] text-slate-600 truncate">Peminjam: <strong class="text-slate-900">{{ selectedLoan?.borrower?.name }}</strong></div>
+                        <div class="text-[9px] text-slate-500 truncate">Asal: {{ li?.item?.source === 'mitra' ? 'Mitra' : 'Internal' }}</div>
+                        <div class="text-[9px] text-rose-700 font-bold">Kembali: {{ formatDate(selectedLoan?.due_at) }}</div>
+                      </div>
+                    </div>
+                    <div class="text-[8px] text-slate-500 font-mono border-t border-slate-100 pt-1 flex justify-between">
+                      <span>{{ selectedLoan?.loan_no }}</span>
+                      <span>Haul Ke-5</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 3. Stiker Kecil (Kabel, Baterai, Aksesoris) - Distribusikan ke Semua Barang -->
+                <div class="grid grid-cols-4 gap-2">
+                  <div
+                    v-for="(li, idx) in (typeof selectedStickerItem === 'number' ? [expandedLoanItems[selectedStickerItem], expandedLoanItems[selectedStickerItem], expandedLoanItems[selectedStickerItem], expandedLoanItems[selectedStickerItem]] : getDistributedMiniItems(expandedLoanItems, 4))"
+                    :key="'sml-' + idx"
+                    class="border-2 border-slate-900 rounded-lg p-2 bg-white flex flex-col justify-between shadow-xs"
+                  >
+                    <div class="flex items-center justify-between text-[8px] border-b border-slate-200 pb-1">
+                      <span class="font-black text-slate-900">RJB-26</span>
+                      <span class="font-mono font-bold text-emerald-800">{{ li?.item?.code }}</span>
+                    </div>
+                    <div class="flex items-center space-x-1.5 py-1.5">
+                      <img
+                        :src="`https://api.qrserver.com/v1/create-qr-code/?size=45x45&data=${encodeURIComponent(getVerifyUrl(selectedLoan?.loan_no))}`"
+                        alt="QR"
+                        class="w-9 h-9 border border-slate-200 p-0.5 rounded flex-shrink-0"
+                      />
+                      <div class="flex-1 min-w-0">
+                        <div class="font-black text-[9px] text-slate-900 leading-tight truncate">{{ li?.item?.name }}</div>
+                        <div class="text-[8px] text-slate-500 truncate">{{ selectedLoan?.borrower?.name }}</div>
+                      </div>
+                    </div>
+                    <div class="text-[7px] text-slate-500 font-mono text-right border-t border-slate-100 pt-0.5">
+                      {{ selectedLoan?.loan_no }}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Bottom Sheet Footer -->
+                <div class="pt-3 border-t-2 border-slate-900 flex items-center justify-between text-[10px] text-slate-600">
+                  <span class="font-semibold">Properti Resmi Logistik MEDIA ROJABIYYAH &bull; Haul Ke-5 &amp; Rojabiyyah 2026</span>
+                  <span class="font-mono">Kertas Stiker Standar F4 (Gunting/Kupas sesuai pola kotak)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- MODE 2: LAYOUT BESAR ONLY (Semua Box Stiker untuk Barang Peminjaman) -->
+            <div v-else-if="stickerSize === 'besar'" class="space-y-4">
+              <!-- Sheet Header -->
+              <div class="flex items-center justify-between pb-2 border-b-2 border-slate-900">
+                <div class="flex items-center space-x-2.5">
+                  <img :src="settingsStore.settings?.kop_logo_url || settingsStore.settings?.logo_url || '/logo.png'" alt="Logo" class="w-10 h-10 object-contain flex-shrink-0" />
+                  <div>
+                    <h1 class="text-xs font-black uppercase text-slate-950 tracking-wide">{{ settingsStore.settings?.kop_name || 'DOKUMENTASI ROJABIYYAH 2026' }}</h1>
+                    <p class="text-[10px] text-emerald-800 font-bold">{{ settingsStore.settings?.kop_sub_theme || 'Haul ke-5 Al-Maghfurlah K.H. Moch. Djamaluddin Achmad & Rojabiyyah 2026' }}</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <span class="text-xs font-black uppercase tracking-wider text-slate-950 block">LEMBAR STIKER BOKS (BESAR)</span>
+                  <span class="text-[10px] font-mono text-slate-600">Ref: {{ selectedLoan?.loan_no }}</span>
+                </div>
               </div>
 
-              <!-- 2. Dua Stiker Sedang (Unit Kamera / Perangkat) -->
-              <div class="grid grid-cols-2 gap-3">
+              <div class="grid grid-cols-2 gap-3.5">
                 <div
-                  v-for="(li, idx) in (expandedLoanItems.length > 1 ? expandedLoanItems.slice(0, 2) : [expandedLoanItems[0], expandedLoanItems[0]])"
-                  :key="'med-' + idx"
-                  class="border-2 border-slate-900 rounded-xl p-3 bg-white flex flex-col justify-between shadow-xs"
+                  v-for="(li, idx) in expandedLoanItems"
+                  :key="'lg-' + idx"
+                  class="border-2 border-slate-900 rounded-2xl overflow-hidden bg-white shadow-sm flex flex-col justify-between"
                 >
-                  <div class="flex items-center justify-between pb-1.5 border-b border-slate-300">
-                    <span class="font-mono font-black text-xs text-emerald-800">{{ li?.item?.code }}</span>
-                    <span class="px-1.5 py-0.5 rounded bg-slate-900 text-white font-bold text-[8px] uppercase">STIKER UNIT</span>
-                  </div>
-                  <div class="flex items-center space-x-2.5 py-2">
-                    <div class="flex flex-col items-center justify-center flex-shrink-0">
-                      <img
-                        :src="`https://api.qrserver.com/v1/create-qr-code/?size=65x65&data=${encodeURIComponent('https://rojabiyyah.id/verify/' + (selectedLoan?.loan_no || 'PJ-001'))}`"
-                        alt="QR"
-                        class="w-13 h-13 border border-slate-300 p-0.5 rounded"
-                      />
-                      <span class="text-[7px] font-bold text-slate-600 mt-0.5">SCAN HP</span>
+                  <div class="bg-slate-900 text-white px-3 py-1.5 flex items-center justify-between">
+                    <div class="flex items-center space-x-1.5">
+                      <img :src="settingsStore.settings?.kop_logo_url || settingsStore.settings?.logo_url || '/logo.png'" alt="Logo" class="w-4 h-4 object-contain bg-white rounded p-0.5" />
+                      <span class="font-black text-[11px] uppercase tracking-wider">MEDIA ROJABIYYAH 2026</span>
                     </div>
-                    <div class="flex-1 min-w-0 space-y-0.5 text-xs">
-                      <div class="font-black text-slate-950 truncate">{{ li?.item?.name }}</div>
-                      <div class="text-[9px] text-slate-600 truncate">Peminjam: <strong class="text-slate-900">{{ selectedLoan?.borrower?.name }}</strong></div>
-                      <div class="text-[9px] text-slate-500 truncate">Asal: {{ li?.item?.source === 'mitra' ? 'Mitra' : 'Internal' }}</div>
+                    <span class="px-2 py-0.5 rounded bg-emerald-500 text-slate-950 font-black text-[8px] uppercase">BOX / HARDCASE</span>
+                  </div>
+                  <div class="p-3 grid grid-cols-3 gap-2 items-center">
+                    <div class="flex flex-col items-center justify-center p-1.5 border border-slate-300 rounded-xl bg-slate-50">
+                      <img :src="`https://api.qrserver.com/v1/create-qr-code/?size=85x85&data=${encodeURIComponent(getVerifyUrl(selectedLoan?.loan_no))}`" alt="QR" class="w-16 h-16" />
+                      <span class="text-[7px] font-black text-slate-700 mt-1">SCAN VERIFIKASI</span>
+                    </div>
+                    <div class="col-span-2 space-y-1 text-xs">
+                      <div class="font-mono font-black text-emerald-800 text-xs">{{ li.item?.code }}</div>
+                      <div class="text-xs font-black text-slate-950 uppercase leading-tight">{{ li.item?.name }}</div>
+                      <div class="text-[10px] text-slate-600">Peminjam: <strong class="text-slate-900">{{ selectedLoan?.borrower?.name }}</strong></div>
                       <div class="text-[9px] text-rose-700 font-bold">Kembali: {{ formatDate(selectedLoan?.due_at) }}</div>
                     </div>
                   </div>
-                  <div class="text-[8px] text-slate-500 font-mono border-t border-slate-100 pt-1 flex justify-between">
+                  <div class="px-3 py-1 bg-slate-50 border-t border-slate-200 text-[8px] font-mono text-slate-500 flex justify-between">
                     <span>{{ selectedLoan?.loan_no }}</span>
-                    <span>Haul Ke-5</span>
+                    <span>Wajib Dijaga Amanah</span>
                   </div>
                 </div>
               </div>
 
-              <!-- 3. Empat Stiker Kecil (Kabel, Baterai, Aksesoris) -->
+              <!-- Bottom Sheet Footer -->
+              <div class="pt-3 border-t-2 border-slate-900 flex items-center justify-between text-[10px] text-slate-600">
+                <span class="font-semibold">Properti Resmi Logistik MEDIA ROJABIYYAH &bull; Haul Ke-5 &amp; Rojabiyyah 2026</span>
+                <span class="font-mono">Kertas Stiker Standar F4</span>
+              </div>
+            </div>
+
+            <!-- MODE 3: LAYOUT SEDANG ONLY (Semua Stiker Unit untuk Semua Barang) -->
+            <div v-else-if="stickerSize === 'sedang'" class="space-y-4">
+              <!-- Sheet Header -->
+              <div class="flex items-center justify-between pb-2 border-b-2 border-slate-900">
+                <div class="flex items-center space-x-2.5">
+                  <img :src="settingsStore.settings?.kop_logo_url || settingsStore.settings?.logo_url || '/logo.png'" alt="Logo" class="w-10 h-10 object-contain flex-shrink-0" />
+                  <div>
+                    <h1 class="text-xs font-black uppercase text-slate-950 tracking-wide">{{ settingsStore.settings?.kop_name || 'DOKUMENTASI ROJABIYYAH 2026' }}</h1>
+                    <p class="text-[10px] text-emerald-800 font-bold">{{ settingsStore.settings?.kop_sub_theme || 'Haul ke-5 Al-Maghfurlah K.H. Moch. Djamaluddin Achmad & Rojabiyyah 2026' }}</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <span class="text-xs font-black uppercase tracking-wider text-slate-950 block">LEMBAR STIKER UNIT (SEDANG)</span>
+                  <span class="text-[10px] font-mono text-slate-600">Ref: {{ selectedLoan?.loan_no }}</span>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2.5">
+                <div
+                  v-for="(li, idx) in expandedLoanItems"
+                  :key="'md-' + idx"
+                  class="border-2 border-slate-900 rounded-xl p-2.5 bg-white flex flex-col justify-between shadow-xs"
+                >
+                  <div class="flex items-center justify-between pb-1 border-b border-slate-300">
+                    <span class="font-mono font-black text-xs text-emerald-800">{{ li.item?.code }}</span>
+                    <span class="px-1.5 py-0.5 rounded bg-slate-900 text-white font-bold text-[8px]">LABEL UNIT</span>
+                  </div>
+                  <div class="flex items-center space-x-2 py-1.5">
+                    <img :src="`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent(getVerifyUrl(selectedLoan?.loan_no))}`" alt="QR" class="w-12 h-12 border border-slate-200 p-0.5 rounded" />
+                    <div class="flex-1 min-w-0 space-y-0.5 text-xs">
+                      <div class="font-black text-slate-950 text-xs truncate">{{ li.item?.name }}</div>
+                      <div class="text-[9px] text-slate-600 truncate">Peminjam: {{ selectedLoan?.borrower?.name }}</div>
+                      <div class="text-[9px] text-rose-700 font-bold">Kembali: {{ formatDate(selectedLoan?.due_at) }}</div>
+                    </div>
+                  </div>
+                  <div class="text-[8px] text-slate-500 font-mono text-right border-t border-slate-100 pt-0.5">
+                    {{ selectedLoan?.loan_no }}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bottom Sheet Footer -->
+              <div class="pt-3 border-t-2 border-slate-900 flex items-center justify-between text-[10px] text-slate-600">
+                <span class="font-semibold">Properti Resmi Logistik MEDIA ROJABIYYAH &bull; Haul Ke-5 &amp; Rojabiyyah 2026</span>
+                <span class="font-mono">Kertas Stiker Standar F4</span>
+              </div>
+            </div>
+
+            <!-- MODE 4: LAYOUT KECIL ONLY (16 Mini Stiker Didistribusikan ke Semua Barang) -->
+            <div v-else-if="stickerSize === 'kecil'" class="space-y-4">
+              <!-- Sheet Header -->
+              <div class="flex items-center justify-between pb-2 border-b-2 border-slate-900">
+                <div class="flex items-center space-x-2.5">
+                  <img :src="settingsStore.settings?.kop_logo_url || settingsStore.settings?.logo_url || '/logo.png'" alt="Logo" class="w-10 h-10 object-contain flex-shrink-0" />
+                  <div>
+                    <h1 class="text-xs font-black uppercase text-slate-950 tracking-wide">{{ settingsStore.settings?.kop_name || 'DOKUMENTASI ROJABIYYAH 2026' }}</h1>
+                    <p class="text-[10px] text-emerald-800 font-bold">{{ settingsStore.settings?.kop_sub_theme || 'Haul ke-5 Al-Maghfurlah K.H. Moch. Djamaluddin Achmad & Rojabiyyah 2026' }}</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <span class="text-xs font-black uppercase tracking-wider text-slate-950 block">LEMBAR STIKER MINI (KECIL)</span>
+                  <span class="text-[10px] font-mono text-slate-600">Ref: {{ selectedLoan?.loan_no }}</span>
+                </div>
+              </div>
+
               <div class="grid grid-cols-4 gap-2">
                 <div
-                  v-for="(li, idx) in (expandedLoanItems.length >= 4 ? expandedLoanItems.slice(0, 4) : [expandedLoanItems[0], expandedLoanItems[0], expandedLoanItems[0], expandedLoanItems[0]])"
-                  :key="'sml-' + idx"
-                  class="border-2 border-slate-900 rounded-lg p-2 bg-white flex flex-col justify-between shadow-xs"
+                  v-for="(li, idx) in getDistributedMiniItems(expandedLoanItems, 16)"
+                  :key="'sm-' + idx"
+                  class="border-2 border-slate-900 rounded-lg p-1.5 bg-white flex flex-col justify-between shadow-xs"
                 >
-                  <div class="flex items-center justify-between text-[8px] border-b border-slate-200 pb-1">
+                  <div class="flex items-center justify-between text-[8px] border-b border-slate-200 pb-0.5">
                     <span class="font-black text-slate-900">RJB-26</span>
-                    <span class="font-mono font-bold text-emerald-800">{{ li?.item?.code }}</span>
+                    <span class="font-mono font-bold text-emerald-800">{{ li.item?.code }}</span>
                   </div>
-                  <div class="flex items-center space-x-1.5 py-1.5">
-                    <img
-                      :src="`https://api.qrserver.com/v1/create-qr-code/?size=45x45&data=${encodeURIComponent('https://rojabiyyah.id/verify/' + (selectedLoan?.loan_no || 'PJ-001'))}`"
-                      alt="QR"
-                      class="w-9 h-9 border border-slate-200 p-0.5 rounded flex-shrink-0"
-                    />
+                  <div class="flex items-center space-x-1 py-1">
+                    <img :src="`https://api.qrserver.com/v1/create-qr-code/?size=40x40&data=${encodeURIComponent(getVerifyUrl(selectedLoan?.loan_no))}`" alt="QR" class="w-8 h-8 rounded" />
                     <div class="flex-1 min-w-0">
-                      <div class="font-black text-[9px] text-slate-900 leading-tight truncate">{{ li?.item?.name }}</div>
-                      <div class="text-[8px] text-slate-500 truncate">{{ selectedLoan?.borrower?.name }}</div>
+                      <div class="font-black text-[8px] text-slate-900 leading-tight truncate">{{ li.item?.name }}</div>
+                      <div class="text-[7px] text-slate-500 truncate">{{ selectedLoan?.borrower?.name }}</div>
                     </div>
                   </div>
                   <div class="text-[7px] text-slate-500 font-mono text-right border-t border-slate-100 pt-0.5">
@@ -1491,95 +1890,14 @@
                   </div>
                 </div>
               </div>
-            </div>
 
-            <!-- LAYOUT BESAR ONLY (4 Box Stickers) -->
-            <div v-else-if="stickerSize === 'besar'" class="grid grid-cols-2 gap-3.5">
-              <div
-                v-for="(li, idx) in expandedLoanItems.slice(0, 4)"
-                :key="'lg-' + idx"
-                class="border-2 border-slate-900 rounded-2xl overflow-hidden bg-white shadow-sm flex flex-col justify-between"
-              >
-                <div class="bg-slate-50 text-white px-3 py-1.5 flex items-center justify-between">
-                  <div class="flex items-center space-x-1.5">
-                    <img :src="settingsStore.settings?.kop_logo_url || settingsStore.settings?.logo_url || '/logo.png'" alt="Logo" class="w-4 h-4 object-contain bg-white rounded p-0.5" />
-                    <span class="font-black text-[11px] uppercase tracking-wider">MEDIA ROJABIYYAH 2026</span>
-                  </div>
-                  <span class="px-2 py-0.5 rounded bg-emerald-500 text-slate-950 font-black text-[8px] uppercase">BOX / HARDCASE</span>
-                </div>
-                <div class="p-3 grid grid-cols-3 gap-2 items-center">
-                  <div class="flex flex-col items-center justify-center p-1.5 border border-slate-300 rounded-xl bg-slate-50">
-                    <img :src="`https://api.qrserver.com/v1/create-qr-code/?size=85x85&data=${encodeURIComponent('https://rojabiyyah.id/verify/' + (selectedLoan?.loan_no || 'PJ-001'))}`" alt="QR" class="w-16 h-16" />
-                    <span class="text-[7px] font-black text-slate-700 mt-1">SCAN VERIFIKASI</span>
-                  </div>
-                  <div class="col-span-2 space-y-1 text-xs">
-                    <div class="font-mono font-black text-emerald-800 text-xs">{{ li.item?.code }}</div>
-                    <div class="text-xs font-black text-slate-950 uppercase leading-tight">{{ li.item?.name }}</div>
-                    <div class="text-[10px] text-slate-600">Peminjam: <strong class="text-slate-900">{{ selectedLoan?.borrower?.name }}</strong></div>
-                    <div class="text-[9px] text-rose-700 font-bold">Kembali: {{ formatDate(selectedLoan?.due_at) }}</div>
-                  </div>
-                </div>
-                <div class="px-3 py-1 bg-slate-50 border-t border-slate-200 text-[8px] font-mono text-slate-500 flex justify-between">
-                  <span>{{ selectedLoan?.loan_no }}</span>
-                  <span>Wajib Dijaga Amanah</span>
-                </div>
+              <!-- Bottom Sheet Footer -->
+              <div class="pt-3 border-t-2 border-slate-900 flex items-center justify-between text-[10px] text-slate-600">
+                <span class="font-semibold">Properti Resmi Logistik MEDIA ROJABIYYAH &bull; Haul Ke-5 &amp; Rojabiyyah 2026</span>
+                <span class="font-mono">Kertas Stiker Standar F4</span>
               </div>
             </div>
 
-            <!-- LAYOUT SEDANG ONLY (8 Medium Stickers) -->
-            <div v-else-if="stickerSize === 'sedang'" class="grid grid-cols-2 gap-2.5">
-              <div
-                v-for="(li, idx) in expandedLoanItems.slice(0, 8)"
-                :key="'md-' + idx"
-                class="border-2 border-slate-900 rounded-xl p-2.5 bg-white flex flex-col justify-between shadow-xs"
-              >
-                <div class="flex items-center justify-between pb-1 border-b border-slate-300">
-                  <span class="font-mono font-black text-xs text-emerald-800">{{ li.item?.code }}</span>
-                  <span class="px-1.5 py-0.5 rounded bg-slate-900 text-white font-bold text-[8px]">LABEL UNIT</span>
-                </div>
-                <div class="flex items-center space-x-2 py-1.5">
-                  <img :src="`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent('https://rojabiyyah.id/verify/' + (selectedLoan?.loan_no || 'PJ-001'))}`" alt="QR" class="w-12 h-12 border border-slate-200 p-0.5 rounded" />
-                  <div class="flex-1 min-w-0 space-y-0.5 text-xs">
-                    <div class="font-black text-slate-950 text-xs truncate">{{ li.item?.name }}</div>
-                    <div class="text-[9px] text-slate-600 truncate">Peminjam: {{ selectedLoan?.borrower?.name }}</div>
-                    <div class="text-[9px] text-rose-700 font-bold">Kembali: {{ formatDate(selectedLoan?.due_at) }}</div>
-                  </div>
-                </div>
-                <div class="text-[8px] text-slate-500 font-mono text-right border-t border-slate-100 pt-0.5">
-                  {{ selectedLoan?.loan_no }}
-                </div>
-              </div>
-            </div>
-
-            <!-- LAYOUT KECIL ONLY (16 Mini Stickers) -->
-            <div v-else-if="stickerSize === 'kecil'" class="grid grid-cols-4 gap-2">
-              <div
-                v-for="(li, idx) in expandedLoanItems.slice(0, 16)"
-                :key="'sm-' + idx"
-                class="border-2 border-slate-900 rounded-lg p-1.5 bg-white flex flex-col justify-between shadow-xs"
-              >
-                <div class="flex items-center justify-between text-[8px] border-b border-slate-200 pb-0.5">
-                  <span class="font-black text-slate-900">RJB-26</span>
-                  <span class="font-mono font-bold text-emerald-800">{{ li.item?.code }}</span>
-                </div>
-                <div class="flex items-center space-x-1 py-1">
-                  <img :src="`https://api.qrserver.com/v1/create-qr-code/?size=40x40&data=${encodeURIComponent('https://rojabiyyah.id/verify/' + (selectedLoan?.loan_no || 'PJ-001'))}`" alt="QR" class="w-8 h-8 rounded" />
-                  <div class="flex-1 min-w-0">
-                    <div class="font-black text-[8px] text-slate-900 leading-tight truncate">{{ li.item?.name }}</div>
-                    <div class="text-[7px] text-slate-500 truncate">{{ selectedLoan?.borrower?.name }}</div>
-                  </div>
-                </div>
-                <div class="text-[7px] text-slate-500 font-mono text-right border-t border-slate-100 pt-0.5">
-                  {{ selectedLoan?.loan_no }}
-                </div>
-              </div>
-            </div>
-
-            <!-- Bottom Sheet Footer -->
-            <div class="pt-3 border-t-2 border-slate-900 flex items-center justify-between text-[10px] text-slate-600">
-              <span class="font-semibold">Properti Resmi Logistik MEDIA ROJABIYYAH &bull; Haul Ke-5 &amp; Rojabiyyah 2026</span>
-              <span class="font-mono">Kertas Stiker Standar F4 (Gunting/Kupas sesuai pola kotak)</span>
-            </div>
           </div>
         </div>
       </div>
@@ -1663,6 +1981,8 @@ const submitting = ref(false);
 const selectedLoan = ref(null);
 const printTab = ref('bukti');
 const stickerSize = ref('campur');
+const selectedStickerItem = ref('gabungan'); // 'gabungan' | 'semua_lembar' | number (index)
+const selectedBoxItemIndex = ref(0);
 const downloadingPdfId = ref(null);
 
 const expandedLoanItems = computed(() => {
@@ -1680,6 +2000,34 @@ const expandedLoanItems = computed(() => {
   });
   return list;
 });
+
+const getDistributedMiniItems = (items, minSlots = 4) => {
+  if (!items || items.length === 0) return [];
+  const count = Math.max(items.length, minSlots);
+  const result = [];
+  for (let i = 0; i < count; i++) {
+    result.push({
+      ...items[i % items.length],
+      _slotIndex: i + 1,
+    });
+  }
+  return result;
+};
+
+const getDistributedMediumItems = (items) => {
+  if (!items || items.length === 0) return [];
+  if (items.length === 1) {
+    return [items[0], items[0]];
+  }
+  return items;
+};
+
+const getVerifyUrl = (loanNo) => {
+  if (typeof window !== 'undefined' && window.location && window.location.origin) {
+    return `${window.location.origin}/verify/${loanNo || 'PJ-001'}`;
+  }
+  return `https://rojabiyyah.id/verify/${loanNo || 'PJ-001'}`;
+};
 
 // Detail item modal
 const showItemDetailModal = ref(false);
@@ -2047,6 +2395,8 @@ const openEvidenceModal = (loan) => {
 const openPrintModalTab = (loan, tabType = 'bukti') => {
   selectedLoan.value = loan;
   printTab.value = tabType;
+  selectedStickerItem.value = 'gabungan';
+  selectedBoxItemIndex.value = 0;
   showPrintModal.value = true;
 };
 
@@ -2164,10 +2514,6 @@ onMounted(() => {
     color: #000000 !important;
     border: none !important;
     box-shadow: none !important;
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
-    page-break-after: avoid !important;
-    break-after: avoid !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
@@ -2175,6 +2521,11 @@ onMounted(() => {
   body.is-printing-document > #directPrintContainer * {
     visibility: visible !important;
     box-sizing: border-box !important;
+  }
+
+  .page-break {
+    page-break-after: always !important;
+    break-after: page !important;
   }
 
   /* Fallback if user presses Ctrl+P while modal is open */
