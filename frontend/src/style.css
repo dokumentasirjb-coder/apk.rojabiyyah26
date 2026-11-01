@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-fallback: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+body {
+  margin: 0;
+  font-family: 'Nunito', 'Plus Jakarta Sans', var(--font-fallback);
+  background-color: #f8fafc;
+  color: #0f172a;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Bright White Card & Panel Component */
+.panel {
+  @apply rounded-2xl bg-white border border-slate-200 p-5 shadow-sm text-slate-800;
+}
+
+/* Crisp button and card transitions */
+button, a, input, select, textarea {
+  transition: all 0.15s ease-in-out;
+}
+
+/* Custom scrollbars (Clean Light Slate & Emerald Theme) */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #059669;
+}
