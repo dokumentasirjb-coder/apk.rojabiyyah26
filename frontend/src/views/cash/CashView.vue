@@ -122,43 +122,44 @@
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <div class="flex items-center space-x-2.5">
-            <div class="w-8 h-8 rounded-xl bg-teal-50 border border-slate-200 flex items-center justify-center text-teal-400">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            <div class="w-8 h-8 rounded-xl bg-teal-50 border border-slate-200 flex items-center justify-center text-teal-600">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
             </div>
-            <h2 class="text-xl font-bold text-slate-900 tracking-tight">Rekap Kas Keuangan</h2>
+            <h2 class="text-xl font-bold text-slate-900 tracking-tight">Laporan Detail Pengeluaran (LPJ Kas)</h2>
           </div>
-          <p class="text-xs text-slate-500 mt-1">Pencatatan kas masuk &amp; keluar, bukti transaksi, transparansi anggaran, dan pembatalan void.</p>
+          <p class="text-xs text-slate-500 mt-1">Laporan pertanggungjawaban kas, rincian belanja operasional, debet, kredit, saldo berjalan, dan bukti nota.</p>
         </div>
 
         <div class="flex flex-wrap items-center gap-2.5">
-          <!-- Ekspor Kas -->
+          <!-- Ekspor LPJ Excel -->
           <button
             @click="exportCash"
             :disabled="exporting"
-            class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-teal-50 border border-emerald-200 text-emerald-700 text-xs font-semibold transition disabled:opacity-50"
+            class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-800 text-xs font-semibold transition disabled:opacity-50 shadow-sm"
           >
-            <span v-if="exporting" class="inline-block w-3.5 h-3.5 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin"></span>
-            <svg v-else class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-            <span>{{ exporting ? 'Mengunduh...' : 'Ekspor Kas Excel/CSV' }}</span>
+            <span v-if="exporting" class="inline-block w-3.5 h-3.5 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></span>
+            <svg v-else class="w-3.5 h-3.5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            <span>{{ exporting ? 'Mengunduh...' : 'Unduh LPJ Excel (.xlsx)' }}</span>
           </button>
 
           <!-- Impor Kas -->
           <button
             v-if="['super_admin', 'bendahara'].includes(authStore.user?.role)"
             @click="showImportModal = true"
-            class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-teal-50 border border-indigo-200 text-indigo-700 text-xs font-semibold transition"
+            class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-700 text-xs font-semibold transition"
           >
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
-            <span>Impor Kas</span>
+            <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+            <span>Impor Data LPJ</span>
           </button>
 
+          <!-- Tambah Transaksi -->
           <button
             v-if="['super_admin', 'bendahara'].includes(authStore.user?.role)"
             @click="openAddCashModal"
             class="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-[#059669] to-[#10b981] hover:from-[#047857] hover:to-[#059669] text-white text-xs font-bold shadow-lg shadow-emerald-950/60 transition"
           >
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-            <span>+ Catat Transaksi Kas</span>
+            <span>+ Catat Transaksi LPJ</span>
           </button>
         </div>
       </div>
@@ -167,54 +168,54 @@
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div class="bg-white p-5 rounded-3xl border border-slate-200 flex items-center justify-between shadow-sm">
           <div>
-            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block">Total Kas Masuk</span>
-            <div class="text-xl sm:text-2xl font-black text-emerald-400 mt-1 font-mono">
-              Rp {{ formatRupiah(summary.total_in) }}
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block">Total Debet (Kas Masuk)</span>
+            <div class="text-xl sm:text-2xl font-black text-emerald-600 mt-1 font-mono">
+              Rp {{ formatRupiah(summary.total_in || summaryLPJ.total_debet) }}
             </div>
-            <span class="text-[10px] text-emerald-500 font-medium">Infaq, Sponsor, Donasi</span>
+            <span class="text-[10px] text-emerald-600 font-medium">Infaq, Subsidi, Sponsor</span>
           </div>
-          <div class="w-12 h-12 rounded-2xl bg-emerald-950/60 border border-emerald-800 text-emerald-400 flex items-center justify-center">
+          <div class="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/></svg>
           </div>
         </div>
 
         <div class="bg-white p-5 rounded-3xl border border-slate-200 flex items-center justify-between shadow-sm">
           <div>
-            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block">Total Pengeluaran</span>
-            <div class="text-xl sm:text-2xl font-black text-rose-400 mt-1 font-mono">
-              Rp {{ formatRupiah(summary.total_out) }}
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block">Total Kredit (Pengeluaran)</span>
+            <div class="text-xl sm:text-2xl font-black text-rose-600 mt-1 font-mono">
+              Rp {{ formatRupiah(summary.total_out || summaryLPJ.total_kredit) }}
             </div>
-            <span class="text-[10px] text-rose-500 font-medium">Konsumsi, Logistik, Operasional</span>
+            <span class="text-[10px] text-rose-600 font-medium">Belanja Alat, Konsumsi, Operasional</span>
           </div>
-          <div class="w-12 h-12 rounded-2xl bg-rose-950/60 border border-rose-800 text-rose-400 flex items-center justify-center">
+          <div class="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"/></svg>
           </div>
         </div>
 
         <div class="bg-white p-5 rounded-3xl border border-slate-200 flex items-center justify-between shadow-sm">
           <div>
-            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block">Saldo Bersih Tersedia</span>
-            <div class="text-xl sm:text-2xl font-black text-white mt-1 font-mono">
-              Rp {{ formatRupiah(summary.balance) }}
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block">Saldo Akhir Tersedia</span>
+            <div class="text-xl sm:text-2xl font-black text-slate-900 mt-1 font-mono" :class="(summary.balance || summaryLPJ.saldo_akhir) < 0 ? 'text-rose-600' : 'text-slate-900'">
+              Rp {{ formatRupiah(summary.balance || summaryLPJ.saldo_akhir) }}
             </div>
-            <span class="text-[10px] text-teal-400 font-medium">Saldo Kas Riil Terverifikasi</span>
+            <span class="text-[10px] text-teal-600 font-medium">Saldo Kas Riil Terverifikasi</span>
           </div>
-          <div class="w-12 h-12 rounded-2xl bg-teal-950/60 border border-teal-800 text-teal-400 flex items-center justify-center">
+          <div class="w-12 h-12 rounded-2xl bg-teal-50 border border-teal-200 text-teal-600 flex items-center justify-center">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           </div>
         </div>
       </div>
 
-      <!-- Filters -->
-      <div class="bg-white p-4 rounded-2xl border border-slate-200 flex flex-wrap gap-3 items-center text-xs">
+      <!-- Filters & Search -->
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 flex flex-wrap gap-3 items-center text-xs shadow-sm">
         <select
           v-model="filters.type"
           @change="fetchTransactions"
           class="px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 focus:outline-none focus:border-emerald-500"
         >
-          <option value="">Semua Jenis Transaksi</option>
-          <option value="in">Pemasukan (+)</option>
-          <option value="out">Pengeluaran (-)</option>
+          <option value="">Semua Jenis (Debet &amp; Kredit)</option>
+          <option value="in">Debet / Kas Masuk (+)</option>
+          <option value="out">Kredit / Pengeluaran (-)</option>
         </select>
 
         <select
@@ -222,7 +223,7 @@
           @change="fetchTransactions"
           class="px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 focus:outline-none focus:border-emerald-500"
         >
-          <option value="">Semua Kategori Kas</option>
+          <option value="">Semua Kategori</option>
           <option v-for="c in categories" :key="c.id" :value="c.id">{{ c.name }}</option>
         </select>
 
@@ -230,109 +231,237 @@
           v-model="filters.search"
           @input="debounceSearch"
           type="text"
-          placeholder="Cari keterangan, bukti, atau uraian belanja..."
-          class="flex-1 min-w-[220px] px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+          placeholder="Cari uraian belanja, nama pelaksana, atau keterangan..."
+          class="flex-1 min-w-[220px] px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500"
         />
       </div>
 
-      <!-- Transactions Table -->
+      <!-- LPJ Transactions Table (Persis Format Excel) -->
       <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
         <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs">
-            <thead class="bg-[#0e172a] border-b border-slate-200 text-slate-500 uppercase font-bold text-[10px] tracking-wider">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead class="bg-[#064e3b] text-white uppercase font-bold text-[10px] tracking-wider">
               <tr>
-                <th class="py-3.5 px-4">Tanggal</th>
-                <th class="py-3.5 px-4">Jenis</th>
-                <th class="py-3.5 px-4">Kategori &amp; Uraian</th>
-                <th class="py-3.5 px-4 text-right">Nominal (Rp)</th>
-                <th class="py-3.5 px-4 text-center">Bukti Nota</th>
-                <th class="py-3.5 px-4">Status</th>
-                <th v-if="['super_admin', 'bendahara'].includes(authStore.user?.role)" class="py-3.5 px-4 text-center w-20">Aksi</th>
+                <th class="py-3 px-3 text-center w-12 border-b border-emerald-900">No.</th>
+                <th class="py-3 px-3 text-center whitespace-nowrap border-b border-emerald-900">Tanggal</th>
+                <th class="py-3 px-3 whitespace-nowrap border-b border-emerald-900">Pelaksana</th>
+                <th class="py-3 px-4 min-w-[220px] border-b border-emerald-900">Uraian</th>
+                <th class="py-3 px-2 text-center w-14 border-b border-emerald-900">Jumlah</th>
+                <th class="py-3 px-2 text-center w-16 border-b border-emerald-900">Satuan</th>
+                <th class="py-3 px-4 text-right text-emerald-200 whitespace-nowrap border-b border-emerald-900">Debet</th>
+                <th class="py-3 px-4 text-right text-rose-200 whitespace-nowrap border-b border-emerald-900">Kredit</th>
+                <th class="py-3 px-4 text-right text-emerald-100 whitespace-nowrap border-b border-emerald-900">Saldo</th>
+                <th class="py-3 px-3 min-w-[140px] border-b border-emerald-900">Keterangan</th>
+                <th class="py-3 px-3 text-center w-20 border-b border-emerald-900">Nota</th>
+                <th v-if="['super_admin', 'bendahara'].includes(authStore.user?.role)" class="py-3 px-3 text-center w-24 border-b border-emerald-900">Aksi</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100">
+            <tbody class="divide-y divide-slate-200">
               <tr v-if="transactions.length === 0" class="text-center">
-                <td colspan="7" class="py-12 text-slate-500">Belum ada catatan transaksi kas.</td>
+                <td colspan="12" class="py-12 text-slate-500">Belum ada catatan transaksi kas LPJ.</td>
               </tr>
               <tr
-                v-for="trx in transactions"
+                v-for="(trx, idx) in transactions"
                 :key="trx.id"
-                :class="trx.voided_at ? 'bg-rose-950/20 opacity-60' : 'hover:bg-slate-50'"
-                class="transition"
+                :class="trx.voided_at ? 'bg-rose-50/50 opacity-60' : (idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/60')"
+                class="hover:bg-emerald-50/40 transition"
               >
-                <td class="py-3.5 px-4 text-slate-700 font-mono whitespace-nowrap">
+                <!-- No. -->
+                <td class="py-3 px-3 text-center font-bold text-slate-500 text-[11px]">{{ idx + 1 }}</td>
+
+                <!-- Tanggal -->
+                <td class="py-3 px-3 text-center text-slate-700 whitespace-nowrap font-mono text-[11px]">
                   {{ formatDate(trx.date) }}
                 </td>
-                <td class="py-3.5 px-4 whitespace-nowrap">
-                  <span
-                    :class="trx.type === 'in' ? 'bg-emerald-950 text-emerald-300 border-emerald-800' : 'bg-rose-950 text-rose-300 border-rose-800'"
-                    class="px-2.5 py-1 font-bold rounded-lg text-[10px] uppercase border"
-                  >
-                    {{ trx.type === 'in' ? 'Pemasukan (+)' : 'Pengeluaran (-)' }}
-                  </span>
+
+                <!-- Pelaksana -->
+                <td class="py-3 px-3 whitespace-nowrap font-semibold text-slate-900 text-[11px]">
+                  {{ trx.pelaksana || trx.creator?.name || '-' }}
                 </td>
-                <td class="py-3.5 px-4">
-                  <div class="font-bold text-white">{{ trx.category?.name || 'Kas Umum' }}</div>
-                  <div class="text-[11px] text-slate-500">{{ trx.description }}</div>
-                </td>
-                <td class="py-3.5 px-4 text-right font-mono font-bold whitespace-nowrap" :class="trx.type === 'in' ? 'text-emerald-400' : 'text-rose-400'">
-                  {{ trx.type === 'in' ? '+' : '-' }} Rp {{ formatRupiah(trx.amount) }}
-                </td>
-                <td class="py-3.5 px-4 text-center">
-                  <div v-if="trx.receipt_path" class="inline-block w-8 h-8 rounded-lg overflow-hidden border border-slate-300">
-                    <img :src="trx.receipt_path" alt="Nota" class="w-full h-full object-cover" />
+
+                <!-- Uraian -->
+                <td class="py-3 px-4 text-slate-900 font-medium">
+                  <div>{{ trx.description }}</div>
+                  <div v-if="trx.category?.name" class="text-[10px] text-slate-600 font-normal mt-0.5">
+                    {{ trx.category.name }}
                   </div>
-                  <span v-else class="text-slate-500 text-[10px]">-</span>
                 </td>
-                <td class="py-3.5 px-4">
-                  <span v-if="trx.voided_at" class="text-[10px] text-rose-400 font-bold">
-                    DIBATALKAN (VOID)
-                  </span>
-                  <span v-else class="text-[10px] text-emerald-400 font-semibold">
-                    Sah
-                  </span>
+
+                <!-- Jumlah / Qty -->
+                <td class="py-3 px-2 text-center text-slate-700 font-mono text-[11px]">
+                  {{ trx.qty || '-' }}
                 </td>
-                <td v-if="['super_admin', 'bendahara'].includes(authStore.user?.role)" class="py-3.5 px-4 text-center">
-                  <button
-                    v-if="!trx.voided_at"
-                    @click="openVoidModal(trx)"
-                    title="Batalkan Transaksi (Void)"
-                    class="p-1.5 text-slate-500 hover:text-rose-400 hover:bg-teal-50 rounded-lg transition"
-                  >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
-                  </button>
+
+                <!-- Satuan -->
+                <td class="py-3 px-2 text-center text-slate-600 text-[11px]">
+                  {{ trx.unit || '-' }}
+                </td>
+
+                <!-- Debet (Kas Masuk) -->
+                <td class="py-3 px-4 text-right font-mono font-bold whitespace-nowrap text-emerald-700 text-[11px]">
+                  <span v-if="trx.type === 'in' && !trx.voided_at">{{ formatRupiah(trx.amount) }}</span>
+                  <span v-else class="text-slate-400">0</span>
+                </td>
+
+                <!-- Kredit (Pengeluaran) -->
+                <td class="py-3 px-4 text-right font-mono font-bold whitespace-nowrap text-rose-700 text-[11px]">
+                  <span v-if="trx.type === 'out' && !trx.voided_at">{{ formatRupiah(trx.amount) }}</span>
+                  <span v-else class="text-slate-400">0</span>
+                </td>
+
+                <!-- Saldo Berjalan -->
+                <td
+                  class="py-3 px-4 text-right font-mono font-black whitespace-nowrap text-[11px]"
+                  :class="(trx.saldo ?? 0) < 0 ? 'text-rose-600' : 'text-slate-900'"
+                >
+                  {{ formatRupiah(trx.saldo ?? 0) }}
+                </td>
+
+                <!-- Keterangan / Anggaran -->
+                <td class="py-3 px-3 text-slate-600 text-[11px]">
+                  {{ trx.notes || '-' }}
+                </td>
+
+                <!-- Nota -->
+                <td class="py-3 px-3 text-center whitespace-nowrap">
+                  <div v-if="trx.receipt_path">
+                    <a
+                      v-if="trx.receipt_path.startsWith('http')"
+                      :href="trx.receipt_path"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="inline-flex items-center space-x-1 px-2 py-1 rounded-md bg-blue-50 text-blue-700 hover:bg-blue-100 text-[10px] font-semibold border border-blue-200"
+                      title="Buka Link Nota"
+                    >
+                      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                      <span>Nota</span>
+                    </a>
+                    <a
+                      v-else
+                      :href="trx.receipt_path"
+                      target="_blank"
+                      class="inline-block w-7 h-7 rounded border border-slate-300 overflow-hidden hover:scale-110 transition"
+                      title="Lihat Foto Bukti"
+                    >
+                      <img :src="trx.receipt_path" alt="Nota" class="w-full h-full object-cover" />
+                    </a>
+                  </div>
+                  <span v-else class="text-slate-400 text-[10px]">-</span>
+                </td>
+
+                <!-- Aksi -->
+                <td v-if="['super_admin', 'bendahara'].includes(authStore.user?.role)" class="py-3 px-3 text-center whitespace-nowrap">
+                  <div class="flex items-center justify-center space-x-1">
+                    <button
+                      v-if="!trx.voided_at"
+                      @click="openEditCashModal(trx)"
+                      title="Edit Data LPJ"
+                      class="p-1 text-slate-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition"
+                    >
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
+                    <button
+                      v-if="!trx.voided_at"
+                      @click="openVoidModal(trx)"
+                      title="Batalkan Transaksi (Void)"
+                      class="p-1 text-slate-600 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition"
+                    >
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+                      </svg>
+                    </button>
+                    <button
+                      v-if="authStore.user?.role === 'super_admin'"
+                      @click="deleteCash(trx)"
+                      title="Hapus Transaksi"
+                      class="p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
+                    >
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
                 </td>
               </tr>
             </tbody>
+
+            <!-- TOTAL >>> ROW -->
+            <tfoot v-if="transactions.length > 0" class="bg-emerald-50 border-t-2 border-emerald-600 font-bold text-xs">
+              <tr>
+                <td colspan="6" class="py-3.5 px-4 text-right uppercase tracking-wider text-emerald-950 font-black">
+                  TOTAL >>>
+                </td>
+                <td class="py-3.5 px-4 text-right font-mono font-black text-emerald-700 whitespace-nowrap">
+                  Rp {{ formatRupiah(summaryLPJ.total_debet) }}
+                </td>
+                <td class="py-3.5 px-4 text-right font-mono font-black text-rose-700 whitespace-nowrap">
+                  Rp {{ formatRupiah(summaryLPJ.total_kredit) }}
+                </td>
+                <td class="py-3.5 px-4 text-right font-mono font-black whitespace-nowrap" :class="summaryLPJ.saldo_akhir < 0 ? 'text-rose-700' : 'text-emerald-950'">
+                  Rp {{ formatRupiah(summaryLPJ.saldo_akhir) }}
+                </td>
+                <td colspan="3" class="py-3.5 px-4 text-slate-400"></td>
+              </tr>
+            </tfoot>
           </table>
         </div>
       </div>
     </div>
 
-    <!-- MODAL: Catat Transaksi Keuangan Baru (Image 3 Match + Upload Foto Bukti) -->
+    <!-- MODAL: Catat / Edit Transaksi Kas LPJ -->
     <div v-if="showAddModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 overflow-y-auto">
       <div class="relative w-full max-w-lg bg-white border border-slate-200 rounded-3xl p-6 sm:p-7 shadow-sm text-slate-700 my-8">
         <!-- Header -->
         <div class="flex items-center justify-between pb-3 border-b border-slate-200 mb-5">
-          <h3 class="text-base font-bold text-slate-900 tracking-wide">Catat Transaksi Keuangan Baru</h3>
-          <button @click="showAddModal = false" class="text-slate-500 hover:text-white transition p-1 rounded-lg hover:bg-slate-100">
+          <div class="flex items-center space-x-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
+            <h3 class="text-base font-bold text-slate-900 tracking-wide">
+              {{ editingTrxId ? 'Edit Catatan Transaksi LPJ' : 'Catat Transaksi Kas LPJ Baru' }}
+            </h3>
+          </div>
+          <button @click="showAddModal = false" class="text-slate-400 hover:text-slate-700 transition p-1 rounded-lg hover:bg-slate-100">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
           </button>
         </div>
 
         <form @submit.prevent="submitCash" class="space-y-4 text-xs">
-          <!-- Row 1: Jenis Transaksi & Kategori Kas -->
+          <!-- Row 1: Jenis Transaksi & Tanggal -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label class="block font-semibold text-slate-700 mb-1">Jenis Transaksi *</label>
               <select
                 v-model="cashForm.type"
                 required
-                class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 focus:outline-none focus:border-emerald-500 transition"
+                class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 focus:outline-none focus:border-emerald-500 transition font-medium"
               >
-                <option value="in">Pemasukan (+)</option>
-                <option value="out">Pengeluaran (-)</option>
+                <option value="out">Kredit / Pengeluaran (-)</option>
+                <option value="in">Debet / Kas Masuk / Subsidi (+)</option>
               </select>
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Tanggal Transaksi *</label>
+              <input
+                v-model="cashForm.date"
+                type="date"
+                required
+                class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 focus:outline-none focus:border-emerald-500 font-sans transition"
+              />
+            </div>
+          </div>
+
+          <!-- Row 2: Pelaksana & Kategori Kas -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Pelaksana (PIC) *</label>
+              <input
+                v-model="cashForm.pelaksana"
+                type="text"
+                required
+                placeholder="misal: MUIZ, Pak Haqi..."
+                class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition"
+              />
             </div>
             <div>
               <label class="block font-semibold text-slate-700 mb-1">Kategori Kas *</label>
@@ -347,8 +476,40 @@
             </div>
           </div>
 
-          <!-- Row 2: Nominal & Tanggal Transaksi -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Row 3: Uraian Belanja / Transaksi -->
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Uraian Belanja / Subsidi *</label>
+            <input
+              v-model="cashForm.description"
+              type="text"
+              required
+              placeholder="misal: Subsidi, AMD Rayzen 3 1200, DP VEDIOTRON..."
+              class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition"
+            />
+          </div>
+
+          <!-- Row 4: Jumlah, Satuan & Nominal -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Jumlah (Qty)</label>
+              <input
+                v-model="cashForm.qty"
+                type="number"
+                step="any"
+                min="0"
+                placeholder="misal: 1"
+                class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 text-center font-mono"
+              />
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Satuan</label>
+              <input
+                v-model="cashForm.unit"
+                type="text"
+                placeholder="Unit, Pcs, Bulan..."
+                class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 text-center"
+              />
+            </div>
             <div>
               <label class="block font-semibold text-slate-700 mb-1">Nominal (Rp) *</label>
               <input
@@ -356,85 +517,74 @@
                 type="number"
                 min="1"
                 required
-                placeholder="misal: 500000"
-                class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 placeholder-slate-500 focus:outline-none focus:border-emerald-500 font-mono transition"
-              />
-            </div>
-            <div>
-              <label class="block font-semibold text-slate-700 mb-1">Tanggal Transaksi *</label>
-              <input
-                v-model="cashForm.date"
-                type="date"
-                required
-                class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 focus:outline-none focus:border-emerald-500 font-sans transition"
+                placeholder="misal: 2808943"
+                class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 font-mono font-bold"
               />
             </div>
           </div>
 
-          <!-- Row 3: Keterangan / Deskripsi Transaksi -->
+          <!-- Row 5: Keterangan / Anggaran -->
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">Keterangan / Deskripsi Transaksi *</label>
-            <textarea
-              v-model="cashForm.description"
-              required
-              rows="3"
-              placeholder="Rincian peruntukan kas atau nama donatur..."
-              class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition"
-            ></textarea>
+            <label class="block font-semibold text-slate-700 mb-1">Keterangan / Alokasi Anggaran (Opsional)</label>
+            <input
+              v-model="cashForm.notes"
+              type="text"
+              placeholder="misal: Anggaran Bulan September, Donasi Hamba Allah..."
+              class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition"
+            />
           </div>
 
-          <!-- Row 4: Foto Bukti Nota / Kwitansi (Opsional - Image 3 Match) -->
-          <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
-            <label class="block font-semibold text-slate-700 mb-2">Foto Bukti Nota / Kwitansi (Opsional)</label>
-            <div class="flex items-center space-x-3.5">
-              <div class="w-14 h-14 rounded-xl bg-white border border-slate-300 overflow-hidden flex items-center justify-center text-slate-500 flex-shrink-0">
-                <img
-                  v-if="cashForm.receipt_path"
-                  :src="cashForm.receipt_path"
-                  alt="Bukti Nota"
-                  class="w-full h-full object-cover"
-                />
-                <svg v-else class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-              </div>
+          <!-- Row 6: Bukti Nota (Bisa Link Google Drive atau Upload Gambar) -->
+          <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+            <label class="block font-semibold text-slate-700">Bukti Nota / Dokumen Pendukung (Opsional)</label>
 
-              <div class="flex-1 space-y-1">
-                <input
-                  type="file"
-                  ref="receiptFileRef"
-                  accept="image/*"
-                  @change="handleReceiptUpload"
-                  class="hidden"
-                />
-                <div class="flex items-center space-x-2">
-                  <button
-                    type="button"
-                    @click="$refs.receiptFileRef.click()"
-                    class="px-3 py-1.5 rounded-xl bg-[#4f46e5] hover:bg-[#4338ca] text-white text-xs font-semibold shadow-md transition"
-                  >
-                    Choose file
-                  </button>
-                  <span class="text-slate-500 text-[11px] truncate max-w-[150px]">
-                    {{ receiptFileName || 'No file chosen' }}
-                  </span>
-                </div>
-                <button
-                  v-if="cashForm.receipt_path"
-                  type="button"
-                  @click="clearReceipt"
-                  class="text-[10px] text-rose-400 hover:underline block pt-1"
-                >
-                  Hapus File
-                </button>
-              </div>
+            <!-- Link Google Drive / Web Nota -->
+            <div>
+              <input
+                v-model="cashForm.receipt_path"
+                type="url"
+                placeholder="Tempelkan Link Google Drive Nota / URL (misal: https://drive.google.com/...)"
+                class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 text-xs"
+              />
+            </div>
+
+            <!-- Upload File Nota -->
+            <div class="flex items-center space-x-3 pt-1">
+              <input
+                type="file"
+                ref="receiptFileRef"
+                accept="image/*"
+                @change="handleReceiptUpload"
+                class="hidden"
+              />
+              <button
+                type="button"
+                @click="$refs.receiptFileRef.click()"
+                class="px-3 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-semibold transition flex items-center space-x-1"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                <span>Atau Unggah Berkas Gambar</span>
+              </button>
+              <span class="text-slate-500 text-[11px] truncate max-w-[200px]">
+                {{ receiptFileName || (cashForm.receipt_path?.startsWith('data:') ? 'Foto terunggah' : '') }}
+              </span>
+              <button
+                v-if="cashForm.receipt_path"
+                type="button"
+                @click="clearReceipt"
+                class="text-[11px] text-rose-500 hover:underline"
+              >
+                Hapus
+              </button>
             </div>
           </div>
 
-          <!-- Bottom Actions (Image 3 Match) -->
+          <!-- Bottom Actions -->
           <div class="flex items-center justify-end space-x-3 pt-4 border-t border-slate-200">
             <button
               type="button"
               @click="showAddModal = false"
-              class="px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 font-semibold transition"
+              class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition"
             >
               Batal
             </button>
@@ -443,7 +593,7 @@
               :disabled="submitting"
               class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#059669] to-[#10b981] hover:from-[#047857] hover:to-[#059669] text-white font-bold shadow-lg shadow-emerald-950/60 transition disabled:opacity-50"
             >
-              {{ submitting ? 'Menyimpan...' : 'Simpan Transaksi' }}
+              {{ submitting ? 'Menyimpan...' : (editingTrxId ? 'Simpan Perubahan LPJ' : 'Simpan Transaksi LPJ') }}
             </button>
           </div>
         </form>
@@ -572,10 +722,12 @@ const verifyCashPassword = async () => {
 const transactions = ref([]);
 const categories = ref([]);
 const summary = ref({ total_in: 0, total_out: 0, balance: 0 });
+const summaryLPJ = ref({ total_debet: 0, total_kredit: 0, saldo_akhir: 0 });
 const filters = ref({ type: '', category_id: '', search: '' });
 
 const showAddModal = ref(false);
 const showImportModal = ref(false);
+const editingTrxId = ref(null);
 const submitting = ref(false);
 const exporting = ref(false);
 const importing = ref(false);
@@ -584,11 +736,15 @@ const importFileRef = ref(null);
 const receiptFileName = ref('');
 
 const cashForm = ref({
-  type: 'in',
+  type: 'out',
   amount: '',
+  qty: '',
+  unit: '',
   date: new Date().toISOString().split('T')[0],
   category_id: null,
   description: '',
+  pelaksana: '',
+  notes: '',
   receipt_path: '',
 });
 
@@ -603,7 +759,10 @@ const debounceSearch = () => {
 const fetchTransactions = async () => {
   try {
     const res = await api.get('/cash', { params: filters.value });
-    transactions.value = res.data.data;
+    transactions.value = res.data.data || [];
+    if (res.data.summary) {
+      summaryLPJ.value = res.data.summary;
+    }
   } catch (e) {
     //
   }
@@ -655,14 +814,37 @@ const formatDate = (dateStr) => {
 };
 
 const openAddCashModal = () => {
+  editingTrxId.value = null;
   clearReceipt();
   cashForm.value = {
-    type: 'in',
+    type: 'out',
     amount: '',
+    qty: '',
+    unit: '',
     date: new Date().toISOString().split('T')[0],
     category_id: categories.value[0]?.id || null,
     description: '',
+    pelaksana: authStore.user?.name || '',
+    notes: '',
     receipt_path: '',
+  };
+  showAddModal.value = true;
+};
+
+const openEditCashModal = (trx) => {
+  editingTrxId.value = trx.id;
+  clearReceipt();
+  cashForm.value = {
+    type: trx.type,
+    amount: trx.amount,
+    qty: trx.qty || '',
+    unit: trx.unit || '',
+    date: trx.date ? String(trx.date).substring(0, 10) : new Date().toISOString().split('T')[0],
+    category_id: trx.category_id || categories.value[0]?.id || null,
+    description: trx.description || '',
+    pelaksana: trx.pelaksana || trx.creator?.name || '',
+    notes: trx.notes || '',
+    receipt_path: trx.receipt_path || '',
   };
   showAddModal.value = true;
 };
@@ -670,16 +852,35 @@ const openAddCashModal = () => {
 const submitCash = async () => {
   submitting.value = true;
   try {
-    await api.post('/cash', cashForm.value);
+    if (editingTrxId.value) {
+      await api.put(`/cash/${editingTrxId.value}`, cashForm.value);
+      alert('Transaksi kas LPJ berhasil diperbarui!');
+    } else {
+      await api.post('/cash', cashForm.value);
+      alert('Transaksi kas LPJ berhasil dicatat!');
+    }
     showAddModal.value = false;
     fetchTransactions();
     fetchSummary();
     realtimeStore.fetchLiveStats();
-    alert('Transaksi kas berhasil dicatat!');
   } catch (err) {
     alert(err.response?.data?.message || 'Gagal menyimpan transaksi kas.');
   } finally {
     submitting.value = false;
+  }
+};
+
+const deleteCash = async (trx) => {
+  if (confirm(`Yakin ingin menghapus transaksi "${trx.description}"? Tindakan ini tidak dapat dibatalkan.`)) {
+    try {
+      await api.delete(`/cash/${trx.id}`);
+      fetchTransactions();
+      fetchSummary();
+      realtimeStore.fetchLiveStats();
+      alert('Transaksi berhasil dihapus.');
+    } catch (err) {
+      alert(err.response?.data?.message || 'Gagal menghapus transaksi.');
+    }
   }
 };
 
@@ -705,7 +906,7 @@ const exportCash = async () => {
     const today = new Date().toISOString().slice(0, 10);
     await downloadAuthenticatedFile(
       '/cash/export',
-      `Rekap_Kas_Rojabiyyah_${today}.xlsx`,
+      `LPJ_Pengeluaran_Kas_${today}.xlsx`,
       filters.value
     );
   } finally {

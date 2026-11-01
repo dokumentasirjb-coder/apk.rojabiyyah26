@@ -195,5 +195,227 @@ class ExcelExportService
 
         return $response;
     }
+
+    /**
+     * Generate and stream exact LPJ spreadsheet format
+     */
+    public static function streamLpjExcel(
+        string $filename,
+        string $orgName,
+        string $subTitle,
+        array $items,
+        float $totalDebet,
+        float $totalKredit,
+        float $totalSaldo
+    ): StreamedResponse {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('LPJ Keuangan');
+
+        $headers = ['No.', 'Tanggal', 'Pelaksana', 'Uraian', 'Jumlah', 'Satuan', 'Debet', 'Kredit', 'Saldo', 'Keterangan', 'Nota'];
+        $totalCols = count($headers);
+        $lastColLetter = Coordinate::stringFromColumnIndex($totalCols);
+
+        // Row 1: Header Title
+        $sheet->setCellValue('A1', 'LAPORAN DETAIL PENGELUARAN');
+        $sheet->mergeCells("A1:{$lastColLetter}1");
+        $sheet->getStyle('A1')->getFont()->setSize(14)->setBold(true)->getColor()->setRGB('0F172A');
+        $sheet->getRowDimension(1)->setRowHeight(22);
+
+        // Row 2: Org Name
+        $sheet->setCellValue('A2', strtoupper($orgName));
+        $sheet->mergeCells("A2:{$lastColLetter}2");
+        $sheet->getStyle('A2')->getFont()->setSize(11)->setBold(true)->getColor()->setRGB('059669');
+        $sheet->getRowDimension(2)->setRowHeight(20);
+
+        // Row 3: Subtitle / Event & Timestamp
+        $sheet->setCellValue('A3', $subTitle . ' • Dicetak pada: ' . date('d/m/Y H:i') . ' WIB');
+        $sheet->mergeCells("A3:{$lastColLetter}3");
+        $sheet->getStyle('A3')->getFont()->setSize(9)->setItalic(true)->getColor()->setRGB('64748B');
+        $sheet->getRowDimension(3)->setRowHeight(18);
+
+        // Row 4: Spacer
+        $sheet->getRowDimension(4)->setRowHeight(8);
+
+        // Row 5: Table Header
+        $headerRowIndex = 5;
+        $sheet->getRowDimension($headerRowIndex)->setRowHeight(26);
+
+        foreach ($headers as $colIdx => $hText) {
+            $colLetter = Coordinate::stringFromColumnIndex($colIdx + 1);
+            $sheet->setCellValue("{$colLetter}{$headerRowIndex}", $hText);
+        }
+
+        $headerRange = "A{$headerRowIndex}:{$lastColLetter}{$headerRowIndex}";
+        $sheet->getStyle($headerRange)->applyFromArray([
+            'font' => [
+                'bold' => true,
+                'color' => ['rgb' => 'FFFFFF'],
+                'size' => 10,
+            ],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => ['rgb' => '065F46'],
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                    'color' => ['rgb' => '047857'],
+                ],
+            ],
+        ]);
+
+        $sheet->freezePane('A6');
+
+        $currentRow = 6;
+        $no = 1;
+        foreach ($items as $item) {
+            $sheet->getRowDimension($currentRow)->setRowHeight(20);
+            $isEven = ($no % 2 === 0);
+            $rowBg = $isEven ? 'F8FAFC' : 'FFFFFF';
+
+            $debetVal = (float)($item['debet'] ?? 0);
+            $kreditVal = (float)($item['kredit'] ?? 0);
+            $saldoVal = (float)($item['saldo'] ?? 0);
+
+            $sheet->setCellValue("A{$currentRow}", $no);
+            $sheet->setCellValue("B{$currentRow}", $item['date'] ?? '-');
+            $sheet->setCellValue("C{$currentRow}", $item['pelaksana'] ?? '-');
+            $sheet->setCellValue("D{$currentRow}", $item['description'] ?? '-');
+            $sheet->setCellValue("E{$currentRow}", $item['qty'] ?: '');
+            $sheet->setCellValue("F{$currentRow}", $item['unit'] ?: '');
+            $sheet->setCellValue("G{$currentRow}", $debetVal ?: 0);
+            $sheet->setCellValue("H{$currentRow}", $kreditVal ?: 0);
+            $sheet->setCellValue("I{$currentRow}", $saldoVal ?: 0);
+            $sheet->setCellValue("J{$currentRow}", $item['notes'] ?? '');
+
+            // Nota link
+            $receipt = $item['receipt_path'] ?? '';
+            if ($receipt) {
+                if (filter_var($receipt, FILTER_VALIDATE_URL)) {
+                    $sheet->setCellValue("K{$currentRow}", 'Lihat Nota');
+                    $sheet->getCell("K{$currentRow}")->getHyperlink()->setUrl($receipt);
+                    $sheet->getStyle("K{$currentRow}")->getFont()->setUnderline(true)->getColor()->setRGB('2563EB');
+                } else {
+                    $sheet->setCellValue("K{$currentRow}", 'Ada Bukti');
+                }
+            } else {
+                $sheet->setCellValue("K{$currentRow}", '-');
+            }
+
+            // Alignments
+            $sheet->getStyle("A{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle("B{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle("C{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle("D{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+            $sheet->getStyle("E{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle("F{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle("G{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+            $sheet->getStyle("H{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+            $sheet->getStyle("I{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+            $sheet->getStyle("J{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+            $sheet->getStyle("K{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+            $sheet->getStyle("G{$currentRow}")->getNumberFormat()->setFormatCode('#,##0');
+            $sheet->getStyle("H{$currentRow}")->getNumberFormat()->setFormatCode('#,##0');
+            $sheet->getStyle("I{$currentRow}")->getNumberFormat()->setFormatCode('#,##0');
+            if (is_numeric($item['qty'] ?? null)) {
+                $sheet->getStyle("E{$currentRow}")->getNumberFormat()->setFormatCode('#,##0.##');
+            }
+
+            // Row style
+            $sheet->getStyle("A{$currentRow}:{$lastColLetter}{$currentRow}")->applyFromArray([
+                'fill' => [
+                    'fillType' => Fill::FILL_SOLID,
+                    'startColor' => ['rgb' => $rowBg],
+                ],
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => Border::BORDER_THIN,
+                        'color' => ['rgb' => 'E2E8F0'],
+                    ],
+                ],
+                'font' => [
+                    'size' => 9.5,
+                    'color' => ['rgb' => '1E293B'],
+                ],
+            ]);
+
+            $currentRow++;
+            $no++;
+        }
+
+        // Row TOTAL >>>
+        $totalRow = $currentRow;
+        $sheet->getRowDimension($totalRow)->setRowHeight(24);
+
+        $sheet->mergeCells("A{$totalRow}:F{$totalRow}");
+        $sheet->setCellValue("A{$totalRow}", 'TOTAL >>>');
+        $sheet->getStyle("A{$totalRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+
+        $sheet->setCellValue("G{$totalRow}", $totalDebet);
+        $sheet->setCellValue("H{$totalRow}", $totalKredit);
+        $sheet->setCellValue("I{$totalRow}", $totalSaldo);
+        $sheet->setCellValue("J{$totalRow}", '');
+        $sheet->setCellValue("K{$totalRow}", '');
+
+        $sheet->getStyle("G{$totalRow}")->getNumberFormat()->setFormatCode('#,##0');
+        $sheet->getStyle("H{$totalRow}")->getNumberFormat()->setFormatCode('#,##0');
+        $sheet->getStyle("I{$totalRow}")->getNumberFormat()->setFormatCode('#,##0');
+
+        $sheet->getStyle("G{$totalRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+        $sheet->getStyle("H{$totalRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+        $sheet->getStyle("I{$totalRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+
+        $totalRange = "A{$totalRow}:{$lastColLetter}{$totalRow}";
+        $sheet->getStyle($totalRange)->applyFromArray([
+            'font' => [
+                'bold' => true,
+                'size' => 10,
+                'color' => ['rgb' => '064E3B'],
+            ],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => ['rgb' => 'D1FAE5'],
+            ],
+            'borders' => [
+                'top' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                    'color' => ['rgb' => '059669'],
+                ],
+                'bottom' => [
+                    'borderStyle' => Border::BORDER_DOUBLE,
+                    'color' => ['rgb' => '059669'],
+                ],
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                    'color' => ['rgb' => 'A7F3D0'],
+                ],
+            ],
+        ]);
+
+        // Auto-fit column widths
+        foreach (range(1, $totalCols) as $colIdx) {
+            $colLetter = Coordinate::stringFromColumnIndex($colIdx);
+            $sheet->getColumnDimension($colLetter)->setAutoSize(true);
+        }
+
+        // Stream as .xlsx
+        $response = new StreamedResponse(function () use ($spreadsheet) {
+            $writer = new Xlsx($spreadsheet);
+            $writer->save('php://output');
+        });
+
+        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . $filename . '"');
+        $response->headers->set('Cache-Control', 'max-age=0');
+        $response->headers->set('Pragma', 'public');
+
+        return $response;
+    }
 }
 

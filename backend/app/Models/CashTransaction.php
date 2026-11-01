@@ -12,9 +12,13 @@ class CashTransaction extends Model
     protected $fillable = [
         'type',
         'amount',
+        'qty',
+        'unit',
         'date',
         'category_id',
         'description',
+        'notes',
+        'pelaksana',
         'receipt_path',
         'created_by',
         'voided_at',

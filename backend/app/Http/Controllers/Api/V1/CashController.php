@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
 use App\Models\CashCategory;
 use App\Models\CashTransaction;
+use App\Models\Setting;
 use App\Services\ExcelExportService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -30,12 +31,44 @@ class CashController extends Controller
 
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where('description', 'like', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->where('description', 'like', "%{$search}%")
+                  ->orWhere('pelaksana', 'like', "%{$search}%")
+                  ->orWhere('notes', 'like', "%{$search}%");
+            });
         }
 
-        $transactions = $query->orderBy('date', 'desc')->orderBy('id', 'desc')->paginate($request->input('per_page', 20));
+        // Kronologis: tanggal asc, id asc agar alur saldo berjalan (LPJ) konsisten
+        $transactions = $query->orderBy('date', 'asc')->orderBy('id', 'asc')->get();
 
-        return response()->json($transactions);
+        $runningBalance = 0;
+        $totalDebet = 0;
+        $totalKredit = 0;
+
+        foreach ($transactions as $trx) {
+            $isVoid = !empty($trx->voided_at);
+            $debet = ($trx->type === 'in' && !$isVoid) ? (float)$trx->amount : 0;
+            $kredit = ($trx->type === 'out' && !$isVoid) ? (float)$trx->amount : 0;
+            $runningBalance += ($debet - $kredit);
+
+            $trx->debet = $trx->type === 'in' ? (float)$trx->amount : 0;
+            $trx->kredit = $trx->type === 'out' ? (float)$trx->amount : 0;
+            $trx->saldo = $runningBalance;
+
+            if (!$isVoid) {
+                $totalDebet += $debet;
+                $totalKredit += $kredit;
+            }
+        }
+
+        return response()->json([
+            'data' => $transactions,
+            'summary' => [
+                'total_debet' => $totalDebet,
+                'total_kredit' => $totalKredit,
+                'saldo_akhir' => $totalDebet - $totalKredit,
+            ],
+        ]);
     }
 
     public function store(Request $request)
@@ -48,18 +81,26 @@ class CashController extends Controller
         $request->validate([
             'type' => 'required|in:in,out',
             'amount' => 'required|numeric|min:0.01',
+            'qty' => 'nullable|numeric|min:0',
+            'unit' => 'nullable|string|max:50',
             'date' => 'required|date',
             'category_id' => 'required|exists:cash_categories,id',
             'description' => 'required|string',
+            'pelaksana' => 'nullable|string|max:255',
+            'notes' => 'nullable|string',
             'receipt_path' => 'nullable|string',
         ]);
 
         $trx = CashTransaction::create([
             'type' => $request->type,
             'amount' => $request->amount,
+            'qty' => $request->qty,
+            'unit' => $request->unit,
             'date' => $request->date,
             'category_id' => $request->category_id,
             'description' => $request->description,
+            'pelaksana' => $request->pelaksana ?: $user->name,
+            'notes' => $request->notes,
             'receipt_path' => $request->receipt_path,
             'created_by' => $user->id,
             'locked' => false,
@@ -71,6 +112,74 @@ class CashController extends Controller
             'message' => 'Transaksi kas berhasil dicatat.',
             'transaction' => $trx->load(['category', 'creator']),
         ], 201);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $user = $request->user();
+        if (!in_array($user->role, ['super_admin', 'bendahara'])) {
+            return response()->json(['message' => 'Hanya Super Admin dan Bendahara yang berhak mengedit kas.'], 403);
+        }
+
+        $trx = CashTransaction::findOrFail($id);
+
+        if ($trx->locked) {
+            return response()->json(['message' => 'Transaksi kas pada periode ini telah dikunci.'], 422);
+        }
+
+        $request->validate([
+            'type' => 'required|in:in,out',
+            'amount' => 'required|numeric|min:0.01',
+            'qty' => 'nullable|numeric|min:0',
+            'unit' => 'nullable|string|max:50',
+            'date' => 'required|date',
+            'category_id' => 'required|exists:cash_categories,id',
+            'description' => 'required|string',
+            'pelaksana' => 'nullable|string|max:255',
+            'notes' => 'nullable|string',
+            'receipt_path' => 'nullable|string',
+        ]);
+
+        $old = $trx->toArray();
+        $trx->update([
+            'type' => $request->type,
+            'amount' => $request->amount,
+            'qty' => $request->qty,
+            'unit' => $request->unit,
+            'date' => $request->date,
+            'category_id' => $request->category_id,
+            'description' => $request->description,
+            'pelaksana' => $request->pelaksana ?: $trx->pelaksana,
+            'notes' => $request->notes,
+            'receipt_path' => $request->receipt_path,
+        ]);
+
+        AuditLog::log('update', 'CashTransaction', $trx->id, $old, $trx->toArray());
+
+        return response()->json([
+            'message' => 'Transaksi kas berhasil diperbarui.',
+            'transaction' => $trx->load(['category', 'creator']),
+        ]);
+    }
+
+    public function destroy(Request $request, $id)
+    {
+        $user = $request->user();
+        if (!in_array($user->role, ['super_admin', 'bendahara'])) {
+            return response()->json(['message' => 'Akses ditolak.'], 403);
+        }
+
+        $trx = CashTransaction::findOrFail($id);
+        if ($trx->locked) {
+            return response()->json(['message' => 'Transaksi kas pada periode ini telah dikunci.'], 422);
+        }
+
+        $old = $trx->toArray();
+        $trx->delete();
+
+        AuditLog::log('delete', 'CashTransaction', $id, $old, null);
+
+        return response()->json(['message' => 'Transaksi kas berhasil dihapus.']);
     }
 
     public function voidTransaction(Request $request, $id)
@@ -168,55 +277,58 @@ class CashController extends Controller
 
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where('description', 'like', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->where('description', 'like', "%{$search}%")
+                  ->orWhere('pelaksana', 'like', "%{$search}%")
+                  ->orWhere('notes', 'like', "%{$search}%");
+            });
         }
 
-        $transactions = $query->orderBy('date', 'desc')->orderBy('id', 'desc')->get();
+        $transactions = $query->orderBy('date', 'asc')->orderBy('id', 'asc')->get();
 
-        $headers = ['NO', 'ID TRX', 'TANGGAL', 'JENIS KAS', 'KATEGORI', 'URAIAN / KETERANGAN', 'MASUK (RP)', 'KELUAR (RP)', 'STATUS', 'DICATAT OLEH'];
+        $runningBalance = 0;
+        $totalDebet = 0;
+        $totalKredit = 0;
+        $items = [];
 
-        $rows = [];
-        $no = 1;
         foreach ($transactions as $trx) {
-            $dateStr = $trx->date instanceof \DateTimeInterface ? $trx->date->format('Y-m-d') : (string)$trx->date;
-            $rows[] = [
-                $no++,
-                'TRX-' . str_pad($trx->id, 5, '0', STR_PAD_LEFT),
-                $dateStr,
-                strtoupper($trx->type === 'in' ? 'KAS MASUK' : 'KAS KELUAR'),
-                $trx->category->name ?? '-',
-                $trx->description,
-                $trx->type === 'in' ? (float)$trx->amount : 0,
-                $trx->type === 'out' ? (float)$trx->amount : 0,
-                $trx->voided_at ? 'BATAL (VOID)' : 'VALID',
-                $trx->creator->name ?? '-',
+            $isVoid = !empty($trx->voided_at);
+            $debet = ($trx->type === 'in' && !$isVoid) ? (float)$trx->amount : 0;
+            $kredit = ($trx->type === 'out' && !$isVoid) ? (float)$trx->amount : 0;
+            $runningBalance += ($debet - $kredit);
+
+            $dateStr = $trx->date instanceof \DateTimeInterface ? $trx->date->format('d/m/Y') : (string)$trx->date;
+
+            $items[] = [
+                'date' => $dateStr,
+                'pelaksana' => $trx->pelaksana ?: ($trx->creator->name ?? '-'),
+                'description' => $trx->description . ($isVoid ? ' [BATAL/VOID]' : ''),
+                'qty' => $trx->qty,
+                'unit' => $trx->unit,
+                'debet' => $debet,
+                'kredit' => $kredit,
+                'saldo' => $runningBalance,
+                'notes' => $trx->notes,
+                'receipt_path' => $trx->receipt_path,
             ];
+
+            if (!$isVoid) {
+                $totalDebet += $debet;
+                $totalKredit += $kredit;
+            }
         }
 
-        return ExcelExportService::streamStyled(
-            filename: 'Rekap_Kas_Rojabiyyah_' . date('Ymd_His') . '.xlsx',
-            sheetTitle: 'Rekap Kas Keuangan',
-            mainTitle: 'BUKU KAS & LAPORAN KEUANGAN ROJABIYYAH 2026',
-            subtitle: 'Haul ke-5 Al-Maghfurlah K.H. Moch. Djamaluddin Achmad & Rojabiyyah 2026',
-            headers: $headers,
-            rows: $rows,
-            options: [
-                'header_bg' => '065F46', // Emerald-800
-                'alignments' => [
-                    1 => 'center',
-                    2 => 'center',
-                    3 => 'center',
-                    4 => 'center',
-                    7 => 'right',
-                    8 => 'right',
-                    9 => 'center',
-                ],
-                'formats' => [
-                    7 => '#,##0',
-                    8 => '#,##0',
-                ],
-                'text_columns' => [2],
-            ]
+        $orgName = Setting::get('app_name', 'IBBIEN MEDIA');
+        $subTitle = Setting::get('sub_theme', 'Haul ke-5 Al-Maghfurlah K.H. Moch. Djamaluddin Achmad & Rojabiyyah 2026');
+
+        return ExcelExportService::streamLpjExcel(
+            filename: 'LPJ_Pengeluaran_' . preg_replace('/[^A-Za-z0-9_-]/', '_', $orgName) . '_' . date('Ymd_His') . '.xlsx',
+            orgName: $orgName,
+            subTitle: $subTitle,
+            items: $items,
+            totalDebet: $totalDebet,
+            totalKredit: $totalKredit,
+            totalSaldo: $totalDebet - $totalKredit
         );
     }
 

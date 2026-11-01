@@ -142,6 +142,18 @@ Route::prefix('v1')->group(function () {
             return app(\App\Http\Controllers\Api\V1\CashController::class)->index($request);
         });
         Route::post('/cash', [CashController::class, 'store']);
+        Route::put('/cash/{id}', function (\Illuminate\Http\Request $request, $id) {
+            if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
+                return response()->json(['message' => 'Akses ditolak.'], 403);
+            }
+            return app(\App\Http\Controllers\Api\V1\CashController::class)->update($request, $id);
+        });
+        Route::delete('/cash/{id}', function (\Illuminate\Http\Request $request, $id) {
+            if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
+                return response()->json(['message' => 'Akses ditolak.'], 403);
+            }
+            return app(\App\Http\Controllers\Api\V1\CashController::class)->destroy($request, $id);
+        });
         Route::post('/cash/{id}/void', function (\Illuminate\Http\Request $request, $id) {
             if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
                 return response()->json(['message' => 'Akses ditolak.'], 403);
