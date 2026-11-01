@@ -14,38 +14,6 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-2.5">
-          <!-- Kelola Divisi Tugas -->
-          <router-link
-            v-if="['super_admin', 'admin'].includes(authStore.user?.role)"
-            to="/settings?tab=divisions"
-            class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-amber-200 text-amber-700 text-xs font-semibold shadow-sm transition"
-            title="Kelola daftar divisi tugas panitia di Pengaturan Sistem"
-          >
-            <svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-            <span>Kelola Divisi</span>
-          </router-link>
-          <!-- Salin Link Form Registrasi Publik / Google Formulir -->
-          <div class="relative inline-block">
-            <button
-              @click="copyPublicFormLink"
-              class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-teal-200 text-teal-700 text-xs font-semibold shadow-sm transition"
-              title="Salin tautan formulir pendaftaran relawan/panitia lapangan (tanpa akun)"
-            >
-              <svg class="w-3.5 h-3.5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-              <span>{{ copiedLink ? 'Link Formulir Disalin!' : 'Salin Link Google Formulir' }}</span>
-            </button>
-          </div>
-
-          <!-- Salin Link Registrasi Akun Login -->
-          <button
-            @click="copyAccountRegLink"
-            class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-cyan-200 text-cyan-700 text-xs font-semibold shadow-sm transition"
-            title="Salin tautan pendaftaran akun bagi anggota yang memerlukan akses login portal"
-          >
-            <svg class="w-3.5 h-3.5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
-            <span>{{ copiedAccountLink ? 'Link Akun Disalin!' : 'Salin Link Daftar Akun' }}</span>
-          </button>
-
           <!-- Ekspor Excel -->
           <button
             @click="exportExcel"
