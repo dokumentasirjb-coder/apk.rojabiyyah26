@@ -415,27 +415,29 @@
             </div>
             <div>
               <div class="flex items-center justify-between mb-1">
-                <label class="block font-semibold text-slate-700">Sumber Kepemilikan</label>
+                <label class="block font-semibold text-slate-700 text-xs">Sumber Kepemilikan</label>
                 <button
                   type="button"
                   @click="showNewPartnerInput = !showNewPartnerInput"
                   class="text-[11px] font-bold text-emerald-700 hover:text-emerald-800 flex items-center space-x-1"
                 >
                   <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                  <span>+ Tambah Sumber Baru</span>
+                  <span>Tambah Lembaga</span>
                 </button>
               </div>
               <select
-                v-model="ownershipSelection"
+                v-model="selectedSourceKey"
+                @change="onSourceChange"
                 class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 text-xs focus:outline-none focus:border-emerald-600 font-medium"
               >
                 <option value="internal">Milik Internal (Dokumentasi Rojabiyyah 2026)</option>
-                <optgroup label="Lembaga / Pondok Pesantren / Mitra Pemilik:">
+                <option value="mitra_umum">Pinjaman Lembaga Mitra (Umum)</option>
+                <optgroup v-if="partners.length > 0" label="Lembaga / Pondok Pesantren / Pemilik:">
                   <option v-for="p in partners" :key="p.id" :value="String(p.id)">
                     {{ p.name }} {{ p.contact ? `(PIC: ${p.contact})` : '' }}
                   </option>
                 </optgroup>
-                <option value="new_partner">+ Buat / Ketik Sumber Baru...</option>
+                <option value="__new__">+ Tambah Lembaga / Sumber Baru...</option>
               </select>
             </div>
           </div>
@@ -1015,26 +1017,35 @@ const form = ref({
   photo_path: null,
 });
 
-const ownershipSelection = computed({
-  get() {
-    if (form.value.source === 'internal') return 'internal';
-    return form.value.partner_id ? String(form.value.partner_id) : 'mitra_general';
-  },
-  set(val) {
-    if (val === 'internal') {
-      form.value.source = 'internal';
-      form.value.partner_id = null;
-    } else if (val === 'new_partner') {
-      showNewPartnerInput.value = true;
-    } else if (val === 'mitra_general') {
-      form.value.source = 'mitra';
-      form.value.partner_id = null;
-    } else {
-      form.value.source = 'mitra';
-      form.value.partner_id = Number(val);
-    }
+const selectedSourceKey = ref('internal');
+
+const syncSelectedSourceKey = () => {
+  if (form.value.source === 'internal') {
+    selectedSourceKey.value = 'internal';
+  } else if (form.value.partner_id) {
+    selectedSourceKey.value = String(form.value.partner_id);
+  } else {
+    selectedSourceKey.value = 'mitra_umum';
   }
-});
+};
+
+const onSourceChange = () => {
+  if (selectedSourceKey.value === 'internal') {
+    form.value.source = 'internal';
+    form.value.partner_id = null;
+    showNewPartnerInput.value = false;
+  } else if (selectedSourceKey.value === 'mitra_umum') {
+    form.value.source = 'mitra';
+    form.value.partner_id = null;
+    showNewPartnerInput.value = false;
+  } else if (selectedSourceKey.value === '__new__') {
+    showNewPartnerInput.value = true;
+  } else {
+    form.value.source = 'mitra';
+    form.value.partner_id = Number(selectedSourceKey.value);
+    showNewPartnerInput.value = false;
+  }
+};
 
 const saveNewPartner = async () => {
   if (!newPartnerForm.value.name.trim()) return;
@@ -1050,6 +1061,7 @@ const saveNewPartner = async () => {
     partners.value.push(created);
     form.value.source = 'mitra';
     form.value.partner_id = created.id;
+    selectedSourceKey.value = String(created.id);
     newPartnerForm.value = { name: '', contact: '', phone: '', description: '' };
     showNewPartnerInput.value = false;
   } catch (err) {
@@ -1060,7 +1072,8 @@ const saveNewPartner = async () => {
 };
 
 const openItemSticker = (item) => {
-  stampingItem.value = item;
+  if (!item) return;
+  stampingItem.value = { ...item };
   itemStickerSize.value = 'campur';
   showItemStickerModal.value = true;
 };
@@ -1200,6 +1213,7 @@ const openAddItemModal = () => {
     source: 'internal',
     photo_path: null,
   };
+  selectedSourceKey.value = 'internal';
   showModal.value = true;
 };
 
@@ -1215,9 +1229,10 @@ const openEditModal = (item) => {
     qty_total: item.qty_total,
     condition: item.condition,
     location: item.location || 'Gudang Inventaris Utama',
-    source: item.source,
+    source: item.source || 'internal',
     photo_path: item.photo_path || null,
   };
+  syncSelectedSourceKey();
   showModal.value = true;
 };
 
@@ -1324,10 +1339,16 @@ onMounted(() => {
   fetchItems();
   fetchCategories();
   fetchPartners();
+  settingsStore.fetchSettings();
 });
 </script>
 
-<style scoped>
+<style>
+@page {
+  size: 215mm 330mm portrait; /* Standar Ukuran Kertas F4 / Folio */
+  margin: 6mm;
+}
+
 @media print {
   html, body {
     margin: 0 !important;
@@ -1362,7 +1383,7 @@ onMounted(() => {
     box-sizing: border-box !important;
   }
 
-  body:not(.is-printing-document) .no-print {
+  .no-print {
     display: none !important;
   }
 }
