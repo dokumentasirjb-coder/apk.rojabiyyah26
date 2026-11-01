@@ -82,6 +82,7 @@ class CashController extends Controller
             'type' => 'required|in:in,out',
             'amount' => 'required|numeric|min:0.01',
             'qty' => 'nullable|numeric|min:0',
+            'unit_price' => 'nullable|numeric|min:0',
             'unit' => 'nullable|string|max:50',
             'date' => 'required|date',
             'category_id' => 'required|exists:cash_categories,id',
@@ -95,6 +96,7 @@ class CashController extends Controller
             'type' => $request->type,
             'amount' => $request->amount,
             'qty' => $request->qty,
+            'unit_price' => $request->unit_price,
             'unit' => $request->unit,
             'date' => $request->date,
             'category_id' => $request->category_id,
@@ -131,6 +133,7 @@ class CashController extends Controller
             'type' => 'required|in:in,out',
             'amount' => 'required|numeric|min:0.01',
             'qty' => 'nullable|numeric|min:0',
+            'unit_price' => 'nullable|numeric|min:0',
             'unit' => 'nullable|string|max:50',
             'date' => 'required|date',
             'category_id' => 'required|exists:cash_categories,id',
@@ -145,6 +148,7 @@ class CashController extends Controller
             'type' => $request->type,
             'amount' => $request->amount,
             'qty' => $request->qty,
+            'unit_price' => $request->unit_price,
             'unit' => $request->unit,
             'date' => $request->date,
             'category_id' => $request->category_id,
@@ -153,6 +157,14 @@ class CashController extends Controller
             'notes' => $request->notes,
             'receipt_path' => $request->receipt_path,
         ]);
+
+        AuditLog::log('update', 'CashTransaction', $trx->id, $old, $trx->toArray());
+
+        return response()->json([
+            'message' => 'Transaksi kas berhasil diperbarui.',
+            'transaction' => $trx->load(['category', 'creator']),
+        ]);
+    }
 
         AuditLog::log('update', 'CashTransaction', $trx->id, $old, $trx->toArray());
 
@@ -305,6 +317,7 @@ class CashController extends Controller
                 'description' => $trx->description . ($isVoid ? ' [BATAL/VOID]' : ''),
                 'qty' => $trx->qty,
                 'unit' => $trx->unit,
+                'unit_price' => $trx->unit_price,
                 'debet' => $debet,
                 'kredit' => $kredit,
                 'saldo' => $runningBalance,

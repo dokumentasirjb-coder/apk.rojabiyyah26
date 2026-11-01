@@ -286,8 +286,15 @@ class ExcelExportService
             $sheet->setCellValue("B{$currentRow}", $item['date'] ?? '-');
             $sheet->setCellValue("C{$currentRow}", $item['pelaksana'] ?? '-');
             $sheet->setCellValue("D{$currentRow}", $item['description'] ?? '-');
+            $satuanVal = $item['unit_price'] ?? $item['unit'] ?? '';
             $sheet->setCellValue("E{$currentRow}", $item['qty'] ?: '');
-            $sheet->setCellValue("F{$currentRow}", $item['unit'] ?: '');
+            $sheet->setCellValue("F{$currentRow}", $satuanVal ?: '');
+            if (is_numeric($satuanVal) && (float)$satuanVal > 0) {
+                $sheet->getStyle("F{$currentRow}")->getNumberFormat()->setFormatCode('#,##0');
+                $sheet->getStyle("F{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+            } else {
+                $sheet->getStyle("F{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            }
             $sheet->setCellValue("G{$currentRow}", $debetVal ?: 0);
             $sheet->setCellValue("H{$currentRow}", $kreditVal ?: 0);
             $sheet->setCellValue("I{$currentRow}", $saldoVal ?: 0);

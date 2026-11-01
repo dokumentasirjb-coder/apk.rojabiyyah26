@@ -13,6 +13,7 @@ class CashTransaction extends Model
         'type',
         'amount',
         'qty',
+        'unit_price',
         'unit',
         'date',
         'category_id',

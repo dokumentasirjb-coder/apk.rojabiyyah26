@@ -292,9 +292,11 @@
                   {{ trx.qty || '-' }}
                 </td>
 
-                <!-- Satuan -->
-                <td class="py-3 px-2 text-center text-slate-600 text-[11px]">
-                  {{ trx.unit || '-' }}
+                <!-- Satuan / Harga Satuan -->
+                <td class="py-3 px-2 text-center text-slate-700 text-[11px] whitespace-nowrap">
+                  <span v-if="trx.unit_price" class="font-mono text-slate-800 font-semibold">{{ formatRupiah(trx.unit_price) }}</span>
+                  <span v-else-if="trx.unit">{{ trx.unit }}</span>
+                  <span v-else class="text-slate-400">-</span>
                 </td>
 
                 <!-- Debet (Kas Masuk) -->
@@ -488,38 +490,79 @@
             />
           </div>
 
-          <!-- Row 4: Jumlah, Satuan & Nominal -->
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div>
-              <label class="block font-semibold text-slate-700 mb-1">Jumlah (Qty)</label>
-              <input
-                v-model="cashForm.qty"
-                type="number"
-                step="any"
-                min="0"
-                placeholder="misal: 1"
-                class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 text-center font-mono"
-              />
+          <!-- Row 4: Jumlah (Qty), Harga Satuan (Rp), Satuan & Total Nominal -->
+          <div class="p-3.5 rounded-2xl bg-emerald-50/50 border border-emerald-200/80 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-emerald-950 text-xs flex items-center space-x-1.5">
+                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                <span>Perhitungan Kuantitas &amp; Nominal Otomatis</span>
+              </span>
+              <span class="text-[10px] text-emerald-800 font-bold bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded-full">
+                Auto Hitung
+              </span>
             </div>
-            <div>
-              <label class="block font-semibold text-slate-700 mb-1">Satuan</label>
-              <input
-                v-model="cashForm.unit"
-                type="text"
-                placeholder="Unit, Pcs, Bulan..."
-                class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 text-center"
-              />
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1">Jumlah (Qty)</label>
+                <input
+                  v-model.number="cashForm.qty"
+                  @input="onQtyOrPriceChange"
+                  type="number"
+                  step="any"
+                  min="0"
+                  placeholder="misal: 9"
+                  class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:border-emerald-500 text-center font-mono font-bold text-sm"
+                />
+              </div>
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1">Harga Satuan (Rp)</label>
+                <input
+                  v-model.number="cashForm.unit_price"
+                  @input="onQtyOrPriceChange"
+                  type="number"
+                  min="0"
+                  placeholder="misal: 250000"
+                  class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:border-emerald-500 font-mono text-right text-sm"
+                />
+                <span v-if="cashForm.unit_price" class="text-[10px] text-emerald-700 font-bold block text-right mt-0.5 font-mono">
+                  Rp {{ formatRupiah(cashForm.unit_price) }}
+                </span>
+              </div>
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1">Satuan (Opsional)</label>
+                <input
+                  v-model="cashForm.unit"
+                  @input="onUnitInputChange"
+                  type="text"
+                  placeholder="Pcs, Unit, Bulan..."
+                  class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 text-center text-xs"
+                />
+              </div>
             </div>
-            <div>
-              <label class="block font-semibold text-slate-700 mb-1">Nominal (Rp) *</label>
+
+            <!-- Total Nominal (Hasil Otomatis) -->
+            <div class="pt-2 border-t border-emerald-200">
+              <div class="flex items-center justify-between mb-1">
+                <label class="font-black text-slate-900 text-xs flex items-center space-x-1">
+                  <span>Hasil Total Nominal (Rp) *</span>
+                </label>
+                <span class="text-xs font-mono font-black" :class="cashForm.type === 'in' ? 'text-emerald-700' : 'text-rose-700'">
+                  Rp {{ formatRupiah(cashForm.amount) }}
+                </span>
+              </div>
               <input
                 v-model.number="cashForm.amount"
+                @input="onAmountChange"
                 type="number"
                 min="1"
                 required
-                placeholder="misal: 2808943"
-                class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 font-mono font-bold"
+                placeholder="misal: 2250000"
+                class="w-full px-3.5 py-2.5 bg-white border-2 border-emerald-600 rounded-xl text-slate-950 font-mono font-black text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
               />
+              <p class="text-[10px] text-slate-500 mt-1">
+                💡 <em>Hasil nominal otomatis dihitung dari <strong>Jumlah (Qty) × Harga Satuan</strong> (misal: 9 × 250.000 = 2.250.000). Berlaku untuk Pemasukan maupun Pengeluaran.</em>
+              </p>
             </div>
           </div>
 
@@ -738,7 +781,8 @@ const receiptFileName = ref('');
 const cashForm = ref({
   type: 'out',
   amount: '',
-  qty: '',
+  qty: 1,
+  unit_price: '',
   unit: '',
   date: new Date().toISOString().split('T')[0],
   category_id: null,
@@ -747,6 +791,33 @@ const cashForm = ref({
   notes: '',
   receipt_path: '',
 });
+
+const onQtyOrPriceChange = () => {
+  const q = parseFloat(cashForm.value.qty);
+  const p = parseFloat(cashForm.value.unit_price);
+  if (!isNaN(q) && q > 0 && !isNaN(p) && p >= 0) {
+    cashForm.value.amount = Math.round(q * p);
+  } else if (!isNaN(p) && p > 0 && (isNaN(q) || q === 0)) {
+    cashForm.value.amount = Math.round(p);
+  }
+};
+
+const onAmountChange = () => {
+  const a = parseFloat(cashForm.value.amount);
+  const q = parseFloat(cashForm.value.qty);
+  if (!isNaN(a) && a > 0 && !isNaN(q) && q > 0) {
+    cashForm.value.unit_price = Math.round(a / q);
+  }
+};
+
+const onUnitInputChange = () => {
+  const raw = String(cashForm.value.unit || '').trim();
+  // Jika user menulis nominal pada kolom satuan (misal: 250000)
+  if (/^\d+$/.test(raw) && Number(raw) > 0) {
+    cashForm.value.unit_price = Number(raw);
+    onQtyOrPriceChange();
+  }
+};
 
 let searchTimeout = null;
 const debounceSearch = () => {
@@ -819,7 +890,8 @@ const openAddCashModal = () => {
   cashForm.value = {
     type: 'out',
     amount: '',
-    qty: '',
+    qty: 1,
+    unit_price: '',
     unit: '',
     date: new Date().toISOString().split('T')[0],
     category_id: categories.value[0]?.id || null,
@@ -838,6 +910,7 @@ const openEditCashModal = (trx) => {
     type: trx.type,
     amount: trx.amount,
     qty: trx.qty || '',
+    unit_price: trx.unit_price || (trx.qty && trx.amount ? Math.round(trx.amount / trx.qty) : ''),
     unit: trx.unit || '',
     date: trx.date ? String(trx.date).substring(0, 10) : new Date().toISOString().split('T')[0],
     category_id: trx.category_id || categories.value[0]?.id || null,
