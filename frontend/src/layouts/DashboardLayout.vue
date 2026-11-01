@@ -106,16 +106,6 @@
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v18M3 9h6"/></svg>
                 <span v-show="!sidebarCollapsed" class="truncate">Beranda Anggota</span>
               </router-link>
-
-              <router-link
-                to="/reports"
-                class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition group"
-                :class="$route.path.startsWith('/reports') ? 'bg-gradient-to-r from-[#059669] to-[#10b981] text-white shadow-md shadow-emerald-600/20 font-bold' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700'"
-                :title="sidebarCollapsed ? 'Jadwal Penugasan' : ''"
-              >
-                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg>
-                <span v-show="!sidebarCollapsed" class="truncate">Jadwal Penugasan</span>
-              </router-link>
             </div>
           </div>
 
@@ -236,16 +226,6 @@
               >
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v18M3 9h6"/></svg>
                 <span v-show="!sidebarCollapsed" class="truncate">Administrasi</span>
-              </router-link>
-
-              <router-link
-                to="/reports"
-                class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition group"
-                :class="$route.path.startsWith('/reports') ? 'bg-gradient-to-r from-[#059669] to-[#10b981] text-white shadow-md shadow-emerald-600/20 font-bold' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700'"
-                :title="sidebarCollapsed ? 'Pembagian Penugasan' : ''"
-              >
-                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg>
-                <span v-show="!sidebarCollapsed" class="truncate">Pembagian Penugasan</span>
               </router-link>
             </div>
           </div>
