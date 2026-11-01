@@ -28,3 +28,4 @@ backend/bootstrap/cache/*.php
 .idea/
 .DS_Store
 Thumbs.db
+

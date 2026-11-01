@@ -478,23 +478,33 @@ class LoanController extends Controller
 
     public function verifyPublic($code)
     {
-        $loan = Loan::with(['borrower.member.division', 'approver', 'loanItems.item'])
+        $loan = Loan::with(['borrower.member.division', 'approver', 'loanItems.item.partner'])
             ->where('verification_code', $code)
+            ->orWhere('loan_no', $code)
             ->firstOrFail();
 
         return response()->json([
             'valid' => true,
             'loan_no' => $loan->loan_no,
             'status' => strtoupper($loan->status),
-            'borrower_name' => $loan->borrower->name,
-            'member_no' => $loan->borrower->member_no,
-            'division' => $loan->borrower->member->division->name ?? '-',
+            'borrower_name' => $loan->borrower->name ?? 'Anggota',
+            'member_no' => $loan->borrower->member_no ?? '-',
+            'division' => $loan->borrower->member->division->name ?? 'Panitia Lapangan',
             'purpose' => $loan->purpose,
-            'requested_at' => $loan->requested_at->format('d M Y H:i'),
-            'due_at' => $loan->due_at->format('d M Y H:i'),
+            'requested_at' => $loan->requested_at ? $loan->requested_at->format('d M Y H:i') : '-',
+            'due_at' => $loan->due_at ? $loan->due_at->format('d M Y H:i') : '-',
             'items' => $loan->loanItems->map(function ($li) {
+                $item = $li->item;
+                $isMitra = $item && $item->source === 'mitra';
+                $ownerName = $isMitra ? ($item->partner->name ?? 'Lembaga Mitra') : 'Panitia Haul & Rojabiyyah (Milik Internal)';
                 return [
-                    'item_name' => $li->item->name,
+                    'item_code' => $item->code ?? '-',
+                    'item_name' => $item->name ?? 'Barang Logistik',
+                    'source' => $item->source ?? 'internal',
+                    'source_label' => $isMitra ? 'Barang Pinjaman Mitra' : 'Aset Internal Panitia',
+                    'owner_name' => $ownerName,
+                    'condition' => $item->condition ?? 'baik',
+                    'location' => $item->storage_location ?? '-',
                     'qty_approved' => $li->qty_approved,
                     'qty_returned' => $li->qty_returned,
                 ];

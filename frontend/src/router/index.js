@@ -61,6 +61,7 @@ const routes = [
   },
   {
     path: '/verify-loan/:code',
+    alias: '/verify/:code',
     name: 'VerifyLoan',
     component: VerifyLoanView,
   },
