@@ -109,7 +109,7 @@ const routes = [
     path: '/cash',
     name: 'Cash',
     component: CashView,
-    meta: { requiresAuth: true, roles: ['super_admin', 'bendahara', 'admin'] },
+    meta: { requiresAuth: true, roles: ['super_admin', 'bendahara'] },
   },
   {
     path: '/sliders',

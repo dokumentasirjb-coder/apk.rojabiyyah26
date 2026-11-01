@@ -121,17 +121,62 @@ Route::prefix('v1')->group(function () {
         Route::post('/reports/{id}/followups', [FieldReportController::class, 'addFollowup']);
         Route::patch('/reports/{id}/status', [FieldReportController::class, 'updateStatus']);
 
-        // Cash Management
-        Route::get('/cash', [CashController::class, 'index']);
+        // Cash Management (Khusus Super Admin & Bendahara)
+        Route::get('/cash', function (\Illuminate\Http\Request $request) {
+            if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
+                return response()->json(['message' => 'Akses ditolak. Hanya Super Admin dan Bendahara.'], 403);
+            }
+            return app(\App\Http\Controllers\Api\V1\CashController::class)->index($request);
+        });
         Route::post('/cash', [CashController::class, 'store']);
-        Route::post('/cash/{id}/void', [CashController::class, 'voidTransaction']);
-        Route::get('/cash/summary', [CashController::class, 'summary']);
-        Route::get('/cash/categories', [CashController::class, 'categories']);
-        Route::post('/cash/categories', [CashController::class, 'storeCategory']);
-        Route::get('/cash/export', [CashController::class, 'export']);
-        Route::get('/cash/template', [CashController::class, 'template']);
-        Route::post('/cash/import/preview', [CashController::class, 'importPreview']);
-        Route::post('/cash/import', [CashController::class, 'importExecute']);
+        Route::post('/cash/{id}/void', function (\Illuminate\Http\Request $request, $id) {
+            if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
+                return response()->json(['message' => 'Akses ditolak.'], 403);
+            }
+            return app(\App\Http\Controllers\Api\V1\CashController::class)->voidTransaction($request, $id);
+        });
+        Route::get('/cash/summary', function (\Illuminate\Http\Request $request) {
+            if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
+                return response()->json(['message' => 'Akses ditolak.'], 403);
+            }
+            return app(\App\Http\Controllers\Api\V1\CashController::class)->summary($request);
+        });
+        Route::get('/cash/categories', function (\Illuminate\Http\Request $request) {
+            if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
+                return response()->json(['message' => 'Akses ditolak.'], 403);
+            }
+            return app(\App\Http\Controllers\Api\V1\CashController::class)->categories($request);
+        });
+        Route::post('/cash/categories', function (\Illuminate\Http\Request $request) {
+            if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
+                return response()->json(['message' => 'Akses ditolak.'], 403);
+            }
+            return app(\App\Http\Controllers\Api\V1\CashController::class)->storeCategory($request);
+        });
+        Route::get('/cash/export', function (\Illuminate\Http\Request $request) {
+            if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
+                return response()->json(['message' => 'Akses ditolak.'], 403);
+            }
+            return app(\App\Http\Controllers\Api\V1\CashController::class)->export($request);
+        });
+        Route::get('/cash/template', function (\Illuminate\Http\Request $request) {
+            if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
+                return response()->json(['message' => 'Akses ditolak.'], 403);
+            }
+            return app(\App\Http\Controllers\Api\V1\CashController::class)->template($request);
+        });
+        Route::post('/cash/import/preview', function (\Illuminate\Http\Request $request) {
+            if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
+                return response()->json(['message' => 'Akses ditolak.'], 403);
+            }
+            return app(\App\Http\Controllers\Api\V1\CashController::class)->importPreview($request);
+        });
+        Route::post('/cash/import', function (\Illuminate\Http\Request $request) {
+            if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
+                return response()->json(['message' => 'Akses ditolak.'], 403);
+            }
+            return app(\App\Http\Controllers\Api\V1\CashController::class)->importExecute($request);
+        });
 
         // Sliders
         Route::get('/sliders', [SliderController::class, 'index']);

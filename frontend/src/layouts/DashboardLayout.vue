@@ -299,7 +299,7 @@
               </router-link>
 
               <router-link
-                v-if="['super_admin', 'bendahara', 'admin'].includes(authStore.user?.role)"
+                v-if="['super_admin', 'bendahara'].includes(authStore.user?.role)"
                 to="/cash"
                 class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition group"
                 :class="$route.path.startsWith('/cash') ? 'bg-gradient-to-r from-[#059669] to-[#10b981] text-white shadow-md shadow-emerald-600/20 font-bold' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700'"
