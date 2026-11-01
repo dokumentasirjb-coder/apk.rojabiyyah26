@@ -8,9 +8,9 @@
             <div class="w-8 h-8 rounded-xl bg-teal-50 border border-slate-200 flex items-center justify-center text-teal-400">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             </div>
-            <h2 class="text-xl font-bold text-slate-900 tracking-tight">Kontrol Wilayah &amp; Titik Tugas</h2>
+            <h2 class="text-xl font-bold text-slate-900 tracking-tight">Tugas Anggota &amp; Titik Tugas</h2>
           </div>
-          <p class="text-xs text-slate-500 mt-1">Penetapan pos teknis (Proyektor, Fotografer, Videografer, Perkabelan), jadwal tanggal &amp; jam, penugasan PIC, dan tindak lanjut laporan lapangan.</p>
+          <p class="text-xs text-slate-500 mt-1">Penetapan pos teknis tugas anggota (Proyektor, Fotografer, Videografer, Perkabelan), jadwal tanggal &amp; jam, penugasan PIC, dan tindak lanjut laporan lapangan.</p>
         </div>
 
         <button

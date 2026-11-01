@@ -10,7 +10,7 @@
             </div>
             <h2 class="text-xl font-bold text-slate-800 tracking-tight">Manajemen Data Anggota</h2>
           </div>
-          <p class="text-xs text-slate-500 mt-1">Data keanggotaan, penugasan divisi panitia, pendidikan, domisili, seragam, dan kontrol wilayah.</p>
+          <p class="text-xs text-slate-500 mt-1">Data keanggotaan, penugasan divisi panitia, pendidikan, domisili, seragam, dan penugasan anggota.</p>
         </div>
 
         <div class="flex flex-wrap items-center gap-2.5">
