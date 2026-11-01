@@ -166,14 +166,6 @@ class CashController extends Controller
         ]);
     }
 
-        AuditLog::log('update', 'CashTransaction', $trx->id, $old, $trx->toArray());
-
-        return response()->json([
-            'message' => 'Transaksi kas berhasil diperbarui.',
-            'transaction' => $trx->load(['category', 'creator']),
-        ]);
-    }
-
     public function destroy(Request $request, $id)
     {
         $user = $request->user();
