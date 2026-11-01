@@ -30,14 +30,21 @@
           ]"
           :title="sidebarCollapsed ? (settingsStore.settings?.app_name || 'MEDIA ROJABIYYAH') : ''"
         >
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#059669] to-[#10b981] border border-emerald-300/50 flex items-center justify-center text-white font-black shadow-md shadow-emerald-500/20 flex-shrink-0 group-hover:scale-105 transition-transform duration-200 p-1">
+          <div
+            :class="[
+              'flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-200',
+              sidebarCollapsed ? 'w-10 h-10' : 'h-10 w-auto'
+            ]"
+          >
             <img
               v-if="settingsStore.settings?.logo_url && settingsStore.settings?.logo_url !== '/logo.png'"
               :src="settingsStore.settings.logo_url"
               alt="Logo"
-              class="w-full h-full object-contain rounded-lg"
+              class="h-8 sm:h-9 w-auto max-w-[48px] object-contain"
             />
-            <svg v-else class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <div v-else class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#059669] to-[#10b981] flex items-center justify-center text-white">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            </div>
           </div>
           <div v-show="!sidebarCollapsed" class="min-w-0 transition-opacity duration-200">
             <div class="text-xs font-black text-slate-900 tracking-wider uppercase truncate max-w-[145px]">

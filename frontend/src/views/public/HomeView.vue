@@ -5,14 +5,16 @@
       <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
         <!-- Brand -->
         <router-link to="/" class="flex items-center space-x-2.5 sm:space-x-3.5 group min-w-0 pr-2">
-          <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[#059669] to-[#10b981] border border-emerald-300/50 flex items-center justify-center shadow-md shadow-emerald-500/20 overflow-hidden group-hover:scale-105 transition flex-shrink-0">
+          <div class="h-9 sm:h-11 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition">
             <img
               v-if="settingsStore.settings?.logo_url && settingsStore.settings?.logo_url !== '/logo.png'"
               :src="settingsStore.settings.logo_url"
               alt="Logo"
-              class="w-full h-full object-cover"
+              class="h-8 sm:h-10 w-auto object-contain"
             />
-            <svg v-else class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <div v-else class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-[#059669] to-[#10b981] flex items-center justify-center text-white">
+              <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            </div>
           </div>
           <div class="min-w-0">
             <div class="font-extrabold text-xs sm:text-base tracking-wider uppercase text-slate-900 flex items-center space-x-1.5 truncate">
