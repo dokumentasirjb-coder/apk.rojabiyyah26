@@ -1013,7 +1013,7 @@
               <p class="text-xs text-slate-500 mt-0.5">Pengguna dengan kewenangan mengatur sistem, logistik, dan transaksi kas.</p>
             </div>
             <button
-              @click="showAddAdminModal = true"
+              @click="openAddAdminModal"
               class="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-[#059669] to-[#10b981] hover:from-[#047857] hover:to-[#059669] text-white text-xs font-bold transition shadow-lg"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
@@ -1346,40 +1346,111 @@
       <!-- MODAL: TAMBAH ADMIN BARU                                                  -->
       <!-- ========================================================================= -->
       <div v-if="showAddAdminModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-        <div class="relative w-full max-w-md bg-white border border-slate-200 rounded-3xl p-6 shadow-sm text-slate-700">
+        <div class="relative w-full max-w-md bg-white border border-slate-200 rounded-3xl p-6 shadow-2xl text-slate-700">
           <div class="flex items-center justify-between pb-3 border-b border-slate-200 mb-4">
-            <h3 class="text-base font-bold text-slate-900">Tambah Pengelola Admin Baru</h3>
-            <button @click="showAddAdminModal = false" class="text-slate-500 hover:text-white">✕</button>
+            <div>
+              <h3 class="text-base font-bold text-slate-900">Tambah Pengelola Admin Baru</h3>
+              <p class="text-[11px] text-slate-500 mt-0.5">Pilih anggota terdaftar atau daftarkan akun baru.</p>
+            </div>
+            <button @click="showAddAdminModal = false" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">✕</button>
           </div>
+
           <form @submit.prevent="submitAddAdmin" class="space-y-4 text-xs">
-            <div>
-              <label class="block font-semibold text-slate-700 mb-1">Nama Lengkap *</label>
-              <input v-model="newAdminForm.name" type="text" required class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 focus:outline-none focus:border-emerald-500" />
+            <!-- PILIHAN OTOMATIS ANGGOTA TERDAFTAR -->
+            <div class="p-3.5 rounded-2xl bg-emerald-50/80 border border-emerald-200 space-y-1.5">
+              <label class="block font-bold text-emerald-950 text-xs flex items-center space-x-1.5">
+                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                <span>Pilih Anggota yang Sudah Login/Terdaftar:</span>
+              </label>
+              <select
+                v-model="selectedCandidateId"
+                @change="onCandidateSelected"
+                class="w-full px-3 py-2 bg-white border border-emerald-300 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              >
+                <option value="">-- Ketik Manual / Buat Akun Baru --</option>
+                <option
+                  v-for="user in adminCandidates"
+                  :key="user.id"
+                  :value="user.id"
+                >
+                  {{ user.name }} ({{ user.member_no || 'Anggota' }}) - {{ user.email }}
+                </option>
+              </select>
+              <p class="text-[11px] text-emerald-700">
+                Pilih nama anggota di atas agar data nama, email, dan no WhatsApp terisi otomatis untuk langsung diangkat menjadi <strong>Super Admin</strong>.
+              </p>
             </div>
+
             <div>
-              <label class="block font-semibold text-slate-700 mb-1">Email Akun *</label>
-              <input v-model="newAdminForm.email" type="email" required class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 focus:outline-none focus:border-emerald-500" />
+              <div class="flex items-center justify-between mb-1">
+                <label class="font-semibold text-slate-700">Nama Lengkap *</label>
+                <span v-if="selectedCandidateId" class="text-[10px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full border border-emerald-200">Terisi Otomatis</span>
+              </div>
+              <input
+                v-model="newAdminForm.name"
+                type="text"
+                required
+                :readonly="!!selectedCandidateId"
+                class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 focus:outline-none focus:border-emerald-500"
+                :class="selectedCandidateId ? 'bg-slate-50 cursor-not-allowed text-slate-700 font-bold' : ''"
+              />
             </div>
+
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <label class="font-semibold text-slate-700">Email Akun *</label>
+                <span v-if="selectedCandidateId" class="text-[10px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full border border-emerald-200">Akun Terdaftar</span>
+              </div>
+              <input
+                v-model="newAdminForm.email"
+                type="email"
+                required
+                :readonly="!!selectedCandidateId"
+                class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 focus:outline-none focus:border-emerald-500"
+                :class="selectedCandidateId ? 'bg-slate-50 cursor-not-allowed font-medium' : ''"
+              />
+            </div>
+
             <div>
               <label class="block font-semibold text-slate-700 mb-1">Role / Hak Akses *</label>
-              <select v-model="newAdminForm.role" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 focus:outline-none focus:border-emerald-500">
+              <select v-model="newAdminForm.role" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 font-bold focus:outline-none focus:border-emerald-500">
+                <option value="super_admin">⭐ Super Admin (Akses Penuh Seluruh Sistem)</option>
                 <option value="admin">Admin Operasional</option>
                 <option value="bendahara">Bendahara</option>
-                <option value="super_admin">Super Admin</option>
               </select>
             </div>
+
             <div>
               <label class="block font-semibold text-slate-700 mb-1">No. WhatsApp</label>
-              <input v-model="newAdminForm.phone_wa" type="text" placeholder="081234567890" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 focus:outline-none focus:border-emerald-500" />
+              <input
+                v-model="newAdminForm.phone_wa"
+                type="text"
+                placeholder="081234567890"
+                class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 focus:outline-none focus:border-emerald-500"
+              />
             </div>
+
             <div>
-              <label class="block font-semibold text-slate-700 mb-1">Kata Sandi Awal *</label>
-              <input v-model="newAdminForm.password" type="password" required minlength="6" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 focus:outline-none focus:border-emerald-500" />
+              <div class="flex items-center justify-between mb-1">
+                <label class="font-semibold text-slate-700">
+                  {{ selectedCandidateId ? 'Ganti Kata Sandi (Opsional)' : 'Kata Sandi Awal *' }}
+                </label>
+                <span v-if="selectedCandidateId" class="text-[10px] text-slate-400">Kosongkan jika tetap memakai kata sandi lama</span>
+              </div>
+              <input
+                v-model="newAdminForm.password"
+                type="password"
+                :required="!selectedCandidateId"
+                :minlength="selectedCandidateId ? undefined : 6"
+                placeholder="••••••••••••"
+                class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 focus:outline-none focus:border-emerald-500"
+              />
             </div>
+
             <div class="flex items-center justify-end space-x-2 pt-3 border-t border-slate-200">
-              <button type="button" @click="showAddAdminModal = false" class="px-4 py-2 bg-white rounded-xl text-slate-700">Batal</button>
-              <button type="submit" :disabled="savingAdmin" class="px-5 py-2 bg-[#059669] text-white font-bold rounded-xl shadow">
-                {{ savingAdmin ? 'Menyimpan...' : 'Simpan Akun' }}
+              <button type="button" @click="showAddAdminModal = false" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-xl text-slate-700 font-semibold transition">Batal</button>
+              <button type="submit" :disabled="savingAdmin" class="px-5 py-2 bg-gradient-to-r from-[#059669] to-[#10b981] hover:from-[#047857] hover:to-[#059669] text-white font-bold rounded-xl shadow transition disabled:opacity-50">
+                {{ savingAdmin ? 'Menyimpan...' : (selectedCandidateId ? 'Angkat Menjadi Pengelola' : 'Simpan Akun Baru') }}
               </button>
             </div>
           </form>
@@ -2120,14 +2191,17 @@ const deleteCustomField = async (index) => {
 // TAB 6: ADMIN USERS MANAGEMENT
 // =========================================================================
 const adminList = ref([]);
+const adminCandidates = ref([]);
+const selectedCandidateId = ref('');
 const showAddAdminModal = ref(false);
 const savingAdmin = ref(false);
 const newAdminForm = ref({
+  user_id: null,
   name: '',
   email: '',
-  role: 'admin',
+  role: 'super_admin',
   phone_wa: '',
-  password: 'password123',
+  password: '',
 });
 
 const fetchAdmins = async () => {
@@ -2139,16 +2213,65 @@ const fetchAdmins = async () => {
   }
 };
 
+const fetchAdminCandidates = async () => {
+  try {
+    const res = await api.get('/admins/candidates');
+    adminCandidates.value = res.data || [];
+  } catch (err) {
+    console.error('Gagal mengambil daftar anggota kandidat admin:', err);
+  }
+};
+
+const openAddAdminModal = async () => {
+  selectedCandidateId.value = '';
+  newAdminForm.value = {
+    user_id: null,
+    name: '',
+    email: '',
+    role: 'super_admin',
+    phone_wa: '',
+    password: '',
+  };
+  showAddAdminModal.value = true;
+  await fetchAdminCandidates();
+};
+
+const onCandidateSelected = () => {
+  if (!selectedCandidateId.value) {
+    newAdminForm.value.user_id = null;
+    newAdminForm.value.name = '';
+    newAdminForm.value.email = '';
+    newAdminForm.value.phone_wa = '';
+    newAdminForm.value.role = 'super_admin';
+    newAdminForm.value.password = '';
+    return;
+  }
+  const candidate = adminCandidates.value.find((c) => c.id === Number(selectedCandidateId.value));
+  if (candidate) {
+    newAdminForm.value.user_id = candidate.id;
+    newAdminForm.value.name = candidate.name;
+    newAdminForm.value.email = candidate.email;
+    newAdminForm.value.phone_wa = candidate.phone_wa || '';
+    newAdminForm.value.role = 'super_admin';
+    newAdminForm.value.password = '';
+  }
+};
+
 const submitAddAdmin = async () => {
+  if (!newAdminForm.value.user_id && !newAdminForm.value.password) {
+    alert('Kata sandi awal minimal 6 karakter wajib diisi untuk pembuatan akun baru.');
+    return;
+  }
   savingAdmin.value = true;
   try {
-    await api.post('/admins', newAdminForm.value);
-    alert('Akun pengelola admin baru berhasil ditambahkan!');
+    const res = await api.post('/admins', newAdminForm.value);
+    alert(res.data?.message || 'Akun pengelola admin berhasil disimpan!');
     showAddAdminModal.value = false;
-    newAdminForm.value = { name: '', email: '', role: 'admin', phone_wa: '', password: 'password123' };
+    newAdminForm.value = { user_id: null, name: '', email: '', role: 'super_admin', phone_wa: '', password: '' };
+    selectedCandidateId.value = '';
     await fetchAdmins();
   } catch (err) {
-    alert(err.response?.data?.message || 'Gagal menambahkan admin baru.');
+    alert(err.response?.data?.message || 'Gagal menyimpan pengelola admin.');
   } finally {
     savingAdmin.value = false;
   }

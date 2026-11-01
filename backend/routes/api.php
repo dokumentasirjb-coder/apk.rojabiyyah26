@@ -150,7 +150,46 @@ Route::prefix('v1')->group(function () {
                 ->get();
             return response()->json($admins);
         });
+
+        Route::get('/admins/candidates', function () {
+            $candidates = \App\Models\User::whereNotNull('email')
+                ->where('email', '!=', '')
+                ->where('role', '!=', 'super_admin')
+                ->orderBy('name', 'asc')
+                ->get(['id', 'name', 'email', 'phone_wa', 'member_no', 'role']);
+            return response()->json($candidates);
+        });
+
         Route::post('/admins', function (\Illuminate\Http\Request $request) {
+            if ($request->filled('user_id')) {
+                $request->validate([
+                    'user_id' => 'required|exists:users,id',
+                    'role' => 'required|in:super_admin,admin,bendahara',
+                    'password' => 'nullable|string|min:6',
+                ]);
+                $user = \App\Models\User::findOrFail($request->user_id);
+                $updateData = [
+                    'role' => $request->role,
+                    'is_active' => true,
+                ];
+                if ($request->filled('name')) {
+                    $updateData['name'] = $request->name;
+                }
+                if ($request->filled('phone_wa')) {
+                    $updateData['phone_wa'] = $request->phone_wa;
+                }
+                if ($request->filled('password')) {
+                    $updateData['password'] = \Illuminate\Support\Facades\Hash::make($request->password);
+                }
+                $user->update($updateData);
+
+                $roleLabel = $request->role === 'super_admin' ? 'Super Admin' : ($request->role === 'bendahara' ? 'Bendahara' : 'Admin Operasional');
+                return response()->json([
+                    'message' => "Akun {$user->name} berhasil diangkat menjadi {$roleLabel}.",
+                    'admin' => $user,
+                ], 200);
+            }
+
             $request->validate([
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|unique:users,email',
