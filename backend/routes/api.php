@@ -21,6 +21,7 @@ Route::prefix('v1')->group(function () {
     // Public routes (Read-only for guests)
     Route::post('/login', [AuthController::class, 'login']);
     Route::get('/public/overview', [PublicEventController::class, 'overview']);
+    Route::get('/public/landing', [PublicEventController::class, 'overview']);
     Route::get('/public/sliders', [SliderController::class, 'publicSliders']);
     Route::get('/public/loans/verify/{code}', [LoanController::class, 'verifyPublic']);
     Route::get('/public/loans/{id}/pdf', [LoanController::class, 'generatePdf']);

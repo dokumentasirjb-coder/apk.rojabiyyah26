@@ -487,6 +487,74 @@
             </div>
           </div>
         </div>
+
+        <!-- 3. Instruksi & SOP Troubleshooting Proyektor Section -->
+        <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2.5">
+              <div class="w-8 h-8 rounded-xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center font-bold text-sm">
+                ℹ️
+              </div>
+              <div>
+                <h4 class="text-sm font-bold text-slate-800">SOP Troubleshooting &amp; Prosedur Cepat Kendala Proyektor</h4>
+                <p class="text-xs text-slate-500">Poin instruksi panduan teknis yang tampil di bagian bawah halaman Pembagian Proyektor Publik.</p>
+              </div>
+            </div>
+            <button
+              @click="addProyektorSop"
+              class="px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-bold border border-amber-200 flex items-center space-x-1 transition"
+            >
+              <span>+ Tambah Poin SOP</span>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+            <div
+              v-for="(sop, sIdx) in proyektorSop"
+              :key="sIdx"
+              class="p-4 rounded-2xl bg-amber-50/40 border border-amber-200 space-y-3 relative group"
+            >
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-black uppercase text-amber-700 tracking-wider">Poin {{ sIdx + 1 }}</span>
+                <button
+                  @click="removeProyektorSop(sIdx)"
+                  class="text-rose-500 hover:text-rose-700 text-xs font-bold"
+                  title="Hapus SOP"
+                >
+                  ✕
+                </button>
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-700 mb-1">Judul SOP / Kendala:</label>
+                <input
+                  v-model="sop.title"
+                  type="text"
+                  placeholder="misal: Layar Mati / No Signal"
+                  class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-800 font-bold focus:outline-none focus:border-amber-500"
+                />
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-700 mb-1">Deskripsi &amp; Langkah Penanganan:</label>
+                <textarea
+                  v-model="sop.desc"
+                  rows="3"
+                  placeholder="Langkah penanganan..."
+                  class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-700 focus:outline-none focus:border-amber-500 resize-none leading-relaxed"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-end pt-2">
+            <button
+              @click="saveProyektorTeams"
+              :disabled="savingProyektor"
+              class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md transition disabled:opacity-50 flex items-center space-x-1.5"
+            >
+              <span>{{ savingProyektor ? 'Menyimpan...' : 'Simpan SOP &amp; Pembagian Proyektor' }}</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- =================================================================== -->
@@ -807,6 +875,74 @@
             </div>
           </div>
         </div>
+
+        <!-- 3. Instruksi Teknis Tim Dokumentasi Section -->
+        <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2.5">
+              <div class="w-8 h-8 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center font-bold text-sm">
+                📋
+              </div>
+              <div>
+                <h4 class="text-sm font-bold text-slate-800">Instruksi Teknis Petugas Dokumentasi &amp; Shooting Lapangan</h4>
+                <p class="text-xs text-slate-500">Poin instruksi SOP yang tampil di bagian bawah halaman Jadwal Kerja Tim.</p>
+              </div>
+            </div>
+            <button
+              @click="addJadwalInstruksi"
+              class="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold border border-emerald-200 flex items-center space-x-1 transition"
+            >
+              <span>+ Tambah Poin Instruksi</span>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+            <div
+              v-for="(inst, iIdx) in jadwalInstruksi"
+              :key="iIdx"
+              class="p-4 rounded-2xl bg-emerald-50/40 border border-emerald-200 space-y-3 relative group"
+            >
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-black uppercase text-emerald-700 tracking-wider">Poin {{ iIdx + 1 }}</span>
+                <button
+                  @click="removeJadwalInstruksi(iIdx)"
+                  class="text-rose-500 hover:text-rose-700 text-xs font-bold"
+                  title="Hapus Instruksi"
+                >
+                  ✕
+                </button>
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-700 mb-1">Judul Instruksi:</label>
+                <input
+                  v-model="inst.title"
+                  type="text"
+                  placeholder="misal: Briefing &amp; Standby Posisi"
+                  class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-800 font-bold focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-700 mb-1">Deskripsi Arahan:</label>
+                <textarea
+                  v-model="inst.desc"
+                  rows="3"
+                  placeholder="Detail instruksi kerja..."
+                  class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-700 focus:outline-none focus:border-emerald-500 resize-none leading-relaxed"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-end pt-2">
+            <button
+              @click="saveJadwalTim"
+              :disabled="savingJadwal"
+              class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md transition disabled:opacity-50 flex items-center space-x-1.5"
+            >
+              <span>{{ savingJadwal ? 'Menyimpan...' : 'Simpan Instruksi &amp; Jadwal Kerja' }}</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- =================================================================== -->
@@ -903,6 +1039,55 @@ const uploadingProyektorPhoto = ref(false);
 const proyektorFileInputRef = ref(null);
 const savingProyektor = ref(false);
 
+const defaultProyektorSop = [
+  {
+    title: 'Layar Mati / "No Signal"',
+    desc: 'Periksa kabel HDMI/VGA dari splitter cabang. Jika kabel FO, pastikan konverter bertenaga adaptor 5V aktif. Hubungi Koordinator Jalur FO jika lampu indikator padam.',
+  },
+  {
+    title: 'Gambar Kedip / Flicker',
+    desc: 'Ganti kabel extender atau turunkan resolusi output switcher di tenda pusat. Pastikan grounding terminal listrik di panggung posko aman & tidak bersentuhan dengan sound.',
+  },
+  {
+    title: 'Kontak Darurat Koordinator',
+    desc: 'Hubungi Koordinator Proyektor melalui handy talky (HT) Channel 3 Media atau telepon darurat panitia proyektor bila kendala > 3 menit belum tertangani.',
+  },
+];
+
+const defaultJadwalInstruksi = [
+  {
+    title: 'Briefing & Standby Posisi',
+    desc: 'Seluruh kameramen dan tim liputan wajib standby di posko masing-masing 30 menit sebelum sesi dimulai. Lakukan pengecekan baterai, SD Card, dan audio input.',
+  },
+  {
+    title: 'Komunikasi & Intercom HT',
+    desc: 'Gunakan HT Channel 1 Media (Shooting Live) atau Channel 2 (Liputan & Drone). Dilarang meninggalkan posisi utama tanpa konfirmasi ke Koordinator Lapangan.',
+  },
+  {
+    title: 'Penyerahan File & Backup',
+    desc: 'Setelah sesi selesai, segera serahkan SD Card / transfer footage ke Tim Editor Posko Utama untuk proses ingest cepat dan backup ganda ke server media.',
+  },
+];
+
+const proyektorSop = ref([...defaultProyektorSop]);
+const jadwalInstruksi = ref([...defaultJadwalInstruksi]);
+
+const addProyektorSop = () => {
+  proyektorSop.value.push({ title: '', desc: '' });
+};
+
+const removeProyektorSop = (idx) => {
+  proyektorSop.value.splice(idx, 1);
+};
+
+const addJadwalInstruksi = () => {
+  jadwalInstruksi.value.push({ title: '', desc: '' });
+};
+
+const removeJadwalInstruksi = (idx) => {
+  jadwalInstruksi.value.splice(idx, 1);
+};
+
 const jadwalPhotos = ref([]);
 const uploadingJadwal = ref(false);
 const jadwalFileInputRef = ref(null);
@@ -988,6 +1173,13 @@ const fetchData = async () => {
     jadwalShooting.value = overviewRes.data.jadwal_shooting || [];
     calendarEvents.value = overviewRes.data.calendar_events || [];
     sliders.value = sliderRes.data || [];
+
+    if (overviewRes.data.proyektor_sop?.length) {
+      proyektorSop.value = overviewRes.data.proyektor_sop;
+    }
+    if (overviewRes.data.jadwal_instruksi?.length) {
+      jadwalInstruksi.value = overviewRes.data.jadwal_instruksi;
+    }
 
     if (settingsRes.data) {
       heroForm.value.hero_title_white = settingsRes.data.hero_title_white || 'Media Rojabiyyah';
@@ -1125,8 +1317,11 @@ const removeProyektorItem = (tIdx, iIdx) => {
 const saveProyektorTeams = async () => {
   savingProyektor.value = true;
   try {
-    await api.post('/admin/landing/save-proyektor', { teams: proyektorTeams.value });
-    alert('Pembagian tim proyektor berhasil disimpan dan sinkron dengan beranda!');
+    await api.post('/admin/landing/save-proyektor', {
+      teams: proyektorTeams.value,
+      sop: proyektorSop.value,
+    });
+    alert('Pembagian tim proyektor & SOP troubleshooting berhasil disimpan dan sinkron dengan beranda!');
   } catch (err) {
     alert(err.response?.data?.message || 'Gagal menyimpan data tim proyektor.');
   } finally {
@@ -1170,8 +1365,9 @@ const saveJadwalTim = async () => {
     await api.post('/admin/landing/save-jadwal', {
       jadwal_tim: jadwalTim.value,
       jadwal_shooting: jadwalShooting.value,
+      instruksi: jadwalInstruksi.value,
     });
-    alert('Jadwal kerja tim dokumentasi & shooting berhasil disimpan dan sinkron dengan beranda!');
+    alert('Jadwal kerja tim & instruksi teknis berhasil disimpan dan sinkron dengan beranda!');
   } catch (err) {
     alert(err.response?.data?.message || 'Gagal menyimpan jadwal tim.');
   } finally {

@@ -354,6 +354,53 @@ class PublicEventController extends Controller
             }
         }
 
+        // SOP Proyektor & Instruksi Teknis Jadwal
+        $defaultProyektorSop = [
+            [
+                'title' => "1. Layar Mati / 'No Signal'",
+                'desc' => "Periksa kabel HDMI/VGA dari splitter cabang. Jika kabel FO, pastikan konverter FO menyala indikator hijau.",
+            ],
+            [
+                'title' => "2. Gambar Kedip / Flicker",
+                'desc' => "Ganti kabel extender atau turunkan resolusi output switcher di tenda pusat menjadi 1080i / 720p.",
+            ],
+            [
+                'title' => "3. Kontak Darurat Koordinator",
+                'desc' => "Hubungi Koordinator Proyektor melalui handy talky (HT) Channel 3 Media atau Posko Pusat.",
+            ],
+        ];
+        $savedProyektorSop = Setting::get('proyektor_sop');
+        $proyektorSop = $defaultProyektorSop;
+        if ($savedProyektorSop !== null) {
+            $decoded = json_decode($savedProyektorSop, true);
+            if (is_array($decoded) && count($decoded) > 0) {
+                $proyektorSop = $decoded;
+            }
+        }
+
+        $defaultJadwalInstruksi = [
+            [
+                'title' => "1. Kehadiran & Koordinasi",
+                'desc' => "Seluruh personil wajib hadir di Posko Media 30 menit sebelum sesi kegiatan dimulai untuk pengecekan baterai, kartu memori, dan briefing.",
+            ],
+            [
+                'title' => "2. Penyetoran Bahan / Footage",
+                'desc' => "Selesai tiap sesi, memory card langsung diserahkan kepada tim editing/ingest di kantor media untuk backup data instan.",
+            ],
+            [
+                'title' => "3. Live Streaming & Multicam",
+                'desc' => "Kameramen multicam memastikan komunikasi intercom terhubung aktif dan mematuhi aba-aba Switcher Director.",
+            ],
+        ];
+        $savedJadwalInstruksi = Setting::get('jadwal_instruksi');
+        $jadwalInstruksi = $defaultJadwalInstruksi;
+        if ($savedJadwalInstruksi !== null) {
+            $decoded = json_decode($savedJadwalInstruksi, true);
+            if (is_array($decoded) && count($decoded) > 0) {
+                $jadwalInstruksi = $decoded;
+            }
+        }
+
         // 6. Calendar Events (Vristo Style)
         $savedCalendar = Setting::get('calendar_events');
         $calendarEvents = $savedCalendar ? json_decode($savedCalendar, true) : null;
@@ -430,8 +477,10 @@ class PublicEventController extends Controller
             'jadwal_photos' => $jadwalPhotos,
             'proyektor_photos' => $proyektorPhotos,
             'proyektor_teams' => $proyektorTeams,
+            'proyektor_sop' => $proyektorSop,
             'jadwal_tim' => $jadwalTim,
             'jadwal_shooting' => $jadwalShooting,
+            'jadwal_instruksi' => $jadwalInstruksi,
             'calendar_events' => $calendarEvents,
             'event' => [
                 'title' => Setting::get('sub_theme', 'Haul ke-5 Al-Maghfurlah K.H. Moch. Djamaluddin Achmad & Rojabiyyah 2026'),
@@ -615,12 +664,19 @@ class PublicEventController extends Controller
 
     public function saveProyektorTeams(Request $request)
     {
-        $request->validate(['teams' => 'required|array']);
-        Setting::set('proyektor_teams', json_encode($request->teams));
+        if ($request->has('teams')) {
+            $request->validate(['teams' => 'required|array']);
+            Setting::set('proyektor_teams', json_encode($request->teams));
+        }
+        if ($request->has('sop')) {
+            $request->validate(['sop' => 'required|array']);
+            Setting::set('proyektor_sop', json_encode($request->sop));
+        }
 
         return response()->json([
-            'message' => 'Data pembagian tim proyektor berhasil disimpan.',
-            'proyektor_teams' => $request->teams,
+            'message' => 'Data pembagian tim & SOP proyektor berhasil disimpan.',
+            'proyektor_teams' => $request->teams ?? json_decode(Setting::get('proyektor_teams', '[]'), true),
+            'proyektor_sop' => $request->sop ?? json_decode(Setting::get('proyektor_sop', '[]'), true),
         ]);
     }
 
@@ -632,9 +688,14 @@ class PublicEventController extends Controller
         if ($request->has('jadwal_shooting')) {
             Setting::set('jadwal_shooting', json_encode($request->jadwal_shooting));
         }
+        if ($request->has('instruksi')) {
+            $request->validate(['instruksi' => 'required|array']);
+            Setting::set('jadwal_instruksi', json_encode($request->instruksi));
+        }
 
         return response()->json([
-            'message' => 'Jadwal kerja tim dokumentasi berhasil diperbarui.',
+            'message' => 'Jadwal kerja & instruksi teknis tim berhasil diperbarui.',
+            'jadwal_instruksi' => $request->instruksi ?? json_decode(Setting::get('jadwal_instruksi', '[]'), true),
         ]);
     }
 

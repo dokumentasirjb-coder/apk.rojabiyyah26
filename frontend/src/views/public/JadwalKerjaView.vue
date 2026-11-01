@@ -385,26 +385,116 @@
 
       <!-- 7. SOP Briefing Catatan Lapangan -->
       <section class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-3">
-        <h3 class="text-xs sm:text-sm font-bold text-emerald-800 uppercase tracking-wider font-mono flex items-center space-x-2">
-          <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          <span>Instruksi Teknis Petugas Dokumentasi &amp; Shooting Lapangan</span>
-        </h3>
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <h3 class="text-xs sm:text-sm font-bold text-emerald-800 uppercase tracking-wider font-mono flex items-center space-x-2">
+            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span>Instruksi Teknis Petugas Dokumentasi &amp; Shooting Lapangan</span>
+          </h3>
+          <button
+            v-if="authStore.isAuthenticated"
+            @click="openEditInstruksiModal"
+            class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-800 text-xs font-bold transition shadow-xs active:scale-95"
+            title="Kelola & edit instruksi teknis dokumentasi lapangan"
+          >
+            <svg class="w-3.5 h-3.5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+            <span>Edit Instruksi Teknis</span>
+          </button>
+        </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-slate-600">
-          <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-            <span class="text-emerald-700 font-bold block mb-1">1. Kehadiran &amp; Koordinasi</span>
-            Seluruh personil wajib hadir di Posko Media 30 menit sebelum sesi kegiatan dimulai untuk pengecekan baterai, kartu memori, dan briefing.
-          </div>
-          <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-            <span class="text-emerald-700 font-bold block mb-1">2. Penyetoran Bahan / Footage</span>
-            Selesai tiap sesi, memory card langsung diserahkan kepada tim editing/ingest di kantor media untuk backup data instan.
-          </div>
-          <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-            <span class="text-emerald-700 font-bold block mb-1">3. Live Streaming &amp; Multicam</span>
-            Kameramen multicam memastikan komunikasi intercom terhubung aktif dan mematuhi aba-aba Switcher Director.
+          <div
+            v-for="(item, iIdx) in jadwalInstruksiList"
+            :key="'instruksi-' + iIdx"
+            class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1"
+          >
+            <span class="text-emerald-700 font-bold block">{{ item.title }}</span>
+            <p class="text-slate-600 leading-relaxed whitespace-pre-line">{{ item.desc }}</p>
           </div>
         </div>
       </section>
     </main>
+
+    <!-- Modal Edit Instruksi Teknis Jadwal -->
+    <div
+      v-if="showEditInstruksiModal"
+      class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto"
+      @click.self="showEditInstruksiModal = false"
+    >
+      <div class="relative max-w-2xl w-full bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-2xl p-5 sm:p-6 my-6 max-h-[90vh] flex flex-col text-xs text-slate-700">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-200 mb-4">
+          <div class="flex items-center space-x-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <h3 class="text-sm sm:text-base font-bold text-slate-900">Edit Instruksi Teknis Petugas Dokumentasi &amp; Shooting</h3>
+          </div>
+          <button @click="showEditInstruksiModal = false" class="text-slate-400 hover:text-slate-700 text-lg">✕</button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto space-y-3.5 pr-1">
+          <div
+            v-for="(item, idx) in editingInstruksiList"
+            :key="'edit-instruksi-' + idx"
+            class="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl space-y-2 relative"
+          >
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-emerald-800 text-[11px]">Poin Instruksi #{{ idx + 1 }}</span>
+              <button
+                type="button"
+                @click="removeInstruksiItem(idx)"
+                class="text-rose-600 hover:text-rose-700 font-bold text-[11px] flex items-center space-x-1"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                <span>Hapus</span>
+              </button>
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1 text-[11px]">Judul Instruksi *</label>
+              <input
+                v-model="item.title"
+                type="text"
+                placeholder="misal: 1. Kehadiran & Koordinasi"
+                class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl font-bold text-slate-900 focus:outline-none focus:border-emerald-500"
+              />
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1 text-[11px]">Penjelasan Petunjuk Teknis *</label>
+              <textarea
+                v-model="item.desc"
+                rows="2"
+                placeholder="Tuliskan petunjuk operasional di lapangan..."
+                class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-slate-800 focus:outline-none focus:border-emerald-500"
+              ></textarea>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            @click="addInstruksiItem"
+            class="w-full py-2.5 rounded-2xl border-2 border-dashed border-emerald-300 hover:border-emerald-500 bg-emerald-50/50 hover:bg-emerald-50 text-emerald-800 font-bold text-xs flex items-center justify-center space-x-1.5 transition"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span>+ Tambah Poin Instruksi Baru</span>
+          </button>
+        </div>
+
+        <div class="flex items-center justify-end space-x-2 pt-4 border-t border-slate-200 mt-4">
+          <button
+            type="button"
+            @click="showEditInstruksiModal = false"
+            class="px-4 py-2 bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 rounded-xl font-semibold transition"
+          >
+            Batal
+          </button>
+          <button
+            type="button"
+            @click="saveInstruksiChanges"
+            :disabled="savingInstruksi"
+            class="px-5 py-2 bg-gradient-to-r from-[#059669] to-[#10b981] hover:brightness-105 text-white font-bold rounded-xl transition flex items-center space-x-1.5 disabled:opacity-50"
+          >
+            <span v-if="savingInstruksi" class="inline-block w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+            <span>{{ savingInstruksi ? 'Menyimpan...' : 'Simpan Perubahan Instruksi' }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- Modal Lightbox Preview Gambar -->
     <div
@@ -434,8 +524,10 @@
 import { ref, computed, onMounted } from 'vue';
 import api from '../../services/api';
 import { useSettingsStore } from '../../stores/settings';
+import { useAuthStore } from '../../stores/auth';
 
 const settingsStore = useSettingsStore();
+const authStore = useAuthStore();
 
 const activeSubTab = ref('liputan');
 const searchQuery = ref('');
@@ -448,6 +540,55 @@ const availableTimes = ['Semua', 'Pagi', 'Siang', 'Malam'];
 const jadwalTimList = ref([]);
 const jadwalShootingList = ref([]);
 const jadwalPhotosList = ref([]);
+
+const defaultJadwalInstruksi = [
+  {
+    title: "1. Kehadiran & Koordinasi",
+    desc: "Seluruh personil wajib hadir di Posko Media 30 menit sebelum sesi kegiatan dimulai untuk pengecekan baterai, kartu memori, dan briefing."
+  },
+  {
+    title: "2. Penyetoran Bahan / Footage",
+    desc: "Selesai tiap sesi, memory card langsung diserahkan kepada tim editing/ingest di kantor media untuk backup data instan."
+  },
+  {
+    title: "3. Live Streaming & Multicam",
+    desc: "Kameramen multicam memastikan komunikasi intercom terhubung aktif dan mematuhi aba-aba Switcher Director."
+  }
+];
+const jadwalInstruksiList = ref([...defaultJadwalInstruksi]);
+const showEditInstruksiModal = ref(false);
+const editingInstruksiList = ref([]);
+const savingInstruksi = ref(false);
+
+const openEditInstruksiModal = () => {
+  editingInstruksiList.value = JSON.parse(JSON.stringify(jadwalInstruksiList.value));
+  showEditInstruksiModal.value = true;
+};
+
+const addInstruksiItem = () => {
+  editingInstruksiList.value.push({
+    title: `${editingInstruksiList.value.length + 1}. Judul Instruksi Baru`,
+    desc: 'Deskripsi teknis petunjuk penugasan...'
+  });
+};
+
+const removeInstruksiItem = (idx) => {
+  editingInstruksiList.value.splice(idx, 1);
+};
+
+const saveInstruksiChanges = async () => {
+  savingInstruksi.value = true;
+  try {
+    const res = await api.post('/admin/landing/save-jadwal', { instruksi: editingInstruksiList.value });
+    jadwalInstruksiList.value = res.data.jadwal_instruksi || editingInstruksiList.value;
+    showEditInstruksiModal.value = false;
+    alert('Instruksi teknis jadwal berhasil disimpan!');
+  } catch (err) {
+    alert(err.response?.data?.message || 'Gagal menyimpan instruksi teknis.');
+  } finally {
+    savingInstruksi.value = false;
+  }
+};
 
 const lightboxImage = ref(null);
 const lightboxCaption = ref('');
@@ -517,11 +658,14 @@ const printSchedule = () => {
 
 const fetchJadwalData = async () => {
   try {
-    const res = await api.get('/public/landing');
-    const data = res.data?.data || {};
+    const res = await api.get('/public/overview');
+    const data = res.data?.data || res.data || {};
     jadwalTimList.value = data.jadwal_tim || [];
     jadwalShootingList.value = data.jadwal_shooting || [];
     jadwalPhotosList.value = data.jadwal_photos || [];
+    if (data.jadwal_instruksi && Array.isArray(data.jadwal_instruksi) && data.jadwal_instruksi.length > 0) {
+      jadwalInstruksiList.value = data.jadwal_instruksi;
+    }
   } catch (err) {
     console.error('Failed to load jadwal kerja data', err);
   }
