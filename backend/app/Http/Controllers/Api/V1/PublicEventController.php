@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Region;
 use App\Models\Item;
 use App\Models\Slider;
+use App\Models\FieldReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
@@ -482,6 +483,10 @@ class PublicEventController extends Controller
             'jadwal_shooting' => $jadwalShooting,
             'jadwal_instruksi' => $jadwalInstruksi,
             'calendar_events' => $calendarEvents,
+            'field_reports' => FieldReport::with(['region:id,name,code', 'reporter:id,name', 'reporter.member.division:id,name', 'media', 'followups.user:id,name'])
+                ->orderBy('created_at', 'desc')
+                ->take(12)
+                ->get(),
             'event' => [
                 'title' => Setting::get('sub_theme', 'Haul ke-5 Al-Maghfurlah K.H. Moch. Djamaluddin Achmad & Rojabiyyah 2026'),
                 'theme' => 'Meneladani Jejak Perjuangan, Menjaga Sanad Keilmuan & Mempererat Ukhuwah Islamiyyah',

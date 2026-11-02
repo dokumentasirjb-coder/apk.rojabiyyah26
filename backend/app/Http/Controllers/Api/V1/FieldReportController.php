@@ -32,6 +32,23 @@ class FieldReportController extends Controller
         return response()->json($reports);
     }
 
+    public function publicReports(Request $request)
+    {
+        $query = FieldReport::with(['region:id,name,code', 'reporter:id,name', 'reporter.member.division:id,name', 'media', 'followups.user:id,name']);
+
+        if ($request->filled('region_id')) {
+            $query->where('region_id', $request->region_id);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $reports = $query->orderBy('created_at', 'desc')->paginate($request->input('per_page', 12));
+
+        return response()->json($reports);
+    }
+
     public function store(Request $request)
     {
         $request->validate([

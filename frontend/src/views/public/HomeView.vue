@@ -43,6 +43,10 @@
             <svg class="w-4 h-4 text-emerald-600 group-hover:scale-110 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
             <span class="whitespace-nowrap font-bold">Pembagian Proyektor</span>
           </router-link>
+          <a href="#laporan-lapangan" class="hover:text-emerald-700 transition flex items-center space-x-1.5 group">
+            <svg class="w-4 h-4 text-emerald-600 group-hover:scale-110 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            <span class="whitespace-nowrap font-bold">Laporan Posko</span>
+          </a>
         </nav>
 
         <!-- Desktop Navbar Action Buttons -->
@@ -125,6 +129,15 @@
           <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
           <span>Pembagian Tim Proyektor (Halaman Lengkap) ↗</span>
         </router-link>
+
+        <a
+          href="#laporan-lapangan"
+          @click="mobileMenuOpen = false"
+          class="flex items-center space-x-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-emerald-50 hover:text-emerald-700"
+        >
+          <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          <span>Laporan Situasi Lapangan</span>
+        </a>
 
         <div class="pt-2 border-t border-slate-200">
           <router-link
@@ -714,6 +727,229 @@
       </div>
     </section>
 
+    <!-- ===================================================================== -->
+    <!-- BAGIAN 5: LAPORAN POSKO & KONDISI LAPANGAN ANGGOTA (READ-ONLY PUBLIK) -->
+    <!-- ===================================================================== -->
+    <section id="laporan-lapangan" class="py-12 sm:py-16 bg-white border-t border-slate-200">
+      <div class="max-w-6xl mx-auto px-4">
+        <!-- Section Header -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-6 sm:mb-8 gap-3 sm:gap-4">
+          <div>
+            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[10px] sm:text-xs font-bold mb-2 sm:mb-3 uppercase tracking-wider">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+              <span>Bagian 5: Transparansi &amp; Pantauan Langsung</span>
+            </div>
+            <h2 class="text-xl sm:text-3xl font-black text-slate-900 tracking-tight">
+              Laporan Situasi &amp; Posko Lapangan
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl leading-relaxed">
+              Pantauan langsung kondisi posko, proyektor, kelistrikan, dan operasional teknis dari seluruh anggota di lapangan secara terbuka dan terverifikasi.
+            </p>
+          </div>
+
+          <!-- Quick Indicator & Action -->
+          <div class="flex items-center space-x-2.5 self-start md:self-auto flex-wrap">
+            <span class="px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-emerald-700 font-mono text-[11px] sm:text-xs font-bold flex items-center space-x-2 shadow-sm">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>{{ filteredFieldReports.length }} Laporan Ditampilkan</span>
+            </span>
+            <button
+              @click="fetchPublicReports"
+              :disabled="loadingReports"
+              class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition active:scale-95 disabled:opacity-50"
+              title="Perbarui data laporan"
+            >
+              <svg class="w-3.5 h-3.5" :class="{ 'animate-spin': loadingReports }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              <span>Segarkan</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 mb-6 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+          <!-- Status Pills -->
+          <div class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none text-xs font-semibold">
+            <button
+              @click="reportFilter.status = ''"
+              :class="reportFilter.status === '' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'"
+              class="px-3 py-1.5 rounded-xl transition whitespace-nowrap"
+            >
+              Semua Kondisi
+            </button>
+            <button
+              @click="reportFilter.status = 'normal'"
+              :class="reportFilter.status === 'normal' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-white text-emerald-700 hover:bg-emerald-50 border border-emerald-200'"
+              class="px-3 py-1.5 rounded-xl transition whitespace-nowrap flex items-center space-x-1"
+            >
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              <span>Normal (Aman)</span>
+            </button>
+            <button
+              @click="reportFilter.status = 'perlu_perhatian'"
+              :class="reportFilter.status === 'perlu_perhatian' ? 'bg-amber-500 text-white shadow-sm' : 'bg-white text-amber-700 hover:bg-amber-50 border border-amber-200'"
+              class="px-3 py-1.5 rounded-xl transition whitespace-nowrap flex items-center space-x-1"
+            >
+              <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+              <span>Perlu Perhatian</span>
+            </button>
+            <button
+              @click="reportFilter.status = 'rusak_kendala'"
+              :class="reportFilter.status === 'rusak_kendala' ? 'bg-rose-600 text-white shadow-sm' : 'bg-white text-rose-700 hover:bg-rose-50 border border-rose-200'"
+              class="px-3 py-1.5 rounded-xl transition whitespace-nowrap flex items-center space-x-1"
+            >
+              <span class="w-2 h-2 rounded-full bg-rose-400"></span>
+              <span>Kendala / Rusak</span>
+            </button>
+          </div>
+
+          <!-- Search & Region Dropdown -->
+          <div class="flex items-center gap-2">
+            <select
+              v-model="reportFilter.region_id"
+              class="px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-xl text-slate-700 focus:outline-none focus:border-emerald-500 font-medium"
+            >
+              <option value="">Semua Posko / Wilayah</option>
+              <option v-for="reg in (publicData.regions || [])" :key="reg.id" :value="reg.id">
+                {{ reg.name }} ({{ reg.code }})
+              </option>
+            </select>
+
+            <div class="relative w-full sm:w-48">
+              <svg class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35"/></svg>
+              <input
+                v-model="reportFilter.search"
+                type="text"
+                placeholder="Cari deskripsi / posko..."
+                class="w-full pl-8 pr-3 py-1.5 text-xs bg-white border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-500"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Read-Only Notice Box -->
+        <div class="mb-6 p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <div class="flex items-center space-x-2.5 text-emerald-900">
+            <svg class="w-4 h-4 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span>Laporan di bawah ini dipublikasikan secara langsung dari anggota yang bertugas di posko masing-masing dan <strong>hanya dapat dibaca (Read-Only)</strong>.</span>
+          </div>
+          <button
+            @click="showLoginModal = true"
+            class="inline-flex items-center justify-center space-x-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] shadow-sm transition active:scale-95 flex-shrink-0"
+          >
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span>Kirim Laporan (Masuk Petugas)</span>
+          </button>
+        </div>
+
+        <!-- Report Cards Grid -->
+        <div v-if="filteredFieldReports.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div
+            v-for="rep in filteredFieldReports"
+            :key="rep.id"
+            class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col overflow-hidden"
+          >
+            <!-- Card Header: Posko & Status -->
+            <div class="p-4 border-b border-slate-100 flex items-start justify-between gap-2 bg-slate-50/50">
+              <div class="min-w-0">
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-200/80 text-slate-700 mr-1.5">
+                  {{ rep.region?.code || 'POS' }}
+                </span>
+                <span class="font-bold text-slate-900 text-sm truncate inline-block align-middle max-w-[170px]">
+                  {{ rep.region?.name || 'Posko Umum' }}
+                </span>
+                <div class="text-[11px] text-slate-500 mt-1 flex items-center space-x-1">
+                  <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  <span>{{ formatReportDate(rep.created_at) }}</span>
+                </div>
+              </div>
+
+              <!-- Status Badge -->
+              <div class="flex flex-col items-end gap-1 flex-shrink-0">
+                <span
+                  class="px-2.5 py-1 rounded-full text-[10px] font-bold border uppercase tracking-wider font-mono inline-flex items-center space-x-1"
+                  :class="getReportStatusBadge(rep.status).class"
+                >
+                  <span class="w-1.5 h-1.5 rounded-full" :class="getReportStatusBadge(rep.status).dotClass"></span>
+                  <span>{{ getReportStatusBadge(rep.status).label }}</span>
+                </span>
+                <span
+                  v-if="rep.followup_status"
+                  class="text-[9px] px-2 py-0.5 rounded font-bold"
+                  :class="getFollowupBadge(rep.followup_status).class"
+                >
+                  {{ getFollowupBadge(rep.followup_status).label }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Card Body: Description & Photos -->
+            <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+              <p class="text-xs text-slate-700 leading-relaxed whitespace-pre-line font-medium">
+                {{ rep.description }}
+              </p>
+
+              <!-- Media / Photo Gallery Thumbnails -->
+              <div v-if="rep.media && rep.media.length > 0" class="pt-2">
+                <div class="flex items-center space-x-1 text-[10px] text-slate-500 mb-1.5 font-bold uppercase tracking-wider">
+                  <svg class="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                  <span>Bukti Foto Lapangan ({{ rep.media.length }})</span>
+                </div>
+                <div class="grid grid-cols-3 gap-2">
+                  <div
+                    v-for="(med, mIdx) in rep.media"
+                    :key="mIdx"
+                    @click="openLightbox(getPhotoUrl(med.path), 'Bukti Laporan - ' + (rep.region?.name || 'Posko'))"
+                    class="relative aspect-video rounded-xl overflow-hidden bg-slate-100 border border-slate-200 cursor-pointer group"
+                  >
+                    <img :src="getPhotoUrl(med.path)" alt="Bukti Lapangan" class="w-full h-full object-cover group-hover:scale-105 transition duration-200" />
+                    <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                      <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/></svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Followups / Solusi Admin Box if exists -->
+              <div v-if="rep.followups && rep.followups.length > 0" class="pt-2">
+                <div class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs">
+                  <div class="flex items-center space-x-1 text-emerald-800 font-bold text-[10px] uppercase font-mono mb-1">
+                    <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span>Tindak Lanjut &amp; Solusi Tim</span>
+                  </div>
+                  <p class="text-[11px] text-slate-700 italic">"{{ rep.followups[rep.followups.length - 1].solution }}"</p>
+                  <div class="text-[9px] text-emerald-700 mt-1 font-semibold">
+                    Oleh: {{ rep.followups[rep.followups.length - 1].user?.name || 'Admin Teknisi' }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card Footer: Reporter -->
+            <div class="px-4 py-2.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+              <div class="flex items-center space-x-1.5 truncate">
+                <div class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center text-[10px] flex-shrink-0">
+                  {{ (rep.reporter?.name || 'P').charAt(0).toUpperCase() }}
+                </div>
+                <span class="font-semibold text-slate-700 truncate">{{ rep.reporter?.name || 'Petugas Lapangan' }}</span>
+              </div>
+              <span class="text-[10px] font-mono text-slate-400 flex-shrink-0">
+                {{ rep.reporter?.member?.division?.name || 'Divisi Operasional' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div v-else class="p-12 rounded-3xl bg-slate-50 border border-slate-200 text-center">
+          <svg class="w-12 h-12 mx-auto text-slate-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          <p class="text-sm font-bold text-slate-800">Belum Ada Laporan Posko Lapangan</p>
+          <p class="text-xs text-slate-500 mt-1 max-w-md mx-auto">
+            Semua posko dalam status siaga dan belum ada laporan kendala yang dimasukkan oleh anggota lapangan.
+          </p>
+        </div>
+      </div>
+    </section>
+
     <!-- 4. Footer Publik -->
     <footer class="border-t border-slate-200 bg-white py-8 text-xs text-slate-600">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
@@ -809,6 +1045,7 @@ const publicData = ref({
   jadwal_tim: [],
   jadwal_shooting: [],
   calendar_events: [],
+  field_reports: [],
 });
 
 const denahPhotosList = computed(() => {
@@ -857,6 +1094,107 @@ const filteredProyektorTeams = computed(() => {
     })
     .filter(Boolean);
 });
+
+// Laporan Lapangan Publik (Read-Only)
+const reportFilter = ref({
+  status: '',
+  region_id: '',
+  search: '',
+});
+
+const loadingReports = ref(false);
+
+const filteredFieldReports = computed(() => {
+  let list = publicData.value.field_reports || [];
+  if (reportFilter.value.status) {
+    list = list.filter((r) => r.status === reportFilter.value.status);
+  }
+  if (reportFilter.value.region_id) {
+    list = list.filter((r) => String(r.region_id) === String(reportFilter.value.region_id));
+  }
+  if (reportFilter.value.search) {
+    const q = reportFilter.value.search.toLowerCase().trim();
+    list = list.filter((r) =>
+      (r.description || '').toLowerCase().includes(q) ||
+      (r.region?.name || '').toLowerCase().includes(q) ||
+      (r.region?.code || '').toLowerCase().includes(q) ||
+      (r.reporter?.name || '').toLowerCase().includes(q)
+    );
+  }
+  return list;
+});
+
+const getReportStatusBadge = (status) => {
+  switch (status) {
+    case 'normal':
+      return {
+        label: 'Normal / Siaga',
+        class: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+        dotClass: 'bg-emerald-500',
+      };
+    case 'perlu_perhatian':
+      return {
+        label: 'Perlu Perhatian',
+        class: 'bg-amber-50 text-amber-700 border-amber-200',
+        dotClass: 'bg-amber-500',
+      };
+    case 'rusak_kendala':
+      return {
+        label: 'Kendala Lapangan',
+        class: 'bg-rose-50 text-rose-700 border-rose-200',
+        dotClass: 'bg-rose-500',
+      };
+    default:
+      return {
+        label: status || 'Laporan',
+        class: 'bg-slate-50 text-slate-700 border-slate-200',
+        dotClass: 'bg-slate-400',
+      };
+  }
+};
+
+const getFollowupBadge = (status) => {
+  switch (status) {
+    case 'resolved':
+      return { label: '✓ Selesai Ditangani', class: 'bg-emerald-100 text-emerald-800' };
+    case 'in_progress':
+      return { label: '⏳ Sedang Ditangani', class: 'bg-sky-100 text-sky-800' };
+    case 'open':
+      return { label: '● Menunggu Penanganan', class: 'bg-amber-100 text-amber-800' };
+    default:
+      return { label: '-', class: 'bg-slate-100 text-slate-600' };
+  }
+};
+
+const formatReportDate = (dt) => {
+  if (!dt) return '-';
+  const d = new Date(dt);
+  return d.toLocaleDateString('id-ID', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }) + ' WIB';
+};
+
+const fetchPublicReports = async () => {
+  loadingReports.value = true;
+  try {
+    const res = await api.get('/public/reports', {
+      params: {
+        per_page: 24,
+      },
+    });
+    if (res.data?.data) {
+      publicData.value.field_reports = res.data.data;
+    }
+  } catch (err) {
+    console.warn('Gagal memuat laporan publik:', err);
+  } finally {
+    loadingReports.value = false;
+  }
+};
 
 // Photo URL Helper (Safe for local dev & production)
 const getPhotoUrl = (img) => {
@@ -1009,6 +1347,7 @@ const fetchPublicOverview = async () => {
         jadwal_photos: res.data.jadwal_photos || [],
         denah_photos: res.data.denah_photos || [],
         calendar_events: res.data.calendar_events || [],
+        field_reports: res.data.field_reports || publicData.value.field_reports || [],
       };
     }
 
@@ -1036,6 +1375,7 @@ const handleImageError = (e, slide) => {
 onMounted(() => {
   settingsStore.fetchSettings();
   fetchPublicOverview();
+  fetchPublicReports();
   autoSlideTimer = setInterval(nextSlide, 7000);
 });
 
