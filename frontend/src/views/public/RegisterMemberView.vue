@@ -32,12 +32,12 @@
             <span>Bagikan</span>
           </button>
 
-          <button
-            @click="showLoginModal = true"
+          <router-link
+            to="/login"
             class="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold transition shadow-md"
           >
             <span>Masuk Petugas</span>
-          </button>
+          </router-link>
         </div>
       </div>
     </header>

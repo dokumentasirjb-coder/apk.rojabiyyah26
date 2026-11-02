@@ -126,9 +126,9 @@
         <div class="mt-6 pt-5 border-t border-slate-200 text-center space-y-2 text-[11px]">
           <div>
             <span class="text-slate-500">Sudah memiliki akun pengurus atau anggota?</span>
-            <button @click="showLoginModal = true" class="text-amber-400 hover:underline font-bold ml-1">
+            <router-link to="/login" class="text-emerald-600 hover:underline font-bold ml-1">
               Masuk di Sini
-            </button>
+            </router-link>
           </div>
           <div>
             <span class="text-slate-500">Hanya ingin isi data pendaftaran anggota / seragam tanpa akun?</span><br />

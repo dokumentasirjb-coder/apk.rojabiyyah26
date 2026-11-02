@@ -60,24 +60,24 @@
             <span>Daftar Panitia</span>
           </router-link>
 
-          <button
-            @click="showLoginModal = true"
+          <router-link
+            to="/login"
             class="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-semibold transition active:scale-95 shadow-sm whitespace-nowrap"
           >
             <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
             <span>Masuk Petugas</span>
-          </button>
+          </router-link>
         </div>
 
         <!-- Mobile & Tablet Controls (< lg) -->
         <div class="flex lg:hidden items-center space-x-1.5 flex-shrink-0">
-          <button
-            @click="showLoginModal = true"
+          <router-link
+            to="/login"
             class="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 text-[11px] font-bold shadow-xs active:scale-95 transition"
           >
             <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14"/></svg>
             <span>Masuk</span>
-          </button>
+          </router-link>
 
           <button
             @click="mobileMenuOpen = !mobileMenuOpen"
@@ -837,13 +837,13 @@
             <svg class="w-4 h-4 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             <span>Laporan di bawah ini dipublikasikan secara langsung dari anggota yang bertugas di posko masing-masing dan <strong>hanya dapat dibaca (Read-Only)</strong>.</span>
           </div>
-          <button
-            @click="showLoginModal = true"
+          <router-link
+            to="/login"
             class="inline-flex items-center justify-center space-x-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] shadow-sm transition active:scale-95 flex-shrink-0"
           >
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
             <span>Kirim Laporan (Masuk Petugas)</span>
-          </button>
+          </router-link>
         </div>
 
         <!-- Report Cards Grid -->
@@ -968,7 +968,7 @@
           <span>&bull;</span>
           <router-link to="/register-account" class="text-slate-600 hover:text-emerald-700 transition">Registrasi Akun</router-link>
           <span>&bull;</span>
-          <button @click="showLoginModal = true" class="text-slate-600 hover:text-emerald-700 transition">Login Petugas</button>
+          <router-link to="/login" class="text-slate-600 hover:text-emerald-700 transition">Login Petugas</router-link>
         </div>
 
         <div class="text-[11px] text-slate-500 font-mono">
