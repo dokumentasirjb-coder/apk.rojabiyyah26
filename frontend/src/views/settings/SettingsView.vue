@@ -216,13 +216,37 @@
                     />
                   </div>
                   <div>
-                    <span class="text-[10px] text-slate-500 block mb-0.5">Teks Sorotan (Warna Gradient A)</span>
+                    <span class="text-[10px] text-slate-500 block mb-0.5">Teks Sorotan (Warna Gradient)</span>
                     <input
                       v-model="systemForm.hero_title_gradient"
                       type="text"
-                      class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-rose-300 focus:outline-none focus:border-emerald-500 font-bold"
+                      class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-emerald-600 focus:outline-none focus:border-emerald-500 font-bold"
                     />
                   </div>
+                </div>
+              </div>
+
+              <!-- Hero Subtitle & Description -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label class="block font-semibold text-slate-700 mb-1">Badge Sub-Judul (Kapsul Gelap di Bawah Judul)</label>
+                  <input
+                    v-model="systemForm.hero_subtitle"
+                    type="text"
+                    placeholder="misal: DOKUMENTASI HAUL & ROJABIYYAH 2026"
+                    class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 font-mono focus:outline-none focus:border-emerald-500"
+                  />
+                  <p class="text-[10px] text-slate-500 mt-1">Ditampilkan pada badge gelap monospasi di bawah judul.</p>
+                </div>
+                <div>
+                  <label class="block font-semibold text-slate-700 mb-1">Deskripsi / Keterangan Teks Bawah Hero</label>
+                  <input
+                    v-model="systemForm.hero_desc"
+                    type="text"
+                    placeholder="misal: Momen Kebersamaan & Khidmah Panitia"
+                    class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 focus:outline-none focus:border-emerald-500"
+                  />
+                  <p class="text-[10px] text-slate-500 mt-1">Ditampilkan sebagai teks penjelas di bawah badge sub-judul.</p>
                 </div>
               </div>
 
@@ -1968,6 +1992,8 @@ const systemForm = ref({
   sub_theme: 'Haul ke-5 Al-Maghfurlah K.H. Moch. Djamaluddin Achmad & Rojabiyyah 2026',
   hero_title_white: 'Media Rojabiyyah',
   hero_title_gradient: 'Haul Ke-5 & Rojabiyyah 2026',
+  hero_subtitle: 'DOKUMENTASI HAUL & ROJABIYYAH 2026',
+  hero_desc: 'Momen Kebersamaan & Khidmah Panitia',
   footer_copyright: '© 2026 Aplikasi Administrasi Haul Ke-5 & Rojabiyyah 2026.',
   kop_name: 'DOKUMENTASI ROJABIYYAH 2026',
   kop_sub_theme: 'Haul ke-5 Al-Maghfurlah K.H. Moch. Djamaluddin Achmad & Rojabiyyah 2026',

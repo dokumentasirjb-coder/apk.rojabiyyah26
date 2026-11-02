@@ -948,61 +948,144 @@
       <!-- =================================================================== -->
       <!-- TAB 5: PENGATURAN TEKS HERO & INFORMASI                            -->
       <!-- =================================================================== -->
-      <div v-if="activeTab === 'hero'" class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-5">
-        <div>
-          <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-bold mb-2">
-            <span>✍️</span>
-            <span>Teks &amp; Identitas Beranda</span>
+      <!-- TAB 6: TEKS HERO UTAMA BERANDA & SUBTEMA                           -->
+      <!-- =================================================================== -->
+      <div v-if="activeTab === 'hero'" class="space-y-6">
+        <!-- Live Realtime Preview (Sesuai Tampilan Asli Halaman Depan) -->
+        <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm space-y-3">
+          <div class="flex items-center justify-between text-xs">
+            <div class="flex items-center space-x-2 text-emerald-700 font-bold uppercase tracking-wider text-[11px]">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>LIVE PREVIEW TEKS HERO HALAMAN DEPAN:</span>
+            </div>
+            <span class="text-slate-400 font-mono text-[11px]">Teks berubah langsung saat Anda mengetik</span>
           </div>
-          <h3 class="text-base font-bold text-slate-800">Konfigurasi Teks Hero Utama</h3>
-          <p class="text-xs text-slate-500 mt-1">Ubah judul utama, subtema, dan informasi yang langsung dibaca pengunjung pada bagian atas beranda.</p>
+
+          <!-- Hero Section Box Preview -->
+          <div class="relative w-full rounded-2xl overflow-hidden bg-slate-950 p-6 sm:p-10 text-center border border-slate-800 shadow-inner">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-900/60 to-slate-950/70 pointer-events-none"></div>
+
+            <div class="relative z-10 max-w-2xl mx-auto space-y-3">
+              <!-- 1. Pita Oranye -->
+              <div class="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-[#f97316] text-white font-black text-[10px] sm:text-xs tracking-wider uppercase shadow-lg border border-white/20 max-w-[90vw] truncate">
+                <span class="w-2 h-2 rounded-full bg-white animate-pulse flex-shrink-0"></span>
+                <span class="truncate">{{ heroForm.sub_theme || 'Peringatan Haul & Isro\' Mi\'roj' }}</span>
+              </div>
+
+              <!-- 2. Judul Hero -->
+              <h1 class="text-xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight leading-tight drop-shadow-lg">
+                {{ heroForm.hero_title_white || 'Media Rojabiyyah' }}
+                <span class="bg-gradient-to-r from-emerald-300 via-teal-200 to-white bg-clip-text text-transparent">
+                  {{ heroForm.hero_title_gradient || 'Haul Ke-5 & Rojabiyyah 2026' }}
+                </span>
+              </h1>
+
+              <!-- 3. Subtitle Badge (Badge Gelap) -->
+              <div v-if="heroForm.hero_subtitle" class="pt-1">
+                <span class="inline-block text-[10px] sm:text-xs font-extrabold tracking-widest text-emerald-300 uppercase font-mono px-3.5 py-1.5 rounded-xl bg-black/50 border border-emerald-400/30 backdrop-blur-md shadow-md">
+                  {{ heroForm.hero_subtitle }}
+                </span>
+              </div>
+
+              <!-- 4. Deskripsi Hero -->
+              <p v-if="heroForm.hero_desc" class="text-xs text-slate-300 font-medium max-w-xl mx-auto leading-relaxed pt-1">
+                {{ heroForm.hero_desc }}
+              </p>
+            </div>
+          </div>
         </div>
 
-        <form @submit.prevent="saveHeroSettings" class="space-y-4 text-xs">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block font-semibold text-slate-700 mb-1">Judul Hero (Teks Depan) *</label>
-              <input
-                v-model="heroForm.hero_title_white"
-                type="text"
-                required
-                placeholder="misal: Media Rojabiyyah"
-                class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
-              />
-            </div>
-
-            <div>
-              <label class="block font-semibold text-slate-700 mb-1">Judul Hero (Teks Aksen Hijau/Merah) *</label>
-              <input
-                v-model="heroForm.hero_title_gradient"
-                type="text"
-                required
-                placeholder="misal: Haul Ke-5 &amp; Rojabiyyah 2026"
-                class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
-              />
-            </div>
-          </div>
-
+        <!-- Edit Form -->
+        <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-5">
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">Subtema / Badge Tema Acara</label>
-            <input
-              v-model="heroForm.sub_theme"
-              type="text"
-              placeholder="misal: Haul ke-5 Al-Maghfurlah K.H. Moch. Djamaluddin Achmad &amp; Rojabiyyah 2026"
-              class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
-            />
+            <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-bold mb-2">
+              <span>✍️</span>
+              <span>Edit Semua Tulisan Hero Bagian Atas</span>
+            </div>
+            <h3 class="text-base font-bold text-slate-800">Formulir Kustomisasi Teks Banner Utama</h3>
+            <p class="text-xs text-slate-500 mt-1">Seluruh 5 elemen tulisan di banner beranda utama dapat Anda ubah dan sesuaikan di bawah ini.</p>
           </div>
 
-          <div class="flex justify-end pt-3">
-            <button
-              type="submit"
-              :disabled="savingHero"
-              class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#059669] to-[#10b981] hover:from-[#047857] hover:to-[#059669] text-white font-bold shadow-md shadow-emerald-500/20 transition disabled:opacity-50"
-            >
-              {{ savingHero ? 'Menyimpan...' : 'Simpan Perubahan Teks Hero' }}
-            </button>
-          </div>
-        </form>
+          <form @submit.prevent="saveHeroSettings" class="space-y-4 text-xs">
+            <!-- 1. Subtema Pita Oranye -->
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">
+                1. Subtema / Pita Oranye (Paling Atas) *
+              </label>
+              <input
+                v-model="heroForm.sub_theme"
+                type="text"
+                required
+                placeholder="misal: PERINGATAN HAUL MASYAYIKH & ISRO' MI'ROJ 1447 H / 2026 M"
+                class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 font-medium"
+              />
+              <p class="text-[10px] text-slate-400 mt-1">Ditampilkan di dalam kapsul oranye menyala di atas judul utama.</p>
+            </div>
+
+            <!-- 2 & 3. Judul Utama Depan & Sorotan -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1">2. Judul Depan (Teks Warna Putih) *</label>
+                <input
+                  v-model="heroForm.hero_title_white"
+                  type="text"
+                  required
+                  placeholder="misal: Media Rojabiyyah"
+                  class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 font-bold"
+                />
+              </div>
+
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1">3. Judul Sorotan (Teks Gradien Hijau/Teal) *</label>
+                <input
+                  v-model="heroForm.hero_title_gradient"
+                  type="text"
+                  required
+                  placeholder="misal: Haul Ke-5 &amp; Rojabiyyah 2026"
+                  class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 font-bold"
+                />
+              </div>
+            </div>
+
+            <!-- 4. Subtitle Badge (Badge Gelap) -->
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">
+                4. Badge Sub-Judul (Kapsul Gelap di Bawah Judul)
+              </label>
+              <input
+                v-model="heroForm.hero_subtitle"
+                type="text"
+                placeholder="misal: DOKUMENTASI HAUL & ROJABIYYAH 2026"
+                class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 font-mono"
+              />
+              <p class="text-[10px] text-slate-400 mt-1">Ditampilkan di dalam badge gelap font monospasi di bawah judul.</p>
+            </div>
+
+            <!-- 5. Deskripsi Teks Bawah -->
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">
+                5. Deskripsi / Keterangan Teks Bawah Hero
+              </label>
+              <textarea
+                v-model="heroForm.hero_desc"
+                rows="2"
+                placeholder="misal: Momen Kebersamaan & Khidmah Panitia"
+                class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+              ></textarea>
+              <p class="text-[10px] text-slate-400 mt-1">Ditampilkan sebagai kalimat penjelas di bawah badge sub-judul.</p>
+            </div>
+
+            <div class="flex justify-end pt-3 border-t border-slate-100">
+              <button
+                type="submit"
+                :disabled="savingHero"
+                class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#059669] to-[#10b981] hover:from-[#047857] hover:to-[#059669] text-white font-bold shadow-md shadow-emerald-500/20 transition active:scale-95 disabled:opacity-50"
+              >
+                {{ savingHero ? 'Menyimpan Perubahan...' : '💾 Simpan Seluruh Teks Hero' }}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </DashboardLayout>
@@ -1100,7 +1183,9 @@ const savingJadwal = ref(false);
 const heroForm = ref({
   hero_title_white: 'Media Rojabiyyah',
   hero_title_gradient: 'Haul Ke-5 & Rojabiyyah 2026',
-  sub_theme: 'Haul ke-5 Al-Maghfurlah K.H. Moch. Djamaluddin Achmad & Rojabiyyah 2026',
+  sub_theme: 'PERINGATAN HAUL MASYAYIKH & ISRO\' MI\'ROJ 1447 H / 2026 M',
+  hero_subtitle: 'DOKUMENTASI HAUL & ROJABIYYAH 2026',
+  hero_desc: 'Momen Kebersamaan & Khidmah Panitia',
 });
 const savingHero = ref(false);
 
@@ -1184,7 +1269,9 @@ const fetchData = async () => {
     if (settingsRes.data) {
       heroForm.value.hero_title_white = settingsRes.data.hero_title_white || 'Media Rojabiyyah';
       heroForm.value.hero_title_gradient = settingsRes.data.hero_title_gradient || 'Haul Ke-5 & Rojabiyyah 2026';
-      heroForm.value.sub_theme = settingsRes.data.sub_theme || 'Haul ke-5 Al-Maghfurlah K.H. Moch. Djamaluddin Achmad & Rojabiyyah 2026';
+      heroForm.value.sub_theme = settingsRes.data.sub_theme || 'PERINGATAN HAUL MASYAYIKH & ISRO\' MI\'ROJ 1447 H / 2026 M';
+      heroForm.value.hero_subtitle = settingsRes.data.hero_subtitle || 'DOKUMENTASI HAUL & ROJABIYYAH 2026';
+      heroForm.value.hero_desc = settingsRes.data.hero_desc || 'Momen Kebersamaan & Khidmah Panitia';
     }
   } catch (err) {
     console.error('Gagal mengambil data:', err);

@@ -218,26 +218,28 @@
             />
           </div>
 
-          <!-- Field 2: Judul Slide -->
+          <!-- Field 2: Judul Slide / Badge Hero -->
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">Judul Slide (Opsional)</label>
+            <label class="block font-semibold text-slate-700 mb-1">Judul Slide / Teks Badge Hero (Opsional)</label>
             <input
               v-model="form.title"
               type="text"
-              placeholder="misal: Haul ke-5 Al-Maghfurlah K.H. Moch. Djamaluddin Achmad"
-              class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 placeholder-slate-500 focus:outline-none focus:border-rose-500 transition"
+              placeholder="misal: DOKUMENTASI HAUL & ROJABIYYAH 2026"
+              class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 font-mono transition"
             />
+            <p class="text-[10px] text-slate-400 mt-1">Ditampilkan pada badge gelap monospasi di bawah judul utama halaman depan.</p>
           </div>
 
           <!-- Field 3: Subjudul / Keterangan Singkat -->
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">Subjudul / Keterangan Singkat (Opsional)</label>
+            <label class="block font-semibold text-slate-700 mb-1">Subjudul / Keterangan Teks Bawah Hero (Opsional)</label>
             <input
               v-model="form.description"
               type="text"
-              placeholder="misal: Momen Kebersamaan & Khidmah Panitia Rojabiyyah 2026"
-              class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 placeholder-slate-500 focus:outline-none focus:border-rose-500 transition"
+              placeholder="misal: Momen Kebersamaan & Khidmah Panitia"
+              class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition"
             />
+            <p class="text-[10px] text-slate-400 mt-1">Ditampilkan sebagai kalimat penjelas di bawah badge slide.</p>
           </div>
 
           <!-- Field 4: Nomor Urutan Tampil -->

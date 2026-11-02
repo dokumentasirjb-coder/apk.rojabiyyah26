@@ -710,6 +710,7 @@ class PublicEventController extends Controller
             'hero_title_white',
             'hero_title_gradient',
             'sub_theme',
+            'hero_subtitle',
             'hero_desc',
             'wa_contact_url',
         ];

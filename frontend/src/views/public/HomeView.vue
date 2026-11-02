@@ -183,23 +183,27 @@
 
       <!-- Center Hero Content -->
       <div class="relative z-10 max-w-4xl mx-auto px-4 text-center py-6 sm:py-12">
+        <!-- 1. Subtema Acara (Pita Oranye) -->
         <div class="mb-3 sm:mb-4 inline-flex items-center space-x-2 px-3.5 sm:px-4 py-1 sm:py-1.5 rounded-full bg-[#f97316] text-white font-black text-[10px] sm:text-xs tracking-wider uppercase shadow-lg border border-white/20 max-w-[92vw] truncate">
           <span class="w-2 h-2 rounded-full bg-white animate-pulse flex-shrink-0"></span>
           <span class="truncate">{{ settingsStore.settings?.sub_theme || "Haul ke-5 Al-Maghfurlah K.H. Moch. Djamaluddin Achmad & Rojabiyyah 2026" }}</span>
         </div>
 
+        <!-- 2. Judul Utama Hero -->
         <h1 class="text-2xl sm:text-4xl lg:text-6xl font-black text-white tracking-tight leading-tight sm:leading-tight mb-2 sm:mb-3 drop-shadow-lg">
           {{ settingsStore.settings?.hero_title_white || 'Media Rojabiyyah' }} <span class="bg-gradient-to-r from-emerald-300 via-teal-200 to-white bg-clip-text text-transparent">{{ settingsStore.settings?.hero_title_gradient || 'Haul Ke-5 & Rojabiyyah 2026' }}</span>
         </h1>
 
-        <div v-if="currentSlideData.subtitle" class="mt-1.5 sm:mt-2 mb-2 sm:mb-3">
+        <!-- 3. Subtitle Badge (Badge Gelap) -->
+        <div v-if="currentSlideData.subtitle || settingsStore.settings?.hero_subtitle" class="mt-1.5 sm:mt-2 mb-2 sm:mb-3">
           <span class="inline-block text-[11px] sm:text-sm font-extrabold tracking-widest text-emerald-300 uppercase font-mono px-3.5 py-1.5 rounded-xl bg-black/40 border border-emerald-400/30 backdrop-blur-md shadow-md">
-            {{ currentSlideData.subtitle }}
+            {{ currentSlideData.subtitle || settingsStore.settings?.hero_subtitle || 'DOKUMENTASI HAUL & ROJABIYYAH 2026' }}
           </span>
         </div>
 
+        <!-- 4. Deskripsi / Keterangan Teks Bawah Hero -->
         <p class="text-xs sm:text-sm text-slate-200 font-medium max-w-2xl mx-auto leading-relaxed drop-shadow px-2 mb-6">
-          {{ currentSlideData.subtext }}
+          {{ currentSlideData.subtext || settingsStore.settings?.hero_desc || 'Momen Kebersamaan & Khidmah Panitia' }}
         </p>
       </div>
     </section>
@@ -1356,9 +1360,9 @@ const fetchPublicOverview = async () => {
       slides.value = res.data.sliders.map((s) => ({
         id: s.id,
         image: s.image_path,
-        title: s.title || 'Media Rojabiyyah 2026',
-        subtitle: s.title || 'DOKUMENTASI ROJABIYYAH 2026',
-        subtext: s.description || 'Haul ke-5 Al-Maghfurlah K.H. Moch. Djamaluddin Achmad & Rojabiyyah 2026',
+        title: s.title || (settingsStore.settings?.hero_title_white ? (settingsStore.settings?.hero_title_white + ' ' + (settingsStore.settings?.hero_title_gradient || '')) : 'Media Rojabiyyah 2026'),
+        subtitle: s.title || settingsStore.settings?.hero_subtitle || 'DOKUMENTASI HAUL & ROJABIYYAH 2026',
+        subtext: s.description || settingsStore.settings?.hero_desc || 'Momen Kebersamaan & Khidmah Panitia',
       }));
       currentSlide.value = 0;
     }
