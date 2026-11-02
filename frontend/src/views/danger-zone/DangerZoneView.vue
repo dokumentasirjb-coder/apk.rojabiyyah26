@@ -32,22 +32,22 @@
       </div>
 
       <!-- Security Notice Banner -->
-      <div class="p-5 bg-rose-950/30 border border-rose-800/60 rounded-3xl text-rose-200 text-xs space-y-2 shadow-lg">
-        <h3 class="font-bold text-sm text-rose-400 flex items-center space-x-2">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          <span>Prosedur Keamanan Tingkat Tinggi (Sesuai PRD v2.0):</span>
+      <div class="p-5 bg-rose-50 border border-rose-200 rounded-3xl text-xs space-y-2 shadow-xs">
+        <h3 class="font-bold text-sm text-rose-800 flex items-center space-x-2">
+          <svg class="w-4 h-4 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <span>Prosedur Keamanan Tingkat Tinggi (Sesuai PRD v3.0):</span>
         </h3>
         <ul class="list-disc list-inside space-y-1 text-slate-700">
-          <li>Sistem akan membuat <strong class="text-rose-300">Snapshot Cadangan (Backup JSON Otomatis)</strong> di server secara instan sebelum tindakan hapus dijalankan.</li>
+          <li>Sistem akan membuat <strong class="text-rose-700 font-bold">Snapshot Cadangan (Backup JSON Otomatis)</strong> di server secara instan sebelum tindakan hapus dijalankan.</li>
           <li>Data akun <strong>Super Admin &amp; Admin Pengelola</strong>, pengaturan branding, dan <strong>Audit Log TIDAK akan pernah terhapus</strong>.</li>
           <li>Pilih modul yang ingin dibersihkan secara fleksibel atau gunakan tombol <strong>Reset Total</strong>.</li>
-          <li>Wajib memasukkan kata sandi akun Anda dan mengetik frasa konfirmasi: <code class="bg-rose-900/60 text-rose-200 px-1.5 py-0.5 rounded font-bold font-mono">RESET OPERASIONAL</code> atau <code class="bg-rose-900/60 text-rose-200 px-1.5 py-0.5 rounded font-bold font-mono">RESET</code>.</li>
+          <li>Wajib memasukkan kata sandi akun Anda dan mengetik frasa konfirmasi: <code class="bg-rose-100 text-rose-800 px-1.5 py-0.5 rounded font-bold font-mono">RESET OPERASIONAL</code> atau <code class="bg-rose-100 text-rose-800 px-1.5 py-0.5 rounded font-bold font-mono">RESET</code>.</li>
         </ul>
       </div>
 
       <!-- Success Notification Banner -->
-      <div v-if="successResult" class="p-5 bg-emerald-950/40 border border-emerald-700/60 rounded-3xl text-emerald-200 text-xs space-y-2 shadow-lg">
-        <div class="flex items-center space-x-2 text-emerald-400 font-bold text-sm">
+      <div v-if="successResult" class="p-5 bg-emerald-50 border border-emerald-200 rounded-3xl text-emerald-900 text-xs space-y-2 shadow-sm">
+        <div class="flex items-center space-x-2 text-emerald-700 font-bold text-sm">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           <span>Pembersihan Data Berhasil Dilakukan!</span>
         </div>
@@ -55,7 +55,7 @@
           {{ successResult.message }}
         </p>
         <div class="flex flex-wrap items-center gap-2 pt-1 font-mono text-[11px]">
-          <span class="px-2 py-1 bg-emerald-900/40 rounded border border-emerald-700 text-emerald-300">
+          <span class="px-2 py-1 bg-emerald-100 rounded border border-emerald-300 text-emerald-800">
             File Snapshot: {{ successResult.backup_file }}
           </span>
         </div>
@@ -74,15 +74,15 @@
             <button
               type="button"
               @click="selectAllModules"
-              class="px-3 py-1.5 rounded-xl bg-rose-950/60 hover:bg-rose-900 border border-rose-700/70 text-rose-300 text-xs font-bold transition flex items-center space-x-1.5"
+              class="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-300 text-rose-800 text-xs font-bold transition flex items-center space-x-1.5 shadow-2xs"
             >
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              <svg class="w-3.5 h-3.5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
               <span>Pilih Semua (Reset Total)</span>
             </button>
             <button
               type="button"
               @click="clearModuleSelection"
-              class="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-slate-500 text-xs font-semibold transition"
+              class="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-300 text-slate-600 text-xs font-semibold transition"
             >
               Hapus Pilihan
             </button>
@@ -94,18 +94,18 @@
           <!-- 1. DATA ANGGOTA RELAWAN -->
           <label
             class="p-4 rounded-2xl border flex items-start space-x-3 cursor-pointer transition select-none"
-            :class="selectedModules.includes('members') ? 'border-rose-500 bg-rose-950/30' : 'border-slate-200 bg-slate-50 hover:border-slate-300'"
+            :class="selectedModules.includes('members') ? 'border-rose-400 bg-rose-50/70 shadow-xs' : 'border-slate-200 bg-slate-50 hover:border-slate-300'"
           >
             <input type="checkbox" value="members" v-model="selectedModules" class="mt-1 rounded text-rose-600 focus:ring-rose-500 bg-white border-slate-300" />
             <div class="flex-1">
               <div class="flex items-center justify-between">
-                <span class="font-bold text-white text-xs block">Data Anggota Relawan &amp; Akun Anggota</span>
-                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-900/60 text-rose-300 border border-rose-700/60">
+                <span class="font-bold text-slate-900 text-xs block">Data Anggota Relawan &amp; Akun Anggota</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-100 text-rose-800 border border-rose-300">
                   {{ previewCounts.members_count || 0 }} Anggota
                 </span>
               </div>
-              <span class="text-slate-500 text-[11px] block mt-1 leading-relaxed">
-                Akan menghapus semua akun relawan role 'anggota', biodata profil, serta penugasan terkait. <strong class="text-rose-400">Akun Super Admin &amp; Admin tetap terlindungi.</strong>
+              <span class="text-slate-600 text-[11px] block mt-1 leading-relaxed">
+                Akan menghapus semua akun relawan role 'anggota', biodata profil, serta penugasan terkait. <strong class="text-rose-700">Akun Super Admin &amp; Admin tetap terlindungi.</strong>
               </span>
             </div>
           </label>
@@ -113,17 +113,17 @@
           <!-- 2. DATA BARANG & INVENTARIS GUDANG -->
           <label
             class="p-4 rounded-2xl border flex items-start space-x-3 cursor-pointer transition select-none"
-            :class="selectedModules.includes('inventory') ? 'border-rose-500 bg-rose-950/30' : 'border-slate-200 bg-slate-50 hover:border-slate-300'"
+            :class="selectedModules.includes('inventory') ? 'border-indigo-400 bg-indigo-50/70 shadow-xs' : 'border-slate-200 bg-slate-50 hover:border-slate-300'"
           >
-            <input type="checkbox" value="inventory" v-model="selectedModules" class="mt-1 rounded text-rose-600 focus:ring-rose-500 bg-white border-slate-300" />
+            <input type="checkbox" value="inventory" v-model="selectedModules" class="mt-1 rounded text-indigo-600 focus:ring-indigo-500 bg-white border-slate-300" />
             <div class="flex-1">
               <div class="flex items-center justify-between">
-                <span class="font-bold text-white text-xs block">Katalog Barang &amp; Inventaris Gudang</span>
-                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-indigo-900/60 text-indigo-300 border border-indigo-700/60">
+                <span class="font-bold text-slate-900 text-xs block">Katalog Barang &amp; Inventaris Gudang</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-indigo-100 text-indigo-800 border border-indigo-300">
                   {{ previewCounts.items_count || 0 }} Barang
                 </span>
               </div>
-              <span class="text-slate-500 text-[11px] block mt-1 leading-relaxed">
+              <span class="text-slate-600 text-[11px] block mt-1 leading-relaxed">
                 Akan menghapus seluruh master data barang logistik gudang, stok kuantitas, dan riwayat sirkulasi peminjaman.
               </span>
             </div>
@@ -132,17 +132,17 @@
           <!-- 3. SIRKULASI PEMINJAMAN -->
           <label
             class="p-4 rounded-2xl border flex items-start space-x-3 cursor-pointer transition select-none"
-            :class="selectedModules.includes('loans') ? 'border-rose-500 bg-rose-950/30' : 'border-slate-200 bg-slate-50 hover:border-slate-300'"
+            :class="selectedModules.includes('loans') ? 'border-amber-400 bg-amber-50/70 shadow-xs' : 'border-slate-200 bg-slate-50 hover:border-slate-300'"
           >
-            <input type="checkbox" value="loans" v-model="selectedModules" class="mt-1 rounded text-rose-600 focus:ring-rose-500 bg-white border-slate-300" />
+            <input type="checkbox" value="loans" v-model="selectedModules" class="mt-1 rounded text-amber-600 focus:ring-amber-500 bg-white border-slate-300" />
             <div class="flex-1">
               <div class="flex items-center justify-between">
-                <span class="font-bold text-white text-xs block">Sirkulasi Peminjaman Logistik</span>
-                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-900/60 text-amber-300 border border-amber-700/60">
+                <span class="font-bold text-slate-900 text-xs block">Sirkulasi Peminjaman Logistik</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-100 text-amber-800 border border-amber-300">
                   {{ previewCounts.loans_count || 0 }} Peminjaman
                 </span>
               </div>
-              <span class="text-slate-500 text-[11px] block mt-1 leading-relaxed">
+              <span class="text-slate-600 text-[11px] block mt-1 leading-relaxed">
                 Akan menghapus data formulir permohonan peminjaman, surat keluar/masuk, dan mereset status reserved stok gudang kembali ke 0.
               </span>
             </div>
@@ -151,17 +151,17 @@
           <!-- 4. DATA LEMBAGA MITRA LUAR -->
           <label
             class="p-4 rounded-2xl border flex items-start space-x-3 cursor-pointer transition select-none"
-            :class="selectedModules.includes('partners') ? 'border-rose-500 bg-rose-950/30' : 'border-slate-200 bg-slate-50 hover:border-slate-300'"
+            :class="selectedModules.includes('partners') ? 'border-teal-400 bg-teal-50/70 shadow-xs' : 'border-slate-200 bg-slate-50 hover:border-slate-300'"
           >
-            <input type="checkbox" value="partners" v-model="selectedModules" class="mt-1 rounded text-rose-600 focus:ring-rose-500 bg-white border-slate-300" />
+            <input type="checkbox" value="partners" v-model="selectedModules" class="mt-1 rounded text-teal-600 focus:ring-teal-500 bg-white border-slate-300" />
             <div class="flex-1">
               <div class="flex items-center justify-between">
-                <span class="font-bold text-white text-xs block">Data Lembaga / Mitra Luar</span>
-                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-teal-900/60 text-teal-300 border border-teal-700/60">
+                <span class="font-bold text-slate-900 text-xs block">Data Lembaga / Mitra Luar</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-teal-100 text-teal-800 border border-teal-300">
                   {{ previewCounts.partners_count || 0 }} Lembaga
                 </span>
               </div>
-              <span class="text-slate-500 text-[11px] block mt-1 leading-relaxed">
+              <span class="text-slate-600 text-[11px] block mt-1 leading-relaxed">
                 Akan menghapus seluruh data mitra eksternal penyedia aset dan melepaskan tautan mitra pada inventaris.
               </span>
             </div>
@@ -170,17 +170,17 @@
           <!-- 5. LAPORAN LAPANGAN & KENDALA POSKO -->
           <label
             class="p-4 rounded-2xl border flex items-start space-x-3 cursor-pointer transition select-none"
-            :class="selectedModules.includes('reports') ? 'border-rose-500 bg-rose-950/30' : 'border-slate-200 bg-slate-50 hover:border-slate-300'"
+            :class="selectedModules.includes('reports') ? 'border-sky-400 bg-sky-50/70 shadow-xs' : 'border-slate-200 bg-slate-50 hover:border-slate-300'"
           >
-            <input type="checkbox" value="reports" v-model="selectedModules" class="mt-1 rounded text-rose-600 focus:ring-rose-500 bg-white border-slate-300" />
+            <input type="checkbox" value="reports" v-model="selectedModules" class="mt-1 rounded text-sky-600 focus:ring-sky-500 bg-white border-slate-300" />
             <div class="flex-1">
               <div class="flex items-center justify-between">
-                <span class="font-bold text-white text-xs block">Laporan Lapangan &amp; Kendala Posko</span>
-                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-sky-900/60 text-sky-300 border border-sky-700/60">
+                <span class="font-bold text-slate-900 text-xs block">Laporan Lapangan &amp; Kendala Posko</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-sky-100 text-sky-800 border border-sky-300">
                   {{ previewCounts.reports_count || 0 }} Laporan
                 </span>
               </div>
-              <span class="text-slate-500 text-[11px] block mt-1 leading-relaxed">
+              <span class="text-slate-600 text-[11px] block mt-1 leading-relaxed">
                 Akan menghapus seluruh laporan kendala posko, dokumentasi foto lapangan, dan riwayat tindak lanjut respon.
               </span>
             </div>
@@ -189,17 +189,17 @@
           <!-- 6. TRANSAKSI KAS KEUANGAN -->
           <label
             class="p-4 rounded-2xl border flex items-start space-x-3 cursor-pointer transition select-none"
-            :class="selectedModules.includes('cash') ? 'border-rose-500 bg-rose-950/30' : 'border-slate-200 bg-slate-50 hover:border-slate-300'"
+            :class="selectedModules.includes('cash') ? 'border-emerald-400 bg-emerald-50/70 shadow-xs' : 'border-slate-200 bg-slate-50 hover:border-slate-300'"
           >
-            <input type="checkbox" value="cash" v-model="selectedModules" class="mt-1 rounded text-rose-600 focus:ring-rose-500 bg-white border-slate-300" />
+            <input type="checkbox" value="cash" v-model="selectedModules" class="mt-1 rounded text-emerald-600 focus:ring-emerald-500 bg-white border-slate-300" />
             <div class="flex-1">
               <div class="flex items-center justify-between">
-                <span class="font-bold text-white text-xs block">Transaksi Kas Keuangan</span>
-                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-900/60 text-emerald-300 border border-emerald-700/60">
+                <span class="font-bold text-slate-900 text-xs block">Transaksi Kas Keuangan</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
                   {{ previewCounts.cash_transactions_count || 0 }} Transaksi
                 </span>
               </div>
-              <span class="text-slate-500 text-[11px] block mt-1 leading-relaxed">
+              <span class="text-slate-600 text-[11px] block mt-1 leading-relaxed">
                 Akan mereset seluruh catatan pemasukan uang, infaq, belanja operasional, dan saldo kas kepanitiaan.
               </span>
             </div>
@@ -208,17 +208,17 @@
           <!-- 7. PENUGASAN PERSONIL POSKO -->
           <label
             class="p-4 rounded-2xl border flex items-start space-x-3 cursor-pointer transition select-none md:col-span-2"
-            :class="selectedModules.includes('assignments') ? 'border-rose-500 bg-rose-950/30' : 'border-slate-200 bg-slate-50 hover:border-slate-300'"
+            :class="selectedModules.includes('assignments') ? 'border-purple-400 bg-purple-50/70 shadow-xs' : 'border-slate-200 bg-slate-50 hover:border-slate-300'"
           >
-            <input type="checkbox" value="assignments" v-model="selectedModules" class="mt-1 rounded text-rose-600 focus:ring-rose-500 bg-white border-slate-300" />
+            <input type="checkbox" value="assignments" v-model="selectedModules" class="mt-1 rounded text-purple-600 focus:ring-purple-500 bg-white border-slate-300" />
             <div class="flex-1">
               <div class="flex items-center justify-between">
-                <span class="font-bold text-white text-xs block">Jadwal Penugasan Personil Posko</span>
-                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-purple-900/60 text-purple-300 border border-purple-700/60">
+                <span class="font-bold text-slate-900 text-xs block">Jadwal Penugasan Personil Posko</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-purple-100 text-purple-800 border border-purple-300">
                   {{ previewCounts.assignments_count || 0 }} Jadwal
                 </span>
               </div>
-              <span class="text-slate-500 text-[11px] block mt-1 leading-relaxed">
+              <span class="text-slate-600 text-[11px] block mt-1 leading-relaxed">
                 Akan menghapus pembagian jadwal penugasan personil relawan ke posko-posko operasional kegiatan.
               </span>
             </div>
