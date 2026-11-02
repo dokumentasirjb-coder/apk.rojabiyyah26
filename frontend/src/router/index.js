@@ -163,17 +163,24 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
+  const token = localStorage.getItem('token');
+  const user = localStorage.getItem('user');
+  const hasValidAuth = Boolean(authStore.isAuthenticated && token && user);
 
-  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    return next({ name: 'Login', query: { redirect: to.fullPath } });
+  if (to.meta.requiresAuth && !hasValidAuth) {
+    authStore.token = null;
+    authStore.user = null;
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    return next({ name: 'Login', query: { redirect: to.fullPath }, replace: true });
   }
 
-  if (to.meta.guestOnly && authStore.isAuthenticated) {
-    return next({ name: 'Dashboard' });
+  if (to.meta.guestOnly && hasValidAuth) {
+    return next({ name: 'Dashboard', replace: true });
   }
 
-  if (to.meta.roles && !to.meta.roles.includes(authStore.user?.role)) {
-    return next({ name: 'Dashboard' });
+  if (to.meta.roles && (!authStore.user?.role || !to.meta.roles.includes(authStore.user.role))) {
+    return next({ name: 'Dashboard', replace: true });
   }
 
   next();

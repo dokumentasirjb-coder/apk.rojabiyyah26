@@ -809,7 +809,7 @@ const handleLogout = async () => {
   if (await window.$confirm('Apakah Anda yakin ingin keluar dari sistem?', 'Konfirmasi Keluar')) {
     realtimeStore.stopLiveSync();
     await authStore.logout();
-    router.push('/login');
+    window.location.replace('/login');
   }
 };
 
