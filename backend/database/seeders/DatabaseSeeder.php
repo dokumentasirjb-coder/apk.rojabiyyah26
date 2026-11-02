@@ -78,17 +78,20 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // 5. Users and Roles
+        $seedPassword = Hash::make(env('SEED_DEFAULT_PASSWORD', 'password123'));
+        $mustChange = (bool) env('SEED_REQUIRE_PASSWORD_CHANGE', true);
+
         // Super Admin
         $superAdmin = User::firstOrCreate(
             ['email' => 'superadmin@rojabiyyah.id'],
             [
                 'member_no' => 'RJB-001',
                 'name' => 'KH. Ahmad Fauzan (Super Admin)',
-                'password' => Hash::make('password123'),
+                'password' => $seedPassword,
                 'role' => 'super_admin',
                 'phone_wa' => '081234567801',
                 'is_active' => true,
-                'must_change_password' => false,
+                'must_change_password' => $mustChange,
             ]
         );
         Member::firstOrCreate(['user_id' => $superAdmin->id], [
@@ -103,11 +106,11 @@ class DatabaseSeeder extends Seeder
             [
                 'member_no' => 'RJB-002',
                 'name' => 'M. Rizqi Akbar (Admin)',
-                'password' => Hash::make('password123'),
+                'password' => $seedPassword,
                 'role' => 'admin',
                 'phone_wa' => '081234567802',
                 'is_active' => true,
-                'must_change_password' => false,
+                'must_change_password' => $mustChange,
             ]
         );
         Member::firstOrCreate(['user_id' => $admin->id], [
@@ -122,11 +125,11 @@ class DatabaseSeeder extends Seeder
             [
                 'member_no' => 'RJB-003',
                 'name' => 'H. Syamsul Arifin (Bendahara)',
-                'password' => Hash::make('password123'),
+                'password' => $seedPassword,
                 'role' => 'bendahara',
                 'phone_wa' => '081234567803',
                 'is_active' => true,
-                'must_change_password' => false,
+                'must_change_password' => $mustChange,
             ]
         );
         Member::firstOrCreate(['user_id' => $bendahara->id], [
@@ -141,11 +144,11 @@ class DatabaseSeeder extends Seeder
             [
                 'member_no' => 'RJB-004',
                 'name' => 'Farhan Al-Ghifari (Ketua Multimedia)',
-                'password' => Hash::make('password123'),
+                'password' => $seedPassword,
                 'role' => 'ketua_divisi',
                 'phone_wa' => '081234567804',
                 'is_active' => true,
-                'must_change_password' => false,
+                'must_change_password' => $mustChange,
             ]
         );
         Member::firstOrCreate(['user_id' => $ketuaDiv->id], [
@@ -160,11 +163,11 @@ class DatabaseSeeder extends Seeder
             [
                 'member_no' => 'RJB-005',
                 'name' => 'Irfan Maulana (PIC Panggung)',
-                'password' => Hash::make('password123'),
+                'password' => $seedPassword,
                 'role' => 'pic_posko',
                 'phone_wa' => '081234567805',
                 'is_active' => true,
-                'must_change_password' => false,
+                'must_change_password' => $mustChange,
             ]
         );
         Member::firstOrCreate(['user_id' => $picPosko->id], [
@@ -179,11 +182,11 @@ class DatabaseSeeder extends Seeder
             [
                 'member_no' => 'RJB-006',
                 'name' => 'Zaidan Baihaqi (Anggota)',
-                'password' => Hash::make('password123'),
+                'password' => $seedPassword,
                 'role' => 'anggota',
                 'phone_wa' => '081234567806',
                 'is_active' => true,
-                'must_change_password' => false,
+                'must_change_password' => $mustChange,
             ]
         );
         Member::firstOrCreate(['user_id' => $anggota->id], [
@@ -198,11 +201,11 @@ class DatabaseSeeder extends Seeder
             [
                 'member_no' => 'RJB-007',
                 'name' => 'Ahmad (Anggota)',
-                'password' => Hash::make('password123'),
+                'password' => $seedPassword,
                 'role' => 'anggota',
                 'phone_wa' => '081234567807',
                 'is_active' => true,
-                'must_change_password' => false,
+                'must_change_password' => $mustChange,
             ]
         );
         Member::firstOrCreate(['user_id' => $ahmad->id], [

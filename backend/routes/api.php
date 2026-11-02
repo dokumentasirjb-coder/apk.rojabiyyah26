@@ -135,12 +135,12 @@ Route::prefix('v1')->group(function () {
                 return response()->json(['message' => 'Akses ditolak.'], 403);
             }
             $request->validate(['password' => 'required|string']);
-            $correct = \App\Models\Setting::get('cash_password', 'kas2026');
+            $correct = \App\Models\Setting::get('cash_password', env('CASH_DEFAULT_PIN', 'kas2026'));
             if ($request->password === $correct) {
                 return response()->json(['valid' => true, 'message' => 'Akses kas berhasil diverifikasi.']);
             }
             return response()->json(['valid' => false, 'message' => 'Kata sandi salah. Silakan coba lagi.'], 401);
-        });
+        })->middleware('throttle:5,1');
 
         Route::get('/cash', function (\Illuminate\Http\Request $request) {
             if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
