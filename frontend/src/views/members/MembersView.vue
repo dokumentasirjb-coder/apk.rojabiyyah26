@@ -137,40 +137,41 @@
       </div>
 
       <!-- Tab Switcher Navigation -->
+      <!-- Tab Selector: Ringkas & Elegan -->
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3">
         <div class="flex items-center space-x-2">
           <button
             @click="setTab('')"
             :class="[
-              'px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 shadow-xs',
+              'px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 shadow-xs',
               activeTab === '' ? 'bg-gradient-to-r from-[#059669] to-[#10b981] text-white shadow-emerald-500/20' : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
             ]"
           >
-            <span>Semua Data</span>
+            <span>Semua</span>
             <span class="px-1.5 py-0.2 rounded-full text-[10px] bg-slate-100 text-slate-700 font-mono">{{ stats.total }}</span>
           </button>
 
           <button
             @click="setTab('account')"
             :class="[
-              'px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 shadow-xs',
+              'px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 shadow-xs',
               activeTab === 'account' ? 'bg-emerald-600 text-white shadow-emerald-500/20' : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
             ]"
           >
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
-            <span>Akun Login (Aplikasi)</span>
+            <span>Akun Login</span>
             <span class="px-1.5 py-0.2 rounded-full text-[10px] bg-emerald-100 text-emerald-800 font-mono">{{ stats.account }}</span>
           </button>
 
           <button
             @click="setTab('google_form')"
             :class="[
-              'px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 shadow-xs',
+              'px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 shadow-xs',
               activeTab === 'google_form' ? 'bg-indigo-600 text-white shadow-indigo-500/20' : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
             ]"
           >
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
-            <span>Google Formulir / Formulir Publik</span>
+            <span>Formulir</span>
             <span class="px-1.5 py-0.2 rounded-full text-[10px] bg-indigo-100 text-indigo-800 font-mono">{{ stats.google_form }}</span>
           </button>
         </div>

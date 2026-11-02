@@ -18,30 +18,29 @@
               : 'Pilih alat inventaris untuk operasional tugas Anda, ajukan peminjaman, dan konfirmasi pengembalian barang disertai bukti foto.'
             }}
           </p>
-          <div class="mt-2 inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-rose-50 border border-rose-200 text-[11px] text-rose-700">
-            <span>✨</span>
-            <span>Sub Tema: Haul ke-5 Al-Maghfurlah K.H. Moch. Djamaluddin Achmad &amp; Rojabiyyah 2026</span>
+          <div class="mt-2 inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-rose-50 border border-rose-200 text-[10px] text-rose-700 font-semibold">
+            <span>✨ Haul Ke-5 &amp; Rojabiyyah 2026</span>
           </div>
         </div>
 
         <!-- Top Action Buttons: Distinct for Admin vs Anggota -->
-        <div class="flex flex-wrap items-center gap-2.5">
+        <div class="flex flex-wrap items-center gap-2">
           <!-- Admin Actions (Admin DOES NOT apply, Admin manages inventory & approvals) -->
           <template v-if="isAdmin">
             <router-link
               to="/inventory"
-              class="inline-flex items-center space-x-1.5 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#059669] to-[#10b981] hover:from-[#047857] hover:to-[#059669] text-white text-xs font-bold shadow-lg shadow-emerald-950/60 transition"
+              class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#059669] to-[#10b981] hover:from-[#047857] hover:to-[#059669] text-white text-xs font-bold shadow-md shadow-emerald-950/60 transition"
             >
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-              <span>+ Tambah Barang Inventaris</span>
+              <span>Tambah Barang</span>
             </router-link>
 
             <router-link
               to="/partner-loans"
-              class="inline-flex items-center space-x-1.5 px-3.5 py-2.5 rounded-xl bg-cyan-50 hover:bg-cyan-100 border border-cyan-300 text-cyan-800 text-xs font-bold transition shadow-xs"
+              class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-cyan-50 hover:bg-cyan-100 border border-cyan-300 text-cyan-800 text-xs font-bold transition shadow-xs"
             >
               <svg class="w-3.5 h-3.5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-              <span>Pinjaman Lembaga Mitra</span>
+              <span>Pinjaman Mitra</span>
             </router-link>
           </template>
 
@@ -49,43 +48,43 @@
           <template v-else>
             <button
               @click="openApplyModal(null)"
-              class="inline-flex items-center space-x-1.5 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#059669] to-[#10b981] hover:from-[#047857] hover:to-[#059669] text-white text-xs font-bold shadow-lg shadow-emerald-950/60 transition"
+              class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#059669] to-[#10b981] hover:from-[#047857] hover:to-[#059669] text-white text-xs font-bold shadow-md shadow-emerald-950/60 transition"
             >
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-              <span>+ Ajukan Peminjaman</span>
+              <span>Ajukan Pinjam</span>
             </button>
           </template>
         </div>
       </div>
 
       <!-- Navigation Tabs: Ordered logically for Admin vs Anggota -->
-      <div class="flex items-center space-x-3 border-b border-slate-200 pb-2 text-xs font-bold">
+      <div class="flex items-center space-x-2 border-b border-slate-200 pb-2 text-xs font-bold">
         <!-- Tab: Loans / Riwayat (Default for Admin) -->
         <button
           @click="activeMainTab = 'riwayat'"
           :class="[
-            'inline-flex items-center space-x-2 px-4 py-2 rounded-xl transition',
+            'inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl transition',
             activeMainTab === 'riwayat'
-              ? 'bg-[#059669] text-white shadow-lg shadow-emerald-950/60'
-              : 'text-slate-500 hover:text-white'
+              ? 'bg-[#059669] text-white shadow-md'
+              : 'text-slate-600 hover:text-slate-900 bg-slate-50 border border-slate-200'
           ]"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-          <span>{{ isAdmin ? `Daftar Pengajuan & Peminjaman Anggota (${loans.length})` : `Riwayat Peminjaman Saya (${loans.length})` }}</span>
+          <span>{{ isAdmin ? `Semua Pinjaman (${loans.length})` : `Pinjaman Saya (${loans.length})` }}</span>
         </button>
 
         <!-- Tab: Catalog (Default for Anggota) -->
         <button
           @click="activeMainTab = 'katalog'"
           :class="[
-            'inline-flex items-center space-x-2 px-4 py-2 rounded-xl transition',
+            'inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl transition',
             activeMainTab === 'katalog'
-              ? 'bg-[#059669] text-white shadow-lg shadow-emerald-950/60'
-              : 'text-slate-500 hover:text-white'
+              ? 'bg-[#059669] text-white shadow-md'
+              : 'text-slate-600 hover:text-slate-900 bg-slate-50 border border-slate-200'
           ]"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-          <span>{{ isAdmin ? `Katalog Stok Barang Gudang (${availableItems.length})` : `Katalog Barang Siap Pinjam (${availableItems.length})` }}</span>
+          <span>{{ isAdmin ? `Katalog Barang (${availableItems.length})` : `Katalog Alat (${availableItems.length})` }}</span>
         </button>
       </div>
 

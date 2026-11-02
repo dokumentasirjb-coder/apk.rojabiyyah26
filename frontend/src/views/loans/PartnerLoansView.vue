@@ -10,27 +10,27 @@
             </div>
             <div>
               <h2 class="text-xl font-black text-slate-900 tracking-tight">
-                {{ isMemberOnly ? 'Katalog Pinjaman Lembaga Mitra Luar' : 'Logistik & Pinjaman Lembaga Mitra' }}
+                {{ isMemberOnly ? 'Katalog Pinjaman Mitra' : 'Pinjaman Lembaga Mitra' }}
               </h2>
             </div>
           </div>
           <p class="text-xs text-slate-500 mt-1">
             {{ isMemberOnly
-              ? 'Daftar alat dan perangkat yang dipinjam panitia dari lembaga/pondok mitra luar. Anggota dapat mengajukan peminjaman alat ini untuk tugas operasional.'
-              : 'Kelola data aset pinjaman dari pondok pesantren/lembaga mitra, kontak narahubung (PIC), batas waktu pengembalian, dan ketersediaan stok.'
+              ? 'Daftar alat pinjaman dari mitra luar yang dapat diajukan untuk operasional.'
+              : 'Kelola aset pinjaman mitra, narahubung PIC, batas kembali, dan stok.'
             }}
           </p>
         </div>
 
         <!-- Action Tools -->
-        <div class="flex flex-wrap items-center gap-2.5">
+        <div class="flex flex-wrap items-center gap-2">
           <!-- Buka Sirkulasi Peminjaman -->
           <router-link
             to="/loans"
-            class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-semibold transition shadow-xs"
+            class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-semibold transition shadow-xs"
           >
             <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-            <span>{{ isMemberOnly ? 'Peminjaman Saya' : 'Sirkulasi Peminjaman Anggota →' }}</span>
+            <span>{{ isMemberOnly ? 'Peminjaman' : 'Sirkulasi Pinjam →' }}</span>
           </router-link>
 
           <!-- Ekspor Excel (Admin Only) -->
@@ -38,29 +38,29 @@
             <button
               @click="exportPartnerItems"
               :disabled="exporting"
-              class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-800 text-xs font-semibold transition disabled:opacity-50 shadow-xs"
+              class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-800 text-xs font-semibold transition disabled:opacity-50 shadow-xs"
             >
               <span v-if="exporting" class="inline-block w-3.5 h-3.5 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></span>
               <svg v-else class="w-3.5 h-3.5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-              <span>{{ exporting ? 'Mengunduh...' : 'Ekspor Excel Mitra' }}</span>
+              <span>{{ exporting ? 'Mengunduh...' : 'Ekspor Excel' }}</span>
             </button>
 
             <!-- Tambah Mitra Baru -->
             <button
               @click="openAddPartnerModal"
-              class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-cyan-50 hover:bg-cyan-100 border border-cyan-300 text-cyan-800 text-xs font-bold transition shadow-xs"
+              class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-cyan-50 hover:bg-cyan-100 border border-cyan-300 text-cyan-800 text-xs font-bold transition shadow-xs"
             >
               <svg class="w-3.5 h-3.5 text-cyan-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-              <span>+ Lembaga Mitra</span>
+              <span>Mitra Baru</span>
             </button>
 
             <!-- Tambah Barang Pinjaman -->
             <button
               @click="openAddItemModal"
-              class="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-[#059669] to-[#10b981] hover:brightness-105 text-white text-xs font-bold shadow-md shadow-emerald-600/20 transition active:scale-95"
+              class="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-[#059669] to-[#10b981] hover:brightness-105 text-white text-xs font-bold shadow-md shadow-emerald-600/20 transition active:scale-95"
             >
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-              <span>+ Barang Pinjaman Mitra</span>
+              <span>Tambah Barang</span>
             </button>
           </template>
         </div>
@@ -134,21 +134,21 @@
             ]"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-            <span>Daftar Barang Pinjaman Mitra ({{ items.length }})</span>
+            <span>Barang Mitra ({{ items.length }})</span>
           </button>
 
           <button
             v-if="!isMemberOnly"
             @click="activeTab = 'partners'"
             :class="[
-              'inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl transition',
+              'inline-flex items-center space-x-2 px-3 py-1.5 rounded-xl transition',
               activeTab === 'partners'
                 ? 'bg-gradient-to-r from-[#059669] to-[#10b981] text-white shadow-xs'
                 : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
             ]"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-            <span>Direktori Lembaga / Mitra ({{ partners.length }})</span>
+            <span>Data Mitra ({{ partners.length }})</span>
           </button>
         </div>
 

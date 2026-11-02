@@ -9,11 +9,11 @@
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
             </div>
             <h2 class="text-xl font-bold text-slate-900 tracking-tight">
-              {{ isMemberOnly ? 'Katalog Inventaris Internal (Milik Sendiri)' : 'Data Inventaris Internal (Milik Sendiri)' }}
+              {{ isMemberOnly ? 'Inventaris Internal' : 'Data Inventaris Internal' }}
             </h2>
           </div>
           <p class="text-xs text-slate-500 mt-1">
-            {{ isMemberOnly ? 'Data master barang dan stok inventaris aset internal milik organisasi Rojabiyyah. Untuk meminjam barang, gunakan submenu Peminjaman.' : 'Kelola aset internal milik organisasi, stok fisik, kondisi kelayakan, dan kode label registrasi stiker.' }}
+            {{ isMemberOnly ? 'Daftar master barang dan stok inventaris aset internal organisasi.' : 'Kelola aset internal, stok fisik, kondisi kelayakan, dan kode label registrasi.' }}
           </p>
         </div>
 
@@ -25,24 +25,24 @@
             class="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-[#059669] to-[#10b981] hover:from-[#047857] hover:to-[#059669] text-white text-xs font-bold shadow-lg shadow-emerald-950/60 transition"
           >
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-            <span>Buka Sub Peminjaman</span>
+            <span>Peminjaman</span>
           </router-link>
 
           <!-- Admin Action Buttons -->
           <template v-else>
             <router-link
               to="/partner-loans"
-              class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-cyan-50 hover:bg-cyan-100 border border-cyan-200 text-cyan-800 text-xs font-bold transition shadow-xs"
+              class="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-cyan-50 hover:bg-cyan-100 border border-cyan-200 text-cyan-800 text-xs font-bold transition shadow-xs"
             >
               <svg class="w-3.5 h-3.5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-              <span>Pinjaman Lembaga Mitra →</span>
+              <span>Pinjaman Mitra →</span>
             </router-link>
 
             <!-- Ekspor Excel -->
             <button
               @click="exportExcel"
               :disabled="exporting"
-              class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-teal-50 border border-emerald-200 text-emerald-700 text-xs font-semibold transition disabled:opacity-50"
+              class="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-slate-50 hover:bg-teal-50 border border-emerald-200 text-emerald-700 text-xs font-semibold transition disabled:opacity-50"
             >
               <span v-if="exporting" class="inline-block w-3.5 h-3.5 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin"></span>
               <svg v-else class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
@@ -52,7 +52,7 @@
             <!-- Impor Excel -->
             <button
               @click="showImportModal = true"
-              class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-teal-50 border border-indigo-200 text-indigo-700 text-xs font-semibold transition"
+              class="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-slate-50 hover:bg-teal-50 border border-indigo-200 text-indigo-700 text-xs font-semibold transition"
             >
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
               <span>Impor Excel</span>
@@ -60,23 +60,27 @@
 
             <button
               @click="openAddItemModal"
-              class="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-[#059669] to-[#10b981] hover:from-[#047857] hover:to-[#059669] text-white text-xs font-bold shadow-lg shadow-emerald-950/60 transition"
+              class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#059669] to-[#10b981] hover:from-[#047857] hover:to-[#059669] text-white text-xs font-bold shadow-lg shadow-emerald-950/60 transition"
             >
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-              <span>+ Tambah Barang</span>
+              <span>Tambah Barang</span>
             </button>
           </template>
         </div>
       </div>
 
       <!-- Blue Notice Banner -->
-      <div class="p-3.5 rounded-2xl bg-sky-50 border border-sky-200 flex items-start space-x-3 text-xs text-sky-800">
-        <svg class="w-4 h-4 text-sky-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        <p class="leading-relaxed">
-          <strong class="font-bold text-sky-950">Submenu Inventaris Internal</strong> khusus mendata aset dan stok fisik milik sendiri. Untuk logistik yang dipinjam dari pondok/mitra luar, dikelola khusus di menu
-          <router-link to="/partner-loans" class="text-emerald-700 font-bold hover:underline">Pinjaman Lembaga Mitra</router-link>. Seluruh transaksi peminjaman oleh anggota tetap diproses terpusat di menu
-          <router-link to="/loans" class="text-sky-700 font-bold hover:underline">Peminjaman</router-link>.
-        </p>
+      <div class="p-3 rounded-2xl bg-sky-50 border border-sky-200 flex items-center justify-between text-xs text-sky-900 gap-2">
+        <div class="flex items-center space-x-2">
+          <svg class="w-4 h-4 text-sky-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <span class="text-[11px] sm:text-xs">
+            Khusus aset milik sendiri. Logistik pinjaman luar dikelola di
+            <router-link to="/partner-loans" class="text-emerald-700 font-bold hover:underline">Pinjaman Mitra</router-link>.
+          </span>
+        </div>
+        <router-link to="/loans" class="text-[11px] font-bold text-sky-700 hover:underline flex-shrink-0">
+          Sirkulasi Pinjam &rarr;
+        </router-link>
       </div>
 
       <!-- Filters (Image 1 Match) -->
