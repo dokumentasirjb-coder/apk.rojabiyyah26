@@ -33,12 +33,7 @@ Route::prefix('v1')->group(function () {
     // Protected routes
     Route::middleware('auth:sanctum')->group(function () {
         // Super Admin & Admin: Landing Page Management
-        Route::middleware(function ($request, $next) {
-            if (!$request->user() || !in_array($request->user()->role, ['super_admin', 'admin'])) {
-                return response()->json(['message' => 'Akses ditolak. Khusus Super Admin / Admin.'], 403);
-            }
-            return $next($request);
-        })->group(function () {
+        Route::middleware('role:super_admin,admin')->group(function () {
             Route::post('/admin/landing/upload-denah', [PublicEventController::class, 'uploadDenah']);
             Route::post('/admin/landing/delete-denah', [PublicEventController::class, 'deleteDenah']);
             Route::post('/admin/landing/upload-jadwal', [PublicEventController::class, 'uploadJadwal']);
