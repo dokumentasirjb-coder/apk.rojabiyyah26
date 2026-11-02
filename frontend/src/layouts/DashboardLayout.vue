@@ -160,6 +160,16 @@
               </router-link>
 
               <router-link
+                to="/reports"
+                class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition group"
+                :class="$route.path.startsWith('/reports') ? 'bg-gradient-to-r from-[#059669] to-[#10b981] text-white shadow-md shadow-emerald-600/20 font-bold' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700'"
+                :title="sidebarCollapsed ? 'Laporan Lapangan' : ''"
+              >
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span v-show="!sidebarCollapsed" class="truncate">Laporan Lapangan</span>
+              </router-link>
+
+              <router-link
                 to="/members"
                 class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition group"
                 :class="$route.path.startsWith('/members') ? 'bg-gradient-to-r from-[#059669] to-[#10b981] text-white shadow-md shadow-emerald-600/20 font-bold' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700'"
@@ -306,6 +316,16 @@
               >
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><circle cx="12" cy="11" r="3" stroke-width="2"/></svg>
                 <span v-show="!sidebarCollapsed" class="truncate">Tugas Anggota</span>
+              </router-link>
+
+              <router-link
+                to="/reports"
+                class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition group"
+                :class="$route.path.startsWith('/reports') ? 'bg-gradient-to-r from-[#059669] to-[#10b981] text-white shadow-md shadow-emerald-600/20 font-bold' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700'"
+                :title="sidebarCollapsed ? 'Laporan Lapangan' : ''"
+              >
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span v-show="!sidebarCollapsed" class="truncate">Laporan Lapangan</span>
               </router-link>
 
               <router-link

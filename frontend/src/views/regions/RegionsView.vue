@@ -547,13 +547,14 @@ const dutyForm = ref({
 
 const fetchInitialData = async () => {
   try {
-    const [regRes, memRes] = await Promise.all([
+    const [regRes, memRes, repRes] = await Promise.all([
       api.get('/regions'),
       api.get('/members', { params: { per_page: 100 } }),
+      api.get('/reports').catch(() => ({ data: { total: 0 } })),
     ]);
     regions.value = regRes.data;
     members.value = memRes.data.data;
-    reportsCount.value = 0;
+    reportsCount.value = repRes.data?.total ?? repRes.data?.data?.length ?? (Array.isArray(repRes.data) ? repRes.data.length : 0);
 
     // Load duties from regions assignments
     const list = [];

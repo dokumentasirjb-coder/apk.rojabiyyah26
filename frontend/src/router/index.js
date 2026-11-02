@@ -110,7 +110,9 @@ const routes = [
   },
   {
     path: '/reports',
-    redirect: '/dashboard',
+    name: 'Reports',
+    component: ReportsView,
+    meta: { requiresAuth: true },
   },
   {
     path: '/cash',
