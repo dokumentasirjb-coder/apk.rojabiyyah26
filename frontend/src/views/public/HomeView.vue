@@ -17,9 +17,9 @@
             </div>
           </div>
           <div class="min-w-0">
-            <div class="font-extrabold text-xs sm:text-base tracking-wider uppercase text-slate-900 flex items-center space-x-1.5 truncate">
-              <span class="truncate">{{ settingsStore.settings?.app_name || 'MEDIA ROJABIYYAH' }}</span>
-              <span class="px-1.5 py-0.2 rounded text-[9px] bg-[#f97316] text-white font-mono border border-white/20 flex-shrink-0 font-bold">2026</span>
+            <div class="font-black text-[11px] sm:text-base tracking-normal sm:tracking-wider uppercase text-slate-900 flex items-center space-x-1.5">
+              <span class="whitespace-nowrap">{{ settingsStore.settings?.app_name || 'MEDIA ROJABIYYAH' }}</span>
+              <span class="px-1.5 py-0.5 rounded text-[9px] bg-[#f97316] text-white font-mono border border-white/20 flex-shrink-0 font-bold">2026</span>
             </div>
             <div class="hidden sm:block text-[11px] font-bold text-emerald-700 tracking-wide truncate">{{ settingsStore.settings?.app_sub_name || 'Aktif, Komunikatif, dan Transparan' }}</div>
           </div>
@@ -65,18 +65,18 @@
         </div>
 
         <!-- Mobile Controls (< md) -->
-        <div class="flex md:hidden items-center space-x-2 flex-shrink-0">
+        <div class="flex md:hidden items-center space-x-1.5 flex-shrink-0">
           <button
             @click="showLoginModal = true"
-            class="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 text-[11px] font-bold shadow-sm"
+            class="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 text-[11px] font-bold shadow-xs active:scale-95 transition"
           >
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14"/></svg>
+            <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14"/></svg>
             <span>Masuk</span>
           </button>
 
           <button
             @click="mobileMenuOpen = !mobileMenuOpen"
-            class="p-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-900 transition"
+            class="p-1.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-900 transition active:scale-95"
             aria-label="Toggle navigation menu"
           >
             <svg v-if="!mobileMenuOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>

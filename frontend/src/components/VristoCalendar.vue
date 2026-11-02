@@ -1,51 +1,53 @@
 <template>
   <div class="panel border border-slate-200 bg-white rounded-2xl shadow-md overflow-hidden text-slate-800">
     <!-- Top Action Toolbar (Clean Light Mode) -->
-    <div class="p-4 sm:p-6 border-b border-slate-200 flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-slate-50/80">
-      <!-- Left: Navigation (Prev, Next, Today) & Month Title -->
-      <div class="flex items-center space-x-2 sm:space-x-3">
-        <div class="flex items-center space-x-1 bg-white p-1 rounded-xl border border-slate-200 shadow-sm">
-          <button
-            type="button"
-            @click="prevMonth"
-            class="p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition"
-            title="Bulan Sebelumnya"
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
-          </button>
-          <button
-            type="button"
-            @click="nextMonth"
-            class="p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition"
-            title="Bulan Berikutnya"
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-          </button>
-        </div>
-
-        <button
-          type="button"
-          @click="goToToday"
-          class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 border border-slate-200 transition shadow-sm"
-        >
-          Hari Ini
-        </button>
-
-        <h3 class="text-base sm:text-xl font-black text-slate-900 capitalize pl-1 tracking-wide">
+    <div class="p-3 sm:p-6 border-b border-slate-200 flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 bg-slate-50/80">
+      <!-- Top / Left: Navigation (Prev, Next, Today) & Month Title -->
+      <div class="flex items-center justify-between sm:justify-start space-x-2 sm:space-x-3 w-full lg:w-auto">
+        <h3 class="text-base sm:text-xl font-black text-slate-900 capitalize tracking-tight sm:tracking-wide">
           {{ monthNames[currentMonth] }} {{ currentYear }}
         </h3>
+
+        <div class="flex items-center space-x-1.5 sm:space-x-2">
+          <div class="flex items-center space-x-0.5 bg-white p-0.5 sm:p-1 rounded-xl border border-slate-200 shadow-xs">
+            <button
+              type="button"
+              @click="prevMonth"
+              class="p-1.5 sm:p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition"
+              title="Bulan Sebelumnya"
+            >
+              <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+            </button>
+            <button
+              type="button"
+              @click="nextMonth"
+              class="p-1.5 sm:p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition"
+              title="Bulan Berikutnya"
+            >
+              <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+
+          <button
+            type="button"
+            @click="goToToday"
+            class="px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-xl text-[11px] sm:text-xs font-bold bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 border border-slate-200 transition shadow-xs whitespace-nowrap"
+          >
+            Hari Ini
+          </button>
+        </div>
       </div>
 
-      <!-- Right: Category Filter Chips & View Mode Switcher -->
-      <div class="flex flex-wrap items-center justify-between lg:justify-end gap-2.5">
-        <!-- View Toggle (Grid vs List) -->
-        <div class="flex items-center bg-white p-1 rounded-xl border border-slate-200 text-xs font-bold shadow-sm">
+      <!-- Bottom / Right: Category Filter Chips & View Mode Switcher -->
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between lg:justify-end gap-2 w-full lg:w-auto">
+        <!-- View Toggle (Grid vs List) - Full width on mobile -->
+        <div class="grid grid-cols-2 sm:flex items-center bg-white p-1 rounded-xl border border-slate-200 text-xs font-bold shadow-xs">
           <button
             type="button"
             @click="viewMode = 'grid'"
             :class="[
-              'px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5',
-              viewMode === 'grid' ? 'bg-gradient-to-r from-[#059669] to-[#10b981] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'
+              'px-3 py-1.5 rounded-lg transition flex items-center justify-center space-x-1.5',
+              viewMode === 'grid' ? 'bg-gradient-to-r from-[#059669] to-[#10b981] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
             ]"
           >
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" stroke-width="2" rx="1"/><rect x="14" y="3" width="7" height="7" stroke-width="2" rx="1"/><rect x="14" y="14" width="7" height="7" stroke-width="2" rx="1"/><rect x="3" y="14" width="7" height="7" stroke-width="2" rx="1"/></svg>
@@ -55,8 +57,8 @@
             type="button"
             @click="viewMode = 'list'"
             :class="[
-              'px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5',
-              viewMode === 'list' ? 'bg-gradient-to-r from-[#059669] to-[#10b981] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'
+              'px-3 py-1.5 rounded-lg transition flex items-center justify-center space-x-1.5',
+              viewMode === 'list' ? 'bg-gradient-to-r from-[#059669] to-[#10b981] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
             ]"
           >
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
@@ -69,7 +71,7 @@
           v-if="editable"
           type="button"
           @click="openAddModal"
-          class="px-4 py-1.5 rounded-xl bg-gradient-to-r from-[#059669] to-[#10b981] hover:brightness-105 text-white text-xs font-bold shadow-md shadow-emerald-600/20 flex items-center space-x-1.5 transition active:scale-95"
+          class="w-full sm:w-auto justify-center px-4 py-2 sm:py-1.5 rounded-xl bg-gradient-to-r from-[#059669] to-[#10b981] hover:brightness-105 text-white text-xs font-bold shadow-md shadow-emerald-600/20 flex items-center space-x-1.5 transition active:scale-95"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
           <span>+ Tambah Agenda</span>
@@ -78,17 +80,17 @@
     </div>
 
     <!-- Category Filter Tags Bar -->
-    <div class="px-4 sm:px-6 py-2.5 bg-white border-b border-slate-200 flex items-center space-x-2 overflow-x-auto scrollbar-thin">
-      <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex-shrink-0 mr-1">
+    <div class="px-3 sm:px-6 py-2 sm:py-2.5 bg-white border-b border-slate-200 flex items-center space-x-1.5 sm:space-x-2 overflow-x-auto no-scrollbar">
+      <span class="text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wider flex-shrink-0 mr-1">
         Kategori:
       </span>
       <button
         type="button"
         @click="selectedCategory = 'all'"
         :class="[
-          'px-3 py-1 rounded-lg text-[11px] font-bold transition flex items-center space-x-1 whitespace-nowrap',
+          'px-2.5 sm:px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold transition flex items-center space-x-1 whitespace-nowrap',
           selectedCategory === 'all'
-            ? 'bg-gradient-to-r from-[#059669] to-[#10b981] text-white shadow-sm'
+            ? 'bg-gradient-to-r from-[#059669] to-[#10b981] text-white shadow-xs'
             : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
         ]"
       >
@@ -101,7 +103,7 @@
         type="button"
         @click="selectedCategory = key"
         :class="[
-          'px-2.5 py-1 rounded-lg text-[11px] font-bold transition flex items-center space-x-1.5 whitespace-nowrap',
+          'px-2 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold transition flex items-center space-x-1.5 whitespace-nowrap',
           selectedCategory === key
             ? 'ring-2 ring-emerald-500 ' + cat.badge
             : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
@@ -117,11 +119,11 @@
     <!-- =================================================================== -->
     <div v-if="viewMode === 'grid'" class="p-2 sm:p-5 bg-slate-50/50">
       <!-- Weekday Headers -->
-      <div class="grid grid-cols-7 gap-1 sm:gap-2 mb-2 text-center">
+      <div class="grid grid-cols-7 gap-1 sm:gap-2 mb-1 sm:mb-2 text-center">
         <div
           v-for="(dayName, dIdx) in dayNames"
           :key="dIdx"
-          class="py-2 text-[11px] sm:text-xs font-black uppercase tracking-wider text-slate-600"
+          class="py-1 sm:py-2 text-[10px] sm:text-xs font-black uppercase tracking-wider text-slate-600"
           :class="dIdx === 0 || dIdx === 5 ? 'text-[#f97316]' : ''"
         >
           {{ dayName }}
@@ -133,23 +135,23 @@
         <div
           v-for="(cell, cIdx) in calendarGrid"
           :key="cIdx"
-          @click="editable ? openAddModalForDate(cell.dateStr) : null"
+          @click="handleDayCellClick(cell)"
           :class="[
-            'min-h-[85px] sm:min-h-[115px] p-1.5 sm:p-2 rounded-xl border flex flex-col transition-all duration-150',
+            'min-h-[48px] sm:min-h-[115px] p-1 sm:p-2 rounded-xl border flex flex-col justify-between sm:justify-start transition-all duration-150',
             cell.isCurrentMonth
               ? 'bg-white border-slate-200 hover:border-emerald-400 shadow-xs'
               : 'bg-slate-100/50 border-slate-100 opacity-40',
             cell.isToday ? 'ring-2 ring-[#059669] shadow-sm bg-emerald-50/40' : '',
-            editable ? 'cursor-pointer hover:bg-slate-50' : ''
+            'cursor-pointer hover:bg-slate-50'
           ]"
         >
           <!-- Cell Top: Day Number & Today Pill -->
-          <div class="flex items-center justify-between mb-1">
+          <div class="flex items-center justify-center sm:justify-between mb-0.5 sm:mb-1">
             <span
               :class="[
-                'text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center',
+                'text-[11px] sm:text-xs font-bold w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center',
                 cell.isToday
-                  ? 'bg-gradient-to-r from-[#059669] to-[#10b981] text-white font-black shadow-sm'
+                  ? 'bg-gradient-to-r from-[#059669] to-[#10b981] text-white font-black shadow-xs'
                   : cell.isCurrentMonth ? 'text-slate-800' : 'text-slate-400'
               ]"
             >
@@ -163,8 +165,8 @@
             </span>
           </div>
 
-          <!-- Events in Day Cell -->
-          <div class="flex-1 space-y-1 overflow-hidden">
+          <!-- Desktop View: Full Event Pills (hidden on mobile) -->
+          <div class="hidden sm:block flex-1 space-y-1 overflow-hidden">
             <div
               v-for="evt in getEventsForCell(cell.dateStr).slice(0, 3)"
               :key="evt.id"
@@ -185,6 +187,19 @@
             >
               +{{ getEventsForCell(cell.dateStr).length - 3 }} lainnya
             </div>
+          </div>
+
+          <!-- Mobile View: Clean Event Indicator Dots (visible on mobile only) -->
+          <div v-if="getEventsForCell(cell.dateStr).length > 0" class="sm:hidden flex items-center justify-center space-x-1 mt-0.5 pb-0.5">
+            <span
+              v-for="(evt, eIdx) in getEventsForCell(cell.dateStr).slice(0, 3)"
+              :key="eIdx"
+              class="w-1.5 h-1.5 rounded-full shadow-xs"
+              :class="getCategoryStyle(evt.type).dot"
+            ></span>
+            <span v-if="getEventsForCell(cell.dateStr).length > 3" class="text-[8px] font-black text-emerald-700 leading-none">
+              +
+            </span>
           </div>
         </div>
       </div>
@@ -491,6 +506,71 @@
         </form>
       </div>
     </div>
+
+    <!-- =================================================================== -->
+    <!-- MODAL 3: DAY EVENTS SUMMARY MODAL (FOR MOBILE MULTI-EVENTS)         -->
+    <!-- =================================================================== -->
+    <div
+      v-if="showDayModal && activeDayCell"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in"
+      @click.self="showDayModal = false"
+    >
+      <div class="w-full max-w-md bg-white border border-slate-200 rounded-2xl shadow-2xl overflow-hidden p-5 text-left relative max-h-[85vh] flex flex-col">
+        <button
+          type="button"
+          @click="showDayModal = false"
+          class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100 transition"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+
+        <div class="flex items-center space-x-2 mb-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span class="text-xs font-bold text-emerald-700 uppercase tracking-wider">Agenda Kegiatan</span>
+        </div>
+
+        <h3 class="text-base font-black text-slate-900 mb-3">
+          {{ formatEventFullDate(activeDayCell.dateStr) }}
+        </h3>
+
+        <div class="overflow-y-auto space-y-2.5 flex-1 pr-1">
+          <div
+            v-for="evt in getEventsForCell(activeDayCell.dateStr)"
+            :key="evt.id"
+            @click="openDetailModalFromDay(evt)"
+            class="p-3 rounded-xl bg-slate-50 hover:bg-emerald-50/50 border border-slate-200 hover:border-emerald-300 transition cursor-pointer flex items-start justify-between gap-2 group"
+          >
+            <div class="min-w-0">
+              <div class="flex items-center space-x-1.5 mb-1">
+                <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider" :class="getCategoryStyle(evt.type).badge">
+                  {{ getCategoryStyle(evt.type).label }}
+                </span>
+                <span class="text-[11px] font-semibold text-slate-500 font-mono">
+                  {{ evt.time_start || '00:00' }} - {{ evt.time_end || 'Selesai' }}
+                </span>
+              </div>
+              <h4 class="text-xs font-bold text-slate-900 group-hover:text-emerald-700 transition">
+                {{ evt.title }}
+              </h4>
+              <p v-if="evt.location" class="text-[11px] text-slate-500 mt-0.5 flex items-center space-x-1">
+                <span>📍 {{ evt.location }}</span>
+              </p>
+            </div>
+            <svg class="w-4 h-4 text-slate-400 group-hover:text-emerald-600 transition flex-shrink-0 self-center" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+
+        <div class="mt-4 pt-3 border-t border-slate-200 flex items-center justify-end">
+          <button
+            type="button"
+            @click="showDayModal = false"
+            class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition"
+          >
+            Tutup
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -581,6 +661,8 @@ const showDetailModal = ref(false);
 const selectedEvent = ref(null);
 const showEditModal = ref(false);
 const isEditMode = ref(false);
+const showDayModal = ref(false);
+const activeDayCell = ref(null);
 
 const eventForm = ref({
   id: '',
@@ -743,6 +825,25 @@ const formatEventFullDate = (dateStr) => {
 const openDetailModal = (evt) => {
   selectedEvent.value = evt;
   showDetailModal.value = true;
+};
+
+const handleDayCellClick = (cell) => {
+  if (props.editable) {
+    openAddModalForDate(cell.dateStr);
+    return;
+  }
+  const events = getEventsForCell(cell.dateStr);
+  if (events.length === 1) {
+    openDetailModal(events[0]);
+  } else if (events.length > 1) {
+    activeDayCell.value = cell;
+    showDayModal.value = true;
+  }
+};
+
+const openDetailModalFromDay = (evt) => {
+  showDayModal.value = false;
+  openDetailModal(evt);
 };
 
 const openAddModal = () => {

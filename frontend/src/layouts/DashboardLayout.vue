@@ -472,9 +472,9 @@
           </button>
 
           <!-- Breadcrumb / Header Title -->
-          <div class="flex items-center space-x-2">
+          <div class="flex items-center space-x-2 min-w-0">
             <span class="text-xs text-slate-400 hidden sm:inline">Aplikasi /</span>
-            <h1 class="text-sm font-bold text-slate-900 tracking-wide">
+            <h1 class="text-xs sm:text-sm font-bold text-slate-900 tracking-wide truncate max-w-[140px] min-[390px]:max-w-[180px] sm:max-w-none">
               {{ isMemberOnly ? 'Portal Anggota' : `Administrasi ${authStore.roleLabel || 'Super Admin'}` }}
             </h1>
           </div>

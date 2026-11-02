@@ -238,6 +238,15 @@
 
       <!-- LPJ Transactions Table (Persis Format Excel) -->
       <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+        <!-- Mobile Swipe Helper Indicator -->
+        <div class="sm:hidden px-3.5 py-2 bg-emerald-50/70 border-b border-emerald-100 flex items-center justify-between text-[11px] text-emerald-800 font-semibold">
+          <span class="flex items-center space-x-1.5">
+            <svg class="w-3.5 h-3.5 text-emerald-600 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            <span>Geser tabel ke samping untuk rincian LPJ</span>
+          </span>
+          <span class="text-[10px] text-emerald-600 font-mono font-bold">{{ transactions.length }} data</span>
+        </div>
+
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs border-collapse">
             <thead class="bg-[#064e3b] text-white uppercase font-bold text-[10px] tracking-wider">
