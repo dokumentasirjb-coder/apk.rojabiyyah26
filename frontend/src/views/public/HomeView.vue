@@ -2,9 +2,9 @@
   <div class="min-h-screen bg-[#f8fafc] text-slate-800 flex flex-col font-sans selection:bg-emerald-500 selection:text-white scroll-smooth">
     <!-- 1. Top Navbar (Clean White & Emerald Accent Theme) -->
     <header class="w-full bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 transition-all shadow-sm">
-      <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
-        <!-- Brand -->
-        <router-link to="/" class="flex items-center space-x-2.5 sm:space-x-3.5 group min-w-0 pr-2">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4">
+        <!-- Brand (Tanpa badge kotak oren 2026, rapi dan tidak bertabrakan) -->
+        <router-link to="/" class="flex items-center space-x-3 group flex-shrink-0">
           <div class="h-9 sm:h-11 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition">
             <img
               v-if="settingsStore.settings?.logo_url && settingsStore.settings?.logo_url !== '/logo.png'"
@@ -12,48 +12,49 @@
               alt="Logo"
               class="h-8 sm:h-10 w-auto object-contain"
             />
-            <div v-else class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-[#059669] to-[#10b981] flex items-center justify-center text-white">
+            <div v-else class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-[#059669] to-[#10b981] flex items-center justify-center text-white shadow-sm">
               <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
             </div>
           </div>
-          <div class="min-w-0">
-            <div class="font-black text-[11px] sm:text-base tracking-normal sm:tracking-wider uppercase text-slate-900 flex items-center space-x-1.5">
-              <span class="whitespace-nowrap">{{ settingsStore.settings?.app_name || 'MEDIA ROJABIYYAH' }}</span>
-              <span class="px-1.5 py-0.5 rounded text-[9px] bg-[#f97316] text-white font-mono border border-white/20 flex-shrink-0 font-bold">2026</span>
+          <div class="flex flex-col">
+            <div class="font-black text-sm sm:text-base tracking-wide uppercase text-slate-900 leading-tight whitespace-nowrap">
+              {{ settingsStore.settings?.app_name || 'MEDIA ROJABIYYAH' }}
             </div>
-            <div class="hidden sm:block text-[11px] font-bold text-emerald-700 tracking-wide truncate">{{ settingsStore.settings?.app_sub_name || 'Aktif, Komunikatif, dan Transparan' }}</div>
+            <div class="hidden sm:block text-[10px] sm:text-[11px] font-bold text-emerald-700 tracking-wider whitespace-nowrap leading-tight mt-0.5">
+              {{ settingsStore.settings?.app_sub_name || 'Aktif, Komunikatif, dan Transparan' }}
+            </div>
           </div>
         </router-link>
 
-        <!-- Desktop Navigation Links -->
-        <nav class="hidden md:flex items-center space-x-4 lg:space-x-6 text-xs font-semibold text-slate-600">
-          <a href="#denah" class="hover:text-emerald-700 transition flex items-center space-x-1.5 group">
-            <svg class="w-4 h-4 text-emerald-600 group-hover:scale-110 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
-            <span class="whitespace-nowrap font-bold">Denah Proyektor</span>
+        <!-- Desktop Navigation Links (Tampil di layar luas lg ke atas dengan padding rapi) -->
+        <nav class="hidden lg:flex items-center space-x-1 xl:space-x-2 text-xs font-semibold text-slate-600">
+          <a href="#denah" class="px-2.5 xl:px-3 py-1.5 rounded-xl hover:text-emerald-700 hover:bg-emerald-50/70 transition flex items-center space-x-1.5 group whitespace-nowrap">
+            <svg class="w-4 h-4 text-emerald-600 group-hover:scale-110 transition flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+            <span>Denah Proyektor</span>
           </a>
-          <a href="#kalender" class="hover:text-emerald-700 transition flex items-center space-x-1.5 group">
-            <svg class="w-4 h-4 text-emerald-600 group-hover:scale-110 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg>
-            <span class="whitespace-nowrap font-bold">Kalender Acara</span>
+          <a href="#kalender" class="px-2.5 xl:px-3 py-1.5 rounded-xl hover:text-emerald-700 hover:bg-emerald-50/70 transition flex items-center space-x-1.5 group whitespace-nowrap">
+            <svg class="w-4 h-4 text-emerald-600 group-hover:scale-110 transition flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg>
+            <span>Kalender Acara</span>
           </a>
-          <router-link to="/jadwal-kerja" class="hover:text-emerald-700 transition flex items-center space-x-1.5 group">
-            <svg class="w-4 h-4 text-emerald-600 group-hover:scale-110 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg>
-            <span class="whitespace-nowrap font-bold">Jadwal Kerja Tim</span>
+          <router-link to="/jadwal-kerja" class="px-2.5 xl:px-3 py-1.5 rounded-xl hover:text-emerald-700 hover:bg-emerald-50/70 transition flex items-center space-x-1.5 group whitespace-nowrap">
+            <svg class="w-4 h-4 text-emerald-600 group-hover:scale-110 transition flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg>
+            <span>Jadwal Kerja Tim</span>
           </router-link>
-          <router-link to="/pembagian-proyektor" class="hover:text-emerald-700 transition flex items-center space-x-1.5 group">
-            <svg class="w-4 h-4 text-emerald-600 group-hover:scale-110 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-            <span class="whitespace-nowrap font-bold">Pembagian Proyektor</span>
+          <router-link to="/pembagian-proyektor" class="px-2.5 xl:px-3 py-1.5 rounded-xl hover:text-emerald-700 hover:bg-emerald-50/70 transition flex items-center space-x-1.5 group whitespace-nowrap">
+            <svg class="w-4 h-4 text-emerald-600 group-hover:scale-110 transition flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <span>Pembagian Proyektor</span>
           </router-link>
-          <a href="#laporan-lapangan" class="hover:text-emerald-700 transition flex items-center space-x-1.5 group">
-            <svg class="w-4 h-4 text-emerald-600 group-hover:scale-110 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-            <span class="whitespace-nowrap font-bold">Laporan Posko</span>
+          <a href="#laporan-lapangan" class="px-2.5 xl:px-3 py-1.5 rounded-xl hover:text-emerald-700 hover:bg-emerald-50/70 transition flex items-center space-x-1.5 group whitespace-nowrap">
+            <svg class="w-4 h-4 text-emerald-600 group-hover:scale-110 transition flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            <span>Laporan Posko</span>
           </a>
         </nav>
 
-        <!-- Desktop Navbar Action Buttons -->
-        <div class="hidden md:flex items-center space-x-2.5 sm:space-x-3 flex-shrink-0">
+        <!-- Desktop Action Buttons -->
+        <div class="hidden lg:flex items-center space-x-2.5 flex-shrink-0">
           <router-link
             to="/register-member"
-            class="inline-flex items-center space-x-1.5 px-3 sm:px-4 py-2 rounded-xl bg-gradient-to-r from-[#059669] to-[#10b981] hover:brightness-105 text-white text-xs font-bold shadow-md shadow-emerald-600/20 transition active:scale-95"
+            class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#059669] to-[#10b981] hover:brightness-105 text-white text-xs font-bold shadow-md shadow-emerald-600/20 transition active:scale-95 whitespace-nowrap"
           >
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
             <span>Daftar Panitia</span>
@@ -61,15 +62,15 @@
 
           <button
             @click="showLoginModal = true"
-            class="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-semibold transition active:scale-95 shadow-sm"
+            class="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-semibold transition active:scale-95 shadow-sm whitespace-nowrap"
           >
             <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
             <span>Masuk Petugas</span>
           </button>
         </div>
 
-        <!-- Mobile Controls (< md) -->
-        <div class="flex md:hidden items-center space-x-1.5 flex-shrink-0">
+        <!-- Mobile & Tablet Controls (< lg) -->
+        <div class="flex lg:hidden items-center space-x-1.5 flex-shrink-0">
           <button
             @click="showLoginModal = true"
             class="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 text-[11px] font-bold shadow-xs active:scale-95 transition"
@@ -84,15 +85,15 @@
             aria-label="Toggle navigation menu"
           >
             <svg v-if="!mobileMenuOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-            <svg v-else class="w-5 h-5 text-[#f97316]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            <svg v-else class="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
           </button>
         </div>
       </div>
 
-      <!-- Mobile Dropdown Navigation Drawer -->
+      <!-- Mobile & Tablet Dropdown Navigation Drawer (< lg) -->
       <div
         v-if="mobileMenuOpen"
-        class="md:hidden bg-white border-b border-slate-200 px-4 py-3 space-y-2 shadow-xl animate-in fade-in slide-in-from-top-2"
+        class="lg:hidden bg-white border-b border-slate-200 px-4 py-3 space-y-2 shadow-xl animate-in fade-in slide-in-from-top-2"
       >
         <a
           href="#denah"

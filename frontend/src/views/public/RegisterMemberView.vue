@@ -8,11 +8,10 @@
             <svg class="w-5 h-5 text-[#34d399]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
           </div>
           <div>
-            <div class="font-extrabold text-sm sm:text-base tracking-wider uppercase text-white flex items-center space-x-1.5">
+            <div class="font-extrabold text-sm sm:text-base tracking-wider uppercase text-slate-900 flex items-center space-x-1.5">
               <span>MEDIA ROJABIYYAH</span>
-              <span class="px-1.5 py-0.2 rounded text-[9px] bg-[#f97316] text-white font-mono border border-white/20 font-bold">2026</span>
             </div>
-            <div class="text-[11px] font-semibold text-slate-700">Portal Formulir Pendaftaran Anggota &amp; Relawan</div>
+            <div class="text-[11px] font-semibold text-emerald-700">Portal Formulir Pendaftaran Anggota &amp; Relawan</div>
           </div>
         </router-link>
 
