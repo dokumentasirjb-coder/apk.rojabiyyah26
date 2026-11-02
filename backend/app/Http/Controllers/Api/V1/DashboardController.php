@@ -7,6 +7,7 @@ use App\Models\CashTransaction;
 use App\Models\FieldReport;
 use App\Models\Item;
 use App\Models\Loan;
+use App\Models\Partner;
 use App\Models\Region;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -20,6 +21,9 @@ class DashboardController extends Controller
         $stats = [
             'total_members' => User::where('role', 'anggota')->count(),
             'total_items' => Item::count(),
+            'internal_items' => Item::where('source', 'internal')->count(),
+            'partner_items' => Item::where('source', 'mitra')->count(),
+            'total_partners' => Partner::count(),
             'active_loans' => Loan::whereIn('status', ['disetujui', 'diserahkan'])->count(),
             'pending_loans' => Loan::where('status', 'diajukan')->count(),
             'total_regions' => Region::count(),

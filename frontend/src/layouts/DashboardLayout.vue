@@ -123,10 +123,20 @@
                 to="/inventory"
                 class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition group"
                 :class="$route.path === '/inventory' ? 'bg-gradient-to-r from-[#059669] to-[#10b981] text-white shadow-md shadow-emerald-600/20 font-bold' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700'"
-                :title="sidebarCollapsed ? 'Katalog Inventaris' : ''"
+                :title="sidebarCollapsed ? 'Katalog Inventaris Internal' : ''"
               >
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                <span v-show="!sidebarCollapsed" class="truncate">Katalog Inventaris</span>
+                <span v-show="!sidebarCollapsed" class="truncate">Inventaris Internal</span>
+              </router-link>
+
+              <router-link
+                to="/partner-loans"
+                class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition group"
+                :class="$route.path === '/partner-loans' ? 'bg-gradient-to-r from-[#059669] to-[#10b981] text-white shadow-md shadow-emerald-600/20 font-bold' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700'"
+                :title="sidebarCollapsed ? 'Pinjaman Lembaga Mitra' : ''"
+              >
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                <span v-show="!sidebarCollapsed" class="truncate">Pinjaman Lembaga Mitra</span>
               </router-link>
 
               <router-link
@@ -243,7 +253,7 @@
               <router-link
                 to="/inventory"
                 class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition group"
-                :class="$route.path === '/inventory' && !$route.query.tab ? 'bg-gradient-to-r from-[#059669] to-[#10b981] text-white shadow-md shadow-emerald-600/20 font-bold' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700'"
+                :class="$route.path === '/inventory' ? 'bg-gradient-to-r from-[#059669] to-[#10b981] text-white shadow-md shadow-emerald-600/20 font-bold' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700'"
                 :title="sidebarCollapsed ? 'Data Inventaris Internal' : ''"
               >
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
@@ -251,9 +261,9 @@
               </router-link>
 
               <router-link
-                to="/loans?tab=mitra"
+                to="/partner-loans"
                 class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition group"
-                :class="$route.path.startsWith('/loans') && $route.query.tab === 'mitra' ? 'bg-gradient-to-r from-[#059669] to-[#10b981] text-white shadow-md shadow-emerald-600/20 font-bold' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700'"
+                :class="$route.path.startsWith('/partner-loans') ? 'bg-gradient-to-r from-[#059669] to-[#10b981] text-white shadow-md shadow-emerald-600/20 font-bold' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700'"
                 :title="sidebarCollapsed ? 'Pinjaman Lembaga Mitra' : ''"
               >
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
@@ -263,7 +273,7 @@
               <router-link
                 to="/loans"
                 class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition group"
-                :class="$route.path === '/loans' && $route.query.tab !== 'mitra' ? 'bg-gradient-to-r from-[#059669] to-[#10b981] text-white shadow-md shadow-emerald-600/20 font-bold' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700'"
+                :class="$route.path.startsWith('/loans') ? 'bg-gradient-to-r from-[#059669] to-[#10b981] text-white shadow-md shadow-emerald-600/20 font-bold' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700'"
                 :title="sidebarCollapsed ? 'Peminjaman Anggota' : ''"
               >
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>

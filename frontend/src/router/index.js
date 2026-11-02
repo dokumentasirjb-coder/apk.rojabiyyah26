@@ -14,6 +14,7 @@ import MembersView from '../views/members/MembersView.vue';
 import DivisionsView from '../views/divisions/DivisionsView.vue';
 import InventoryView from '../views/inventory/InventoryView.vue';
 import LoansView from '../views/loans/LoansView.vue';
+import PartnerLoansView from '../views/loans/PartnerLoansView.vue';
 import RegionsView from '../views/regions/RegionsView.vue';
 import ReportsView from '../views/reports/ReportsView.vue';
 import CashView from '../views/cash/CashView.vue';
@@ -87,6 +88,12 @@ const routes = [
     path: '/inventory',
     name: 'Inventory',
     component: InventoryView,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/partner-loans',
+    name: 'PartnerLoans',
+    component: PartnerLoansView,
     meta: { requiresAuth: true },
   },
   {

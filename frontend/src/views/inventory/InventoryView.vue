@@ -9,11 +9,11 @@
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
             </div>
             <h2 class="text-xl font-bold text-slate-900 tracking-tight">
-              {{ isMemberOnly ? 'Penyimpanan & Pendataan Gudang Inventaris' : 'Data Inventaris & Logistik' }}
+              {{ isMemberOnly ? 'Katalog Inventaris Internal (Milik Sendiri)' : 'Data Inventaris Internal (Milik Sendiri)' }}
             </h2>
           </div>
           <p class="text-xs text-slate-500 mt-1">
-            {{ isMemberOnly ? 'Data master barang dan stok inventaris organisasi. Untuk meminjam barang, gunakan submenu Peminjaman.' : 'Kelola data aset, stok fisik, kondisi kelayakan, dan sumber kepemilikan barang.' }}
+            {{ isMemberOnly ? 'Data master barang dan stok inventaris aset internal milik organisasi Rojabiyyah. Untuk meminjam barang, gunakan submenu Peminjaman.' : 'Kelola aset internal milik organisasi, stok fisik, kondisi kelayakan, dan kode label registrasi stiker.' }}
           </p>
         </div>
 
@@ -31,11 +31,11 @@
           <!-- Admin Action Buttons -->
           <template v-else>
             <router-link
-              to="/loans?tab=mitra"
-              class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-teal-50 border border-teal-200 text-teal-700 text-xs font-semibold transition"
+              to="/partner-loans"
+              class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-cyan-50 hover:bg-cyan-100 border border-cyan-200 text-cyan-800 text-xs font-bold transition shadow-xs"
             >
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-              <span>Katalog Pinjaman Lembaga</span>
+              <svg class="w-3.5 h-3.5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+              <span>Pinjaman Lembaga Mitra →</span>
             </router-link>
 
             <!-- Ekspor Excel -->
@@ -69,12 +69,13 @@
         </div>
       </div>
 
-      <!-- Blue Notice Banner (Exact Image 1) -->
+      <!-- Blue Notice Banner -->
       <div class="p-3.5 rounded-2xl bg-sky-50 border border-sky-200 flex items-start space-x-3 text-xs text-sky-800">
-        <svg class="w-4 h-4 text-sky-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <svg class="w-4 h-4 text-sky-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         <p class="leading-relaxed">
-          <strong class="text-white">Submenu Inventaris</strong> difokuskan khusus untuk penyimpanan dan pendataan stok fisik. Seluruh transaksi peminjaman (baik barang internal maupun barang pinjaman dari lembaga) diproses terpusat melalui submenu
-          <router-link to="/loans" class="text-sky-300 font-bold hover:underline">Peminjaman</router-link>.
+          <strong class="font-bold text-sky-950">Submenu Inventaris Internal</strong> khusus mendata aset dan stok fisik milik sendiri. Untuk logistik yang dipinjam dari pondok/mitra luar, dikelola khusus di menu
+          <router-link to="/partner-loans" class="text-emerald-700 font-bold hover:underline">Pinjaman Lembaga Mitra</router-link>. Seluruh transaksi peminjaman oleh anggota tetap diproses terpusat di menu
+          <router-link to="/loans" class="text-sky-700 font-bold hover:underline">Peminjaman</router-link>.
         </p>
       </div>
 
@@ -116,14 +117,9 @@
           @change="handleSourceFilterChange"
           class="px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 focus:outline-none focus:border-emerald-500 transition font-medium"
         >
-          <option value="">Semua Sumber Kepemilikan</option>
-          <option value="internal">Milik Internal (Dokumentasi RJB)</option>
-          <optgroup label="Lembaga / Pondok Pesantren / Mitra:">
-            <option v-for="p in partners" :key="p.id" :value="'partner_' + p.id">
-              {{ p.name }}
-            </option>
-          </optgroup>
-          <option value="mitra">Semua Pinjaman Luar / Mitra</option>
+          <option value="internal">Aset Milik Sendiri (Internal RJB)</option>
+          <option value="">Semua Sumber Logistik</option>
+          <option value="mitra">Khusus Pinjaman Lembaga Mitra</option>
         </select>
 
         <!-- View Mode Toggle for Admin -->
@@ -982,8 +978,8 @@ const filters = ref({
   search: '',
   category_id: '',
   condition: '',
-  sourceSelection: '',
-  source: '',
+  sourceSelection: 'internal',
+  source: 'internal',
   partner_id: '',
 });
 
