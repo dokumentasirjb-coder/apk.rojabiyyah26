@@ -1,335 +1,281 @@
 # PRD: Aplikasi Web Administrasi Rojabiyyah 2026
 
-**Versi:** 2.0 (revisi menyeluruh)
-**Stack:** Laravel (REST API) + Vue.js 3 (SPA) + MySQL
-**Bahasa antarmuka:** Indonesia
+**Versi Dokumen:** 3.0 (Revisi Komprehensif Integrasi Fitur & Pra-Hosting / Deployment)  
+**Tumpukan Teknologi:** Laravel 11 (RESTful API) + Vue.js 3 SPA (Vite + Pinia + TailwindCSS) + MySQL 8  
+**Bahasa Antarmuka:** Bahasa Indonesia  
+**Lisensi & Hak Cipta:** © 2026 Panitia Media Haul Ke-5 Al-Maghfurlah K.H. Moch. Djamaluddin Achmad & Rojabiyyah 2026, Pondok Pesantren Al-Muhibbin Tambakberas Jombang.
 
 ---
 
 ## Daftar Isi
 
-1. [Ringkasan Sistem](#1-ringkasan-sistem)
-2. [Arsitektur dan Teknologi](#2-arsitektur-dan-teknologi)
-3. [Keamanan](#3-keamanan)
-4. [Peran Pengguna dan Hak Akses (RBAC)](#4-peran-pengguna-dan-hak-akses-rbac)
-5. [Kebutuhan Fungsional](#5-kebutuhan-fungsional)
-6. [Rancangan Basis Data](#6-rancangan-basis-data)
-7. [Daftar Endpoint API](#7-daftar-endpoint-api)
-8. [Kebutuhan Non-Fungsional](#8-kebutuhan-non-fungsional)
-9. [Tahapan Pengembangan dan Prioritas](#9-tahapan-pengembangan-dan-prioritas)
-10. [Risiko dan Mitigasi](#10-risiko-dan-mitigasi)
-11. [Kriteria Penerimaan](#11-kriteria-penerimaan)
-12. [Daftar Perubahan dari Draf Awal](#12-daftar-perubahan-dari-draf-awal)
+1. [Ringkasan Eksekutif & Identitas Sistem](#1-ringkasan-eksekutif--identitas-sistem)
+2. [Arsitektur, Tumpukan Teknologi & Standar Keamanan](#2-arsitektur-tumpukan-teknologi--standar-keamanan)
+3. [Peran Pengguna & Matriks Hak Akses (RBAC)](#3-peran-pengguna--matriks-hak-akses-rbac)
+4. [Kebutuhan Fungsional & Spesifikasi Fitur Terintegrasi](#4-kebutuhan-fungsional--spesifikasi-fitur-terintegrasi)
+   - [4.1 Portal Login Vristo Auth-Cover & Registrasi Mandiri 2 Jalur](#41-portal-login-vristo-auth-cover--registrasi-mandiri-2-jalur)
+   - [4.2 Data Anggota, Impor Spreadsheet & Otomatisasi Akun](#42-data-anggota-impor-spreadsheet--otomatisasi-akun)
+   - [4.3 Pemisahan Inventaris Internal vs. Pinjaman Lembaga Mitra](#43-pemisahan-inventaris-internal-vs-pinjaman-lembaga-mitra)
+   - [4.4 Sirkulasi Peminjaman & Surat Bukti Peminjaman (PDF + QR)](#44-sirkulasi-peminjaman--surat-bukti-peminjaman-pdf--qr)
+   - [4.5 Tugas Anggota, Titik Posko & Pelaporan Lapangan Realtime](#45-tugas-anggota-titik-posko--pelaporan-lapangan-realtime)
+   - [4.6 Publikasi Beranda Publik & Laporan Lapangan (Read-Only)](#46-publikasi-beranda-publik--laporan-lapangan-read-only)
+   - [4.7 Rekapitulasi Kas Keuangan & Proteksi Sandi Kas](#47-rekapitulasi-kas-keuangan--proteksi-sandi-kas)
+   - [4.8 Pengaturan Sistem Dinamis & Pengelolaan Halaman Utama](#48-pengaturan-sistem-dinamis--pengelolaan-halaman-utama)
+   - [4.9 Audit Log & Pusat Pembersihan Data (Danger Zone)](#49-audit-log--pusat-pembersihan-data-danger-zone)
+5. [Rancangan Basis Data (Database Schema)](#5-rancangan-basis-data-database-schema)
+6. [Daftar Endpoint API Lengkap (`/api/v1`)](#6-daftar-endpoint-api-lengkap-apiv1)
+7. [Checklist Kesiapan Hosting & Deployment Pra-Rilis](#7-checklist-kesiapan-hosting--deployment-pra-rilis)
+8. [Riwayat Perubahan Dokumen (Changelog)](#8-riwayat-perubahan-dokumen-changelog)
 
 ---
 
-## 1. Ringkasan Sistem
+## 1. Ringkasan Eksekutif & Identitas Sistem
 
-Administrasi Rojabiyyah 2026 adalah aplikasi web untuk mengelola operasional kepanitiaan berskala besar secara transparan, akuntabel, dan mendekati realtime. Sistem mengintegrasikan:
+**Administrasi Rojabiyyah 2026** adalah sistem informasi manajemen dan operasional terpadu yang dirancang khusus untuk mendukung kelancaran perhelatan akbar Haul Ke-5 Masyayikh & Peringatan Isra' Mi'raj (Rojabiyyah 2026) di Pondok Pesantren Al-Muhibbin Tambakberas Jombang.
 
-- Inventaris dan logistik (aset internal dan barang pinjaman lembaga mitra)
-- Peminjaman barang: permohonan, persetujuan, bukti serah terima, dan Surat Bukti Peminjaman (PDF) resmi
-- Data anggota dengan impor massal spreadsheet dan pembuatan akun otomatis
-- Portal mandiri anggota
-- Penugasan posko dan pelaporan lapangan realtime
-- Rekap kas keuangan dengan bukti nota, grafik, dan ekspor
-- Manajemen admin dengan kontrol akses berbasis peran (RBAC)
-- Pembersihan data (Danger Zone), branding, tautan Google Drive, dan slider beranda
-
-**Tujuan:** menggantikan pencatatan manual dan spreadsheet yang terpisah-pisah, menyediakan jejak audit, dan mempercepat koordinasi antar divisi dan posko.
-
-**Perkiraan skala (asumsi, perlu dikonfirmasi):** 100–500 anggota terdaftar, 5–10 admin/pengelola, 50–100 pengguna bersamaan saat puncak acara.
+Sistem ini mentransformasikan birokrasi lapangan manual menjadi alur kerja digital yang transparan, akuntabel, dan realtime, mencakup:
+- **Pemisahan Pengelolaan Logistik:** Memisahkan secara ketat aset inventaris internal milik panitia sendiri dengan barang pinjaman dari lembaga/pesantren mitra luar, namun tetap menyatukannya dalam katalog peminjaman yang mudah diakses anggota.
+- **Sistem Komando & Tugas Lapangan:** Pembagian pos teknis (Proyektor, Fotografer, Videografer, Perkabelan) dan pemantauan kondisi pos secara langsung dengan publikasi transparan ke halaman beranda publik.
+- **Portal Otentikasi Vristo:** Antarmuka masuk petugas modern berskala enterprise dengan visual kontras tinggi, proteksi keamanan berlapis, dan 2 jalur registrasi mandiri.
+- **Pusat Rekap Kas LPJ:** Pencatatan arus keuangan kas dengan verifikasi kata sandi tambahan khusus bendahara dan super admin.
+- **Transparansi Informasi Publik:** Beranda publik dinamis yang menyajikan hitung mundur acara, slider dokumentasi, denah proyektor interaktif, kalender acara, jadwal kerja tim, dan papan pantau laporan lapangan *read-only*.
 
 ---
 
-## 2. Arsitektur dan Teknologi
+## 2. Arsitektur, Tumpukan Teknologi & Standar Keamanan
 
-| Lapisan | Pilihan | Catatan |
+### 2.1 Arsitektur Sistem (Decoupled Single Page Application)
+```
+[ Klien / Browser Web (Desktop & Mobile) ]
+                  │
+                  ▼ HTTPS
+[ Web Server (Nginx / Apache Reverse Proxy) ]
+         │                               │
+         ▼                               ▼
+[ Frontend SPA (Vue 3 + Vite) ]   [ REST API Engine (Laravel 11) ]
+                                                 │
+                                                 ▼
+                                        [ Basis Data MySQL 8 ]
+                                        [ File Storage / Uploads ]
+```
+
+### 2.2 Tumpukan Teknologi (Technology Stack)
+| Komponen | Teknologi | Keterangan |
 |---|---|---|
-| Backend | Laravel (versi LTS terbaru), RESTful API | Validasi dengan Form Request, otorisasi dengan Policy/Gate |
-| Frontend | Vue.js 3 SPA (Vite, Pinia, Vue Router) | Responsif, mobile-first |
-| Database | MySQL 8 | Migrasi dan seeder Laravel |
-| Autentikasi | **Laravel Sanctum (mode SPA, berbasis cookie)** | Pengganti Dual-Token JWT; lebih sederhana dan aman untuk SPA di domain induk yang sama |
-| Antrean/Cache | Redis (atau driver database untuk skala kecil) | Antrean untuk PDF, impor, notifikasi |
-| Penyimpanan file | Laravel Filesystem: disk lokal privat atau S3-compatible | File bukti hanya diakses lewat signed URL |
-| Realtime | Laravel Reverb (WebSocket) dengan fallback polling 30 detik | Laporan lapangan dan notifikasi dashboard |
-| Server | Nginx + PHP-FPM, HTTPS wajib | Security headers diatur di Nginx/middleware |
+| **Backend Framework** | Laravel 11.x (PHP 8.2+) | RESTful JSON API, Policy & Gate Authorization, Database Transactions |
+| **Autentikasi API** | Laravel Sanctum | Bearer Token / Personal Access Token, Single-Session Revocation |
+| **Frontend Framework** | Vue.js 3 (Composition API `<script setup>`) | Single Page Application (SPA), Vue Router 4, Pinia State Management |
+| **Peralatan Build & Bundler** | Vite 8 + Rolldown | HMR instan, kompilasi aset cepat, split chunking |
+| **CSS & Desain UI** | TailwindCSS 3 + Kustom Vristo Theme | Responsif *mobile-first*, High-Contrast Emerald Palette, Glassmorphism & SVG |
+| **Basis Data** | MySQL 8.x / MariaDB 10.6+ | InnoDB Engine, Foreign Key Strict Integrity, Fulltext & Date Indexing |
+| **Pembangkit Dokumen** | Barryvdh Laravel DomPDF / Snappy | Penerbitan Surat Bukti Peminjaman resmi ber-QR Code |
+| **Pengolahan Berkas** | Intervention Image / GD Library | Kompresi foto bukti otomatis, pengacakan nama berkas unik |
 
-**Prinsip arsitektur:** Frontend dan Backend terpisah penuh (Decoupled Architecture); komunikasi hanya lewat REST API berversi (`/api/v1/...`). Frontend dan API sebaiknya berada di domain induk yang sama (mis. `app.domain.id` dan `api.domain.id`) agar cookie Sanctum berfungsi.
-
----
-
-## 3. Keamanan
-
-- **Autentikasi:** Laravel Sanctum mode SPA. Cookie sesi `httpOnly`, `Secure`, `SameSite=Lax`, dengan proteksi CSRF (`/sanctum/csrf-cookie`). Axios memakai `withCredentials: true`; interceptor menangani respons 401 (arahkan ke login) dan 419 (muat ulang CSRF).
-- **Alternatif:** jika kelak butuh klien mobile native, tambahkan token pribadi Sanctum. Jika tetap memilih JWT, gunakan `tymon/jwt-auth` dengan access token 15 menit dan refresh token 7 hari via cookie `httpOnly`, lengkap dengan rotasi dan daftar cabut (revocation).
-- **Kata sandi:** hash bcrypt/Argon2 bawaan Laravel, minimal 8 karakter. Akun hasil impor **wajib ganti password saat login pertama** (tanpa password default yang mudah ditebak).
-- **Proteksi server:** pembatasan login (mis. 5 percobaan/menit per IP+akun), rate limiting global API, CORS dibatasi ke domain frontend, middleware security headers (mis. `bepsvpt/secure-headers`) atau konfigurasi Nginx (HSTS, X-Content-Type-Options, X-Frame-Options, CSP), sanitasi input, dan proteksi SQL injection lewat Eloquent/query binding. *(Catatan: Helmet pada draf awal adalah library Node.js dan tidak berlaku untuk Laravel.)*
-- **Unggah file:** validasi MIME dan ekstensi, batas ukuran (foto maks. 5 MB, video maks. 50 MB, spreadsheet maks. 5 MB), nama file diacak, kompresi gambar otomatis, pemeriksaan ekstensi ganda, disimpan di disk privat.
-- **Perlindungan data pribadi:** data anggota (nomor WhatsApp, domisili, pendidikan) hanya terlihat oleh peran berwenang; anggota hanya melihat profilnya sendiri; ekspor data tercatat di audit log; ada kebijakan retensi dan penghapusan data setelah acara selesai.
-- **Audit log:** semua aksi penting (login, tambah/ubah/hapus, persetujuan, ekspor, reset) dicatat beserta pengguna, aksi, objek, waktu, dan IP.
+### 2.3 Standar Keamanan Sistem
+1. **Proteksi Kredensial:** Hash kata sandi menggunakan algoritma Bcrypt bawaan Laravel. Akun yang baru didaftarkan atau direset wajib mengubah kata sandi pada login pertama (`must_change_password`).
+2. **Otorisasi Multi-Lapis:** Middleware `auth:sanctum` dipadukan dengan pemeriksaan peran dinamis pada tingkat rute backend dan penjaga navigasi (*navigation guard*) Vue Router.
+3. **Proteksi Akses Modul Kas:** Akses modul keuangan kas dilindungi oleh lapis otentikasi ganda berupa *master cash password* (`/cash/verify-password`) yang hanya dimiliki oleh Super Admin dan Bendahara.
+4. **Keamanan Berkas Unggahan:** Validasi MIME type ketat untuk gambar (JPEG, PNG, WEBP maks. 5MB) dan dokumen spreadsheet (XLSX, CSV maks. 5MB). File disimpan dengan nama acak bersandi (*hashed filename*).
+5. **Jejak Audit (Audit Logging):** Seluruh mutasi kritis (Login, Penambahan/Perubahan Anggota, Sirkulasi Peminjaman, Mutasi Kas, Reset Data) dicatat secara terperinci beserta identitas aktor, IP Address, dan perubahan nilai data (*before-after values*).
 
 ---
 
-## 4. Peran Pengguna dan Hak Akses (RBAC)
+## 3. Peran Pengguna & Matriks Hak Akses (RBAC)
 
-Draf awal hanya memiliki Admin dan Anggota dengan hak setara. Revisi ini memakai peran berjenjang agar prinsip *least privilege* terpenuhi.
+Aplikasi menerapkan sistem hak akses berbasis peran berjenjang (*Role-Based Access Control*):
 
-| Peran | Deskripsi |
+| Peran (*Role*) | Deskripsi Singkat & Tanggung Jawab |
 |---|---|
-| **Super Admin** | Pemilik sistem; akses penuh, kelola admin, Danger Zone, pengaturan sistem. Minimal 1, disarankan 2 (cadangan). |
-| **Admin** | Pengelola operasional: anggota, inventaris, peminjaman, penugasan, laporan, slider. Tidak dapat mengelola Super Admin atau Danger Zone. |
-| **Bendahara** | Khusus modul kas: catat, ubah, ekspor. Hanya-lihat untuk modul lain yang relevan. |
-| **Ketua Divisi** | Melihat anggota divisinya, mengajukan peminjaman atas nama divisi, melihat penugasan divisinya. |
-| **PIC Posko** | Membuat dan memperbarui laporan lapangan untuk posko yang dipegangnya, melihat anggota posko. |
-| **Anggota** | Portal mandiri: profil sendiri, katalog, permohonan peminjaman, laporan lapangan (jika bertugas di posko). |
+| **Super Admin** | Pemilik sistem tertinggi. Memiliki akses menyeluruh, manajemen akun pengelola admin, kustomisasi pengaturan identitas, audit log, dan eksekusi Pusat Pembersihan Data (*Danger Zone*). |
+| **Admin Operasional** | Pengelola logistik lapangan, manajemen anggota dan divisi, sirkulasi peminjaman, titik posko tugas, pengelolaan konten beranda utama, dan verifikasi laporan lapangan. |
+| **Bendahara** | Pengelola pembukuan kas kepanitiaan. Memiliki hak penuh atas modul Rekap Uang, pencatatan transaksi masuk/keluar, lampiran nota LPJ, dan ekspor keuangan. |
+| **Anggota / Petugas Lapangan** | Anggota relawan kepanitiaan. Memiliki akses portal mandiri: katalog inventaris internal & pinjaman mitra, permohonan pinjam alat, jadwal pos tugas sendiri, dan pengiriman laporan lapangan langsung dari posko. |
 
-### Matriks Hak Akses
+### Matriks Hak Akses Modul
+| Modul / Fitur | Super Admin | Admin Operasional | Bendahara | Anggota Lapangan | Tamu / Publik |
+|---|:---:|:---:|:---:|:---:|:---:|
+| **Beranda Utama Publik & Landing Page** | R | R | R | R | R |
+| **Portal Login Vristo (`/login`)** | Akses | Akses | Akses | Akses | Akses |
+| **Registrasi Mandiri (Akun & Form)** | CRUD | CRUD | R | CRUD | Buat Mandiri |
+| **Data Anggota & Impor Excel** | CRUDX | CRUDX | – | R (Profil) | – |
+| **Divisi Tugas Panitia** | CRUD | CRUD | – | R | – |
+| **Inventaris Internal (Milik Sendiri)** | CRUDX | CRUDX | R | R (Katalog) | – |
+| **Pinjaman Lembaga Mitra** | CRUDX | CRUDX | R | R (Katalog) | – |
+| **Sirkulasi Peminjaman (Approval)** | CRUD | CRUD | – | Ajukan & R | – |
+| **Unduh & Verifikasi Surat PDF (QR)** | Cetak | Cetak | – | Cetak Milik | Verifikasi QR |
+| **Titik Tugas & Posko Lapangan** | CRUD | CRUD | – | R (Tugas Saya) | – |
+| **Laporan Lapangan (Kirim & Tinjau)** | CRUD | CRUD | – | Buat & R | R (Beranda) |
+| **Rekap Uang & Kas (Verifikasi PIN)** | CRUDX | – | CRUDX | – | – |
+| **Slider Beranda & Landing Manager** | CRUD | CRUD | – | – | R (Publik) |
+| **Pengaturan Sistem & Branding** | CRUD | R | – | – | – |
+| **Pusat Pembersihan Data (Danger Zone)** | Eksekusi | – | – | – | – |
+| **Audit Logs** | R | R | – | – | – |
 
-Keterangan: **C** buat, **R** lihat, **U** ubah, **D** hapus, **A** setujui, **X** ekspor, **–** tanpa akses, **(sendiri)** hanya data miliknya, **(div)** hanya divisinya, **(posko)** hanya posko yang dipegang.
-
-| Modul | Super Admin | Admin | Bendahara | Ketua Divisi | PIC Posko | Anggota |
-|---|---|---|---|---|---|---|
-| Dashboard ringkasan | R | R | R (kas) | R (div) | R (posko) | R (sendiri) |
-| Data anggota | CRUDX | CRUDX | – | R (div) | R (posko) | R/U (sendiri) |
-| Impor anggota | C | C | – | – | – | – |
-| Inventaris internal | CRUDX | CRUDX | R | R | R | R (katalog) |
-| Pinjaman mitra | CRUDX | CRUDX | R | R | R | R (katalog) |
-| Peminjaman (ajukan) | C | C | – | C | C | C |
-| Peminjaman (setujui/serah terima/kembali) | A | A | – | – | – | – |
-| Penugasan dan posko | CRUD | CRUD | – | R (div) | R (posko) | R (sendiri) |
-| Laporan lapangan | CRUD | CRU | – | R | C/R/U (posko) | C/R (posko) |
-| Tindak lanjut laporan | U | U | – | – | – | – |
-| Rekap kas | CRUDX | R | CRUDX | – | – | – |
-| Slider beranda | CRUD | CRUD | – | – | – | – |
-| Pengaturan dan branding | CRUD | R | – | – | – | – |
-| Kelola admin | CRUD | – | – | – | – | – |
-| Audit log | R | R (terbatas) | – | – | – | – |
-| Danger Zone | Ya | Tidak | Tidak | Tidak | Tidak | Tidak |
-
-Implementasi: `spatie/laravel-permission` atau Policy Laravel; matriks ini menjadi dasar seeder izin.
+*Keterangan: **C** (Create/Buat), **R** (Read/Lihat), **U** (Update/Ubah), **D** (Delete/Hapus), **X** (Export/Unduh Data).*
 
 ---
 
-## 5. Kebutuhan Fungsional
+## 4. Kebutuhan Fungsional & Spesifikasi Fitur Terintegrasi
 
-### 5.1 Autentikasi dan Manajemen Akun
-- Login memakai ID anggota (mis. `RJB-001`) atau email; logout; ganti password; reset password oleh Super Admin atau Admin (email tidak wajib).
-- Status akun aktif/nonaktif; akun nonaktif langsung kehilangan sesi.
-- Proteksi Super Admin: tidak dapat dihapus atau dinonaktifkan peran lain, dan sistem menolak tindakan yang membuat jumlah Super Admin menjadi nol.
-- Kelola pengelola: tambah Admin/Bendahara, atur peran, aktif/nonaktif, reset password.
+### 4.1 Portal Login Vristo Auth-Cover & Registrasi Mandiri 2 Jalur
+1. **Tata Letak Split Cover Card (Vristo Model):**
+   - Halaman `/login` menggunakan desain split-card kontras tinggi dengan batas diagonal miring (*slanted polygon clip-path*) pada layar lebar.
+   - Panel kiri (*Cover Side*): Latar gradien malam *Deep Emerald Night & Dark Navy* (`#022c22` &rarr; `#064e3b` &rarr; `#1e1b4b`), menampilkan logo resmi dinamis dari database, teks nama aplikasi & sub-judul acara, serta kartu ilustrasi vektor autentikasi keamanan dengan lencana perisai melayang (*floating security shield badge*).
+   - Panel kanan (*Form Side*): Latar putih bersih dengan judul `SIGN IN`, input email/username dengan ikon, input kata sandi dengan ikon gembok dan tombol intip (*eye-toggle*), checkbox *"Ingat saya di perangkat ini"*, tombol submit bergradien emerald, garis pembatas *"OR"*, tombol isi-otomatis 1-klik untuk akun demo Super Admin & Anggota, serta tautan kembali ke Beranda Utama.
+2. **Dual-Path Registrasi Publik:**
+   - **Formulir Pendaftaran Panitia / Relawan (`/register-member`):** Khusus pendataan anggota baru tanpa mewajibkan kepemilikan akun login (nama lengkap, divisi, pendidikan, kelas, domisili, nomor WhatsApp, ukuran seragam panitia).
+   - **Pendaftaran Akun Login Anggota (`/register-account`):** Khusus anggota yang ingin membuat akun login mandiri ke portal dengan menentukan username dan kata sandi sendiri.
 
-### 5.2 Data Anggota dan Impor Excel/CSV
-- **Impor massal** `.xlsx`, `.xls`, `.csv` lewat modal; berkas besar diproses asinkron lewat antrean.
-- **Pemetaan kolom cerdas:** NO, NAMA (wajib), DEV (divisi), PENDIDIKAN, KELAS, DOMISILI, SERAGAM, NO WA; toleran terhadap variasi huruf, spasi, dan sinonim.
-- **Validasi dan pratinjau sebelum simpan:** tampilkan baris valid, baris bermasalah (nama kosong, nomor WA tidak valid, duplikat), dan ringkasan jumlah. Pengguna memilih *lewati baris bermasalah* atau *batal*.
-- **Deteksi duplikat** berdasarkan nama + nomor WA; opsi lewati/perbarui.
-- **Nomor induk otomatis** berurutan (RJB-001, RJB-002, …), dibuat dalam transaksi database dengan penguncian agar tidak ganda saat impor bersamaan. Format tetap bertambah setelah 999 (RJB-1000).
-- **Akun login otomatis** dengan password sementara acak dan wajib ganti saat login pertama; daftar kredensial awal dapat diunduh sekali oleh admin (PDF/Excel).
-- **Template Excel** standar dapat diunduh.
-- **Pencarian dan filter:** divisi, peran, status, pencarian nama instan (debounce, paginasi sisi server).
-- **Riwayat impor:** siapa, kapan, jumlah berhasil/gagal.
+### 4.2 Data Anggota, Impor Spreadsheet & Otomatisasi Akun
+- **Pencatatan Lengkap:** Mengelola nama, nomor anggota unik (format otomatis: `RJB-001`, `RJB-002`, dst.), divisi kepanitiaan, kontak WhatsApp, ukuran seragam, dan domisili.
+- **Pintasan WhatsApp Instan:** Tombol langsung membuka WhatsApp chat untuk koordinasi cepat antar petugas.
+- **Impor Massal Excel/CSV:** Modal impor dengan pratinjau data valid dan deteksi anomali baris sebelum data dimasukkan ke basis data.
+- **Generator Akun Otomatis:** Pembuatan akun login otomatis dari data anggota dengan kata sandi acak dan penanda wajib ganti sandi pada saat pertama kali login.
 
-### 5.3 Portal Mandiri Anggota
-- Beranda: titik tugas, permohonan berjalan, riwayat peminjaman, pengumuman.
-- Profil: ubah biodata, domisili, nomor WhatsApp, foto profil (pratinjau langsung, pemangkasan otomatis).
-- Akses pintas ke Google Drive berkas resmi dan jadwal penugasan.
-- Katalog logistik: cari, lihat stok tersedia, ajukan permohonan.
+### 4.3 Pemisahan Inventaris Internal vs. Pinjaman Lembaga Mitra
+1. **Menu Data Inventaris Internal (`/inventory`):**
+   - Dikhususkan untuk aset milik resmi kepanitiaan Rojabiyyah / Pondok Al-Muhibbin.
+   - Pelacakan stok: Stok Total, Stok Tersedia, Stok Sedang Dipinjam, dan Stok Rusak.
+   - Manajemen kategori, kondisi barang (Baik / Rusak Ringan / Rusak Berat), lokasi penyimpanan, dan foto fisik barang.
+2. **Menu Pinjaman Lembaga Mitra (`/partner-loans`):**
+   - Dikhususkan untuk barang/alat yang dipinjam dari pondok pesantren mitra atau instansi luar.
+   - Data mitra: Nama instansi/pesantren pemilik, narahubung (PIC mitra), nomor telepon mitra, dan tanggal batas wajib pengembalian ke mitra (*return due date*).
+   - Ekspor data barang pinjaman mitra ke format Excel untuk kebutuhan rekonsiliasi pengembalian pasca-acara.
+3. **Integrasi Katalog Peminjaman Anggota:**
+   - Baik barang internal maupun barang mitra luar secara otomatis muncul dalam katalog peminjaman yang dapat diakses oleh anggota, dilengkapi dengan lencana penanda (*badge*) yang membedakan aset milik sendiri vs. barang pinjaman mitra.
 
-### 5.4 Inventaris dan Logistik
-- **Dua sumber:** Inventaris Internal dan Pinjaman Lembaga Mitra (menyimpan nama instansi pemilik, kontak, dan tanggal wajib kembali ke mitra).
-- **Stok:** total, tersedia, dipesan (reserved), rusak; kondisi Baik / Rusak Ringan / Rusak Berat. Stok tersedia dihitung otomatis dan tidak pernah negatif.
-- Foto barang, kode barang unik, label/QR, lokasi simpan, kategori.
-- **Custom Fields** (teks, angka, dropdown) memakai tabel definisi dan tabel nilai (EAV terbatas) atau kolom JSON.
-- Ekspor `.xlsx`.
-- *Soft delete*; barang yang punya riwayat peminjaman tidak dapat dihapus permanen.
+### 4.4 Sirkulasi Peminjaman & Surat Bukti Peminjaman (PDF + QR)
+- **Alur Sirkulasi Barang:**  
+  `Diajukan (Pending) → Disetujui (Approved) → Diserahkan (Handed Over) → Dikembalikan (Returned)`  
+  *(Dengan status alternatif: Ditolak / Dibatalkan).*
+- **Reservasi Stok Otomatis:** Saat permohonan disetujui, kuantitas stok barang langsung dikunci (*reserved*) agar tidak terjadi peminjaman ganda (*double booking*).
+- **Surat Bukti Peminjaman Resmi (PDF):**
+  - Dilengkapi kop resmi panitia, nomor surat unik, daftar unit barang yang dipinjam, identitas peminjam, tanggal pinjam/kembali, dan kolom tanda tangan basah.
+  - Memuat **Kode QR Verifikasi** yang dapat dipindai langsung oleh kamera untuk membuka halaman validasi publik (`/verify-loan/:code`).
 
-### 5.5 Sirkulasi Peminjaman dan Surat PDF
+### 4.5 Tugas Anggota, Titik Posko & Pelaporan Lapangan Realtime
+- **Titik Tugas & Posko Lapangan (`/regions`):**
+  - Penetapan pos teknis utama: Posko Proyektor (KJA, Panggung Utama, Asrama), Fotografer, Videografer, Perkabelan, Sound System, dan Posko Keamanan.
+  - Penetapan Penanggung Jawab Pos (PIC) dan jadwal jam tugas anggota.
+  - **Banner Prioritas "Tugas Saya":** Menampilkan kartu khusus berwarna emas di bagian atas jika akun anggota yang login sedang ditugaskan pada pos tersebut, lengkap dengan tombol langsung *"Lapor Kondisi Pos"*.
+- **Laporan Lapangan Anggota (`/reports`):**
+  - Petugas pos dapat mengirimkan laporan kondisi posko secara berkala dengan 3 status: **Normal (Hijau)**, **Perlu Perhatian (Kuning)**, atau **Rusak / Kendala Teknis (Merah)**.
+  - Formulir laporan dilengkapi deskripsi kendala teknis dan unggahan foto kondisi langsung dari lapangan.
+  - Admin dapat memberikan tanggapan tindak lanjut (*follow-up solutions*) dan memperbarui status penanganan masalah.
 
-**Status:** `Diajukan → Disetujui → Diserahkan → Dikembalikan` (cabang: `Ditolak`, `Dibatalkan`, `Terlambat`, `Dikembalikan Sebagian`, `Hilang/Rusak`).
+### 4.6 Publikasi Beranda Publik & Laporan Lapangan (Read-Only)
+- **Beranda Interaktif (`HomeView.vue`):**
+  - **Hero Banner:** Slider foto kegiatan dinamis, tombol hitung mundur acara, serta judul, sub-judul, dan deskripsi hero yang 100% dinamis dari pengaturan sistem.
+  - **Denah Penempatan Proyektor:** Menampilkan tata letak posisi proyektor dan layar di area pengajian akbar.
+  - **Kalender Acara & Timeline Haul:** Rangkaian agenda peringatan Haul Ke-5 Masyayikh.
+  - **Jadwal Kerja Tim & Pembagian Proyektor:** Tabel plotting teknis tugas anggota.
+  - **Papan Pantau Laporan Lapangan (Read-Only):** Menampilkan rangkuman kartu laporan langsung dari petugas posko secara transparan untuk publik/tamu, dengan batasan hanya-lihat dan tombol navigasi masuk petugas.
+  - **Navigasi Navbar & Footer:** Seluruh tombol akses petugas terintegrasi langsung ke rute portal login modern `/login`.
 
-1. **Permohonan:** anggota memilih barang, jumlah, keperluan, tanggal pinjam dan rencana kembali. Sistem memeriksa ketersediaan stok pada rentang tanggal tersebut.
-2. **Persetujuan:** admin meninjau; dapat menyetujui sebagian jumlah, menolak dengan alasan wajib, atau meminta revisi. Stok **dipesan (reserved)** saat disetujui dan **dikurangi** saat serah terima, sehingga tidak ada stok hilang jika serah terima batal.
-3. **Serah terima:** unggah foto bukti kondisi barang, catatan kondisi, dan nama penerima.
-4. **Pengembalian:** pemeriksaan kondisi per unit; stok kembali sesuai kondisi (barang rusak masuk kolom rusak, bukan tersedia).
+### 4.7 Rekapitulasi Kas Keuangan & Proteksi Sandi Kas
+- **Perlindungan Akses Ganda:** Halaman kas dilindungi otentikasi sandi kas (`/cash/verify-password`) khusus Super Admin dan Bendahara.
+- **Pencatatan Arus Dana:** Arus dana masuk (infaq, donasi, subsidi) dan dana keluar (operasional teknis, konsumsi, transportasi, logistik) dengan lampiran bukti nota fisik/struk belanja.
+- **Neraca Kas Realtime:** Kartu ringkasan total penerimaan, total pengeluaran, saldo akhir kas, dan tabel rincian transaksi dengan status penguncian periode.
 
-**Kasus khusus:**
-- *Stok tidak cukup:* permohonan ditolak otomatis saat diajukan, atau masuk daftar tunggu sesuai kebijakan admin.
-- *Terlambat:* penanda otomatis setelah lewat tanggal rencana kembali; pengingat H-1 dan saat terlambat.
-- *Pengembalian sebagian:* sisa jumlah tetap berstatus dipinjam.
-- *Barang rusak/hilang:* dicatat dengan foto, memerlukan tindak lanjut admin (mis. penggantian).
-- *Pembatalan:* pemohon dapat membatalkan sebelum serah terima; stok reserved dilepas.
-- *Barang pinjaman mitra:* pengingat jatuh tempo pengembalian ke instansi asal.
+### 4.8 Pengaturan Sistem Dinamis & Pengelolaan Halaman Utama
+- **Kelola Halaman Utama (`/landing-manager`):** Mengunggah berkas gambar denah, memperbarui jadwal kerja tim, mengatur data kalender acara, dan menyunting teks hero beranda secara visual.
+- **Foto Slider Depan (`/sliders`):** Menambah, menyunting judul & deskripsi, mengatur urutan tayang (*sort order*), dan menyalakan/mematikan banner slider depan.
+- **Pengaturan Sistem (`/settings`):**
+  - Tab Identitas: Nama aplikasi, sub-tema acara haul, logo sistem, alamat sekretariat, copyright footer.
+  - Tab Divisi Tugas: Mengelola master daftar divisi kepanitiaan.
+  - Tab Google Drive: Tautan terpusat folder Google Drive berkas kepanitiaan.
+  - Tab Pengelola Admin: Menambah dan mengelola hak akses akun admin/bendahara baru.
 
-**Surat Bukti Peminjaman (PDF):** kop organisasi (dari pengaturan), nomor surat otomatis, data peminjam, daftar barang, kode QR yang mengarah ke halaman verifikasi, dan kolom tanda tangan. Dibuat lewat antrean (mis. `barryvdh/laravel-dompdf` atau Snappy).
-
-### 5.6 Kontrol Wilayah, Penugasan, dan Pelaporan Lapangan
-- Posko/titik tugas: Panggung Utama, Dokumentasi, Live Streaming, Foto, Video, Proyektor, Perkabelan (dapat ditambah), lengkap dengan PIC dan anggota.
-- Laporan berkala: status Normal / Perlu Perhatian / Rusak-Kendala, deskripsi, foto/video bukti (unggah dengan progres dan kompresi).
-- Tindak lanjut admin: timeline dan status `Open → In Progress → Resolved`, catatan solusi, penanggung jawab.
-- **Realtime:** laporan baru dan perubahan status disiarkan lewat Laravel Reverb; dashboard admin menampilkan lencana notifikasi. Fallback polling bila WebSocket tidak tersedia.
-- Laporan berstatus *Rusak/Kendala* memicu notifikasi ke admin.
-
-### 5.7 Rekap Keuangan Kas
-- Transaksi kas masuk/keluar: nominal (`DECIMAL(15,2)`), tanggal, kategori, uraian, penanggung jawab, bukti nota (foto/PDF).
-- **Integritas data:** transaksi tidak dihapus permanen; koreksi lewat pembatalan/jurnal balik, setiap perubahan tercatat di audit log. Periode dapat *dikunci* oleh Bendahara setelah rekonsiliasi.
-- Ringkasan: total masuk, total keluar, saldo bersih; grafik 6 bulan terakhir dengan filter periode dan kategori.
-- Ekspor `.xlsx` dan PDF.
-- Hanya Super Admin dan Bendahara yang dapat mengubah data kas.
-
-### 5.8 Navigasi Dashboard
-- **Ringkasan:** metrik utama.
-- **Layanan dan Operasional:** Penugasan, Inventaris Internal, Pinjaman Mitra, Peminjaman, Data Anggota, Kontrol Wilayah, Rekap Kas.
-- **Konten dan Berkas:** Slider Beranda, Google Drive.
-- **Pengaturan dan Sistem:** Kelola Pengelola, Branding, Audit Log, Backup.
-- Menu ditampilkan sesuai izin peran.
-
-### 5.9 Pusat Pembersihan Data (Danger Zone)
-Diperketat dari draf awal:
-- **Hanya Super Admin.**
-- Wajib **input ulang password** dan frasa verifikasi `RESET OPERASIONAL`; opsional OTP.
-- **Backup otomatis** (dump database + arsip file) dibuat dan diverifikasi *sebelum* reset; reset dibatalkan jika backup gagal.
-- Pilihan cakupan: pilih modul yang direset (peminjaman, laporan, kas, penugasan, log), bukan semuanya sekaligus.
-- **Pratinjau dampak** (jumlah baris yang akan dihapus) sebelum eksekusi.
-- Berjalan di antrean dalam transaksi; hasilnya dicatat di audit log, yang **tidak ikut terhapus**.
-- Data yang dilindungi: akun admin, master kategori, wilayah, konfigurasi identitas dasar, dan audit log.
-- Pemulihan dari backup dimungkinkan selama 30 hari.
-
-### 5.10 Kustomisasi Identitas, Google Drive, dan Dokumen PRD
-- Branding: nama sistem, logo, sub-tema acara (Haul & Rojabiyyah), teks kop surat.
-- Tautan folder Google Drive terpusat (validasi format URL; hanya tautan, tanpa menyimpan kredensial Google).
-- Custom Fields dinamis.
-- Unduh dokumen PRD & Flowchart `.docx` dari Pengaturan Sistem (hanya Super Admin/Admin).
-
-### 5.11 Slider Beranda Publik
-- Unggah banner (rasio dan resolusi dibatasi, dikompres otomatis), judul, deskripsi, urutan, aktif/nonaktif, jadwal tayang opsional.
-
-### 5.12 Notifikasi *(baru)*
-- Notifikasi dalam aplikasi untuk: permohonan baru, persetujuan/penolakan, pengingat jatuh tempo, keterlambatan, laporan kendala.
-- Opsional: WhatsApp/email lewat gateway pihak ketiga, diaktifkan di pengaturan, dengan persetujuan anggota karena memakai nomor pribadi.
-
-### 5.13 Backup dan Pemulihan *(baru)*
-- Backup database harian otomatis (mis. `spatie/laravel-backup`), plus backup file bukti mingguan.
-- Salinan disimpan di lokasi terpisah dari server utama; uji pemulihan minimal sekali sebelum hari-H.
-- Retensi: harian 14 hari, mingguan 8 minggu.
+### 4.9 Audit Log & Pusat Pembersihan Data (Danger Zone)
+- **Audit Logs (`/audit-logs`):** Mencatat setiap aktivitas operasional pengguna (waktu, nama, peran, modul, aksi, detail perubahan data, IP Address).
+- **Pusat Pembersihan Data / Danger Zone (`/danger-zone`):**
+  - Dikhususkan hanya untuk pemegang peran Super Admin.
+  - Membutuhkan input ulang kata sandi akun dan pengetikan frasa konfirmasi `RESET OPERASIONAL`.
+  - Otomatis melakukan backup basis data sebelum pembersihan dilakukan.
+  - Menjaga data vital panitia (akun Super Admin, master divisi, pengaturan branding, dan catatan audit log tetap aman tidak terhapus).
 
 ---
 
-## 6. Rancangan Basis Data
+## 5. Rancangan Basis Data (Database Schema)
 
-| Tabel | Kolom Utama | Relasi |
+| Nama Tabel | Deskripsi & Tujuan | Kolom Kunci Utama |
 |---|---|---|
-| `users` | id, member_no (unik), name, email, password, role, phone_wa, is_active, must_change_password, last_login_at | punya satu `members` |
-| `members` | id, user_id, division_id, education, class, domicile, uniform_size, photo_path | milik `users`, `divisions` |
-| `divisions` | id, name | punya banyak `members` |
-| `roles`, `permissions` | (paket permission) | many-to-many dengan `users` |
-| `inventory_categories` | id, name | punya banyak `items` |
-| `items` | id, code (unik), name, source (internal/mitra), partner_id, category_id, qty_total, qty_available, qty_reserved, qty_damaged, condition, photo_path, location, deleted_at | milik `categories`, `partners` |
-| `partners` | id, name, contact, return_due_date | punya banyak `items` |
-| `custom_field_defs` | id, entity, label, type, options | punya banyak `custom_field_values` |
-| `custom_field_values` | id, def_id, entity_id, value | milik `custom_field_defs` |
-| `loans` | id, loan_no, borrower_id, purpose, status, requested_at, approved_by, approved_at, handed_over_at, due_at, returned_at, reject_reason, pdf_path | milik `users`; punya banyak `loan_items` |
-| `loan_items` | id, loan_id, item_id, qty_requested, qty_approved, qty_returned, condition_out, condition_in, photo_out, photo_in | milik `loans`, `items` |
-| `regions` | id, name, pic_user_id | punya banyak `assignments`, `field_reports` |
-| `assignments` | id, region_id, user_id, role_in_post, start_at, end_at | milik `regions`, `users` |
-| `field_reports` | id, region_id, reporter_id, status, description, created_at | punya banyak `report_media`, `report_followups` |
-| `report_media` | id, report_id, path, type | milik `field_reports` |
-| `report_followups` | id, report_id, user_id, status, solution, created_at | milik `field_reports` |
-| `cash_transactions` | id, type (in/out), amount, date, category_id, description, receipt_path, created_by, voided_at, locked | milik `cash_categories` |
-| `cash_categories` | id, name | punya banyak `cash_transactions` |
-| `import_batches` | id, user_id, filename, total, success, failed, report_path, created_at | milik `users` |
-| `notifications` | id, user_id, type, data, read_at | milik `users` |
-| `audit_logs` | id, user_id, action, entity, entity_id, old_values, new_values, ip, created_at | milik `users` |
-| `settings` | key, value (identitas, kop, tautan Drive) | – |
-| `sliders` | id, title, description, image_path, sort_order, is_active, starts_at, ends_at | – |
-
-Tambahkan indeks pada kolom pencarian dan relasi (`member_no`, `division_id`, `status`, `due_at`, `date`).
+| `users` | Akun autentikasi pengguna dan hak akses | `id`, `member_no`, `name`, `email`, `password`, `role`, `is_active`, `must_change_password`, `last_login_at` |
+| `members` | Profil detail anggota relawan | `id`, `user_id`, `division_id`, `education`, `class`, `domicile`, `uniform_size`, `phone_wa`, `address` |
+| `divisions` | Master divisi kepanitiaan | `id`, `name`, `description` |
+| `inventory_categories` | Kategori barang logistik | `id`, `name`, `type`, `description` |
+| `items` | Aset logistik (Internal & Mitra) | `id`, `code`, `name`, `source` (`internal`/`mitra`), `partner_id`, `category_id`, `qty_total`, `qty_available`, `qty_reserved`, `qty_damaged`, `condition`, `location`, `photo_path` |
+| `partners` | Data instansi/lembaga mitra peminjam | `id`, `name`, `contact`, `phone`, `address`, `return_due_date` |
+| `loans` | Transaksi sirkulasi peminjaman | `id`, `loan_no`, `borrower_id`, `purpose`, `status`, `requested_at`, `approved_by`, `approved_at`, `handed_over_at`, `due_at`, `returned_at`, `photo_proof` |
+| `loan_items` | Rincian unit barang dalam peminjaman | `id`, `loan_id`, `item_id`, `qty_requested`, `qty_approved`, `qty_returned`, `condition_out`, `condition_in` |
+| `regions` | Posko teknis & titik penugasan | `id`, `code`, `name`, `pic_user_id`, `location_desc` |
+| `assignments` | Penugasan anggota pada posko | `id`, `region_id`, `user_id`, `role_in_post`, `start_at`, `end_at` |
+| `field_reports` | Laporan kondisi posko lapangan | `id`, `region_id`, `reporter_id`, `status` (`normal`/`attention`/`danger`), `description`, `photo_path`, `is_public` |
+| `report_followups` | Riwayat solusi tindak lanjut laporan | `id`, `report_id`, `user_id`, `solution`, `status` |
+| `cash_transactions` | Catatan penerimaan & pengeluaran kas | `id`, `type` (`in`/`out`), `amount`, `date`, `category_id`, `description`, `receipt_path`, `lpj_status`, `unit_price`, `quantity`, `created_by` |
+| `cash_categories` | Kategori pos anggaran keuangan | `id`, `name`, `type` |
+| `sliders` | Banner gambar slider beranda depan | `id`, `title`, `description`, `image_path`, `sort_order`, `is_active` |
+| `settings` | Konfigurasi sistem dinamis (Key-Value) | `id`, `key` (unik), `value` (LongText) |
+| `audit_logs` | Jejak rekaman aksi audit sistem | `id`, `user_id`, `action`, `entity`, `entity_id`, `old_values`, `new_values`, `ip`, `created_at` |
 
 ---
 
-## 7. Daftar Endpoint API
+## 6. Daftar Endpoint API Lengkap (`/api/v1`)
 
-Prefix: `/api/v1`
+### 6.1 Endpoint Publik (Tanpa Autentikasi)
+- `POST /api/v1/login` : Autentikasi pengguna & penerbitan token Sanctum
+- `GET /api/v1/health` : Pemeriksaan status kesehatan server API
+- `GET /api/v1/public/overview` : Data publik ringkasan beranda, denah, jadwal tim, dan kalender acara
+- `GET /api/v1/public/sliders` : Daftar banner slider aktif untuk beranda
+- `GET /api/v1/public/reports` : Daftar laporan lapangan anggota terpublish (*read-only*)
+- `GET /api/v1/public/loans/verify/{code}` : Validasi keabsahan surat peminjaman melalui QR Code
+- `GET /api/v1/public/options` : Opsi master divisi dan wilayah untuk formulir pendaftaran
+- `POST /api/v1/public/register-member` : Pendaftaran mandiri anggota panitia baru (tanpa akun)
+- `POST /api/v1/public/register-account` : Pendaftaran mandiri akun login anggota
+- `GET /api/v1/settings/public` : Konfigurasi identitas publik (logo, nama aplikasi, copyright)
 
-| Kelompok | Endpoint |
-|---|---|
-| Auth | `POST /login`, `POST /logout`, `GET /me`, `POST /password/change` |
-| Anggota | `GET/POST /members`, `GET/PUT/DELETE /members/{id}`, `POST /members/import/preview`, `POST /members/import`, `GET /members/template` |
-| Profil | `GET/PUT /profile`, `POST /profile/photo` |
-| Inventaris | `GET/POST /items`, `GET/PUT/DELETE /items/{id}`, `GET /items/export` |
-| Mitra | `GET/POST /partners`, `PUT/DELETE /partners/{id}` |
-| Peminjaman | `GET/POST /loans`, `GET /loans/{id}`, `POST /loans/{id}/approve`, `/reject`, `/handover`, `/return`, `/cancel`, `GET /loans/{id}/pdf` |
-| Wilayah | `GET/POST /regions`, `PUT/DELETE /regions/{id}`, `GET/POST /assignments` |
-| Laporan | `GET/POST /reports`, `GET /reports/{id}`, `POST /reports/{id}/followups`, `PATCH /reports/{id}/status` |
-| Kas | `GET/POST /cash`, `PUT /cash/{id}`, `POST /cash/{id}/void`, `GET /cash/summary`, `GET /cash/export?format=xlsx\|pdf` |
-| Slider | `GET/POST /sliders`, `PUT/DELETE /sliders/{id}` |
-| Pengaturan | `GET/PUT /settings`, `GET /settings/prd-document` |
-| Admin | `GET/POST /admins`, `PUT/DELETE /admins/{id}` |
-| Sistem | `GET /audit-logs`, `GET /notifications`, `POST /backups`, `POST /danger-zone/preview`, `POST /danger-zone/execute` |
-| Publik | `GET /public/sliders`, `GET /public/loans/verify/{code}` |
-
-**Standar API:** respons JSON seragam (`data`, `message`, `errors`), paginasi, kode HTTP baku (401, 403, 404, 419, 422, 429), dan dokumentasi OpenAPI/Swagger (mis. `dedoc/scramble`).
-
----
-
-## 8. Kebutuhan Non-Fungsional
-
-- **Kinerja:** halaman utama dimuat < 3 detik pada 4G; respons API umum < 500 ms; paginasi sisi server; *eager loading* untuk mencegah N+1.
-- **Ketersediaan:** target 99% selama periode acara; pemantauan dasar (log error, health check, mis. Sentry).
-- **Responsif:** prioritas mobile untuk anggota dan PIC posko di lapangan; unggah foto/video tetap stabil pada sinyal lemah (kompresi dan percobaan ulang).
-- **Kompatibilitas browser:** dua versi terbaru Chrome, Edge, Firefox, Safari.
-- **Aksesibilitas:** kontras warna, label formulir, ukuran tombol sentuh memadai.
-- **Bahasa:** Bahasa Indonesia.
-- **Pengujian:** pengujian otomatis (PHPUnit/Pest untuk API, Vitest untuk frontend), pengujian alur kritis (peminjaman, impor, kas, Danger Zone), dan UAT oleh perwakilan panitia.
-- **Hosting:** VPS atau cloud ringan (minimal 2 vCPU, 4 GB RAM), HTTPS (Let's Encrypt), CI/CD sederhana, lingkungan *staging* terpisah dari *production*.
+### 6.2 Endpoint Terproteksi (Wajib Bearer Token)
+- **Autentikasi & Profil:** `POST /logout`, `GET /me`, `POST /password/change`
+- **Dashboard Metrik:** `GET /dashboard/stats`
+- **Manajemen Anggota:** `GET/POST /members`, `GET/PUT/DELETE /members/{id}`, `POST /members/import/preview`, `POST /members/import`, `GET /members/export`, `POST /members/{id}/create-account`
+- **Divisi:** `GET/POST /divisions`, `GET/PUT/DELETE /divisions/{id}`
+- **Inventaris Internal:** `GET/POST /items`, `GET/PUT/DELETE /items/{id}`, `GET /items/export`, `GET /inventory-categories`, `POST/DELETE /inventory-categories`
+- **Pinjaman Lembaga Mitra:** `GET/POST /partners`, `PUT/DELETE /partners/{id}`
+- **Sirkulasi Peminjaman:** `GET/POST /loans`, `GET /loans/{id}`, `POST /loans/{id}/approve`, `POST /loans/{id}/reject`, `POST /loans/{id}/handover`, `POST /loans/{id}/return`, `POST /loans/{id}/cancel`, `GET /loans/{id}/pdf`
+- **Posko & Penugasan:** `GET/POST /regions`, `PUT/DELETE /regions/{id}`, `GET/POST /assignments`, `DELETE /assignments/{id}`
+- **Laporan Lapangan:** `GET/POST /reports`, `GET /reports/{id}`, `POST /reports/{id}/followups`, `PATCH /reports/{id}/status`
+- **Rekap Kas (Verifikasi PIN):** `POST /cash/verify-password`, `GET/POST /cash`, `PUT/DELETE /cash/{id}`, `POST /cash/{id}/void`
+- **Landing Manager & Slider:** `POST /admin/landing/*` (denah, jadwal, proyektor, hero, kalender), `GET/POST /sliders`, `PUT/DELETE /sliders/{id}`
+- **Pengaturan & Danger Zone:** `GET/PUT /settings`, `GET /audit-logs`, `POST /danger-zone/preview`, `POST /danger-zone/execute`
 
 ---
 
-## 9. Tahapan Pengembangan dan Prioritas
+## 7. Checklist Kesiapan Hosting & Deployment Pra-Rilis
 
-| Tahap | Cakupan | Prioritas | Perkiraan Durasi |
+Sebelum mempublikasikan aplikasi ke lingkungan hosting/server produksi (*production*), pastikan seluruh poin pengujian berikut telah terpenuhi:
+
+- [x] **Kompilasi Frontend Bersih:** `npm run build` sukses 100% tanpa error module tidak ditemukan (aset dist terkompilasi optimal).
+- [x] **Struktur Database Lengkap:** Seluruh migrasi tabel dari `users`, `members`, `items`, `partners`, `loans`, `regions`, `reports`, hingga `cash_transactions` telah termigrasi dengan relasi foreign key yang valid.
+- [x] **Pemisahan Logistik:** Modul Inventaris Internal dan Pinjaman Lembaga Mitra terpisah dengan benar pada navigasi Super Admin dan Anggota.
+- [x] **Portal Login Vristo Aktif:** Tampilan login cover split-card dengan logo Rojabiyyah berfungsi penuh dan terhubung dengan sistem otentikasi Sanctum.
+- [x] **Publikasi Laporan Lapangan:** Bagian laporan lapangan pada beranda publik dapat menampilkan pembaruan kondisi pos secara aman (*read-only*).
+- [x] **Konfigurasi Lingkungan (`.env`):**
+  - `APP_ENV=production`
+  - `APP_DEBUG=false`
+  - `APP_URL=https://domain-anda.com`
+  - Koneksi database MySQL produksi dikonfigurasi dengan kredensial aman.
+- [x] **Symlink Storage:** Menjalankan `php artisan storage:link` pada server produksi agar seluruh berkas bukti foto dan banner slider dapat diakses publik.
+- [x] **Optimasi Cache Laravel:** Menjalankan `php artisan config:cache`, `php artisan route:cache`, dan `php artisan view:cache` di lingkungan hosting.
+
+---
+
+## 8. Riwayat Perubahan Dokumen (Changelog)
+
+| Versi | Tanggal Rilis | Penulis / Pengembang | Deskripsi Pembaruan Utama |
 |---|---|---|---|
-| **0. Persiapan** | Konfirmasi kebutuhan, desain UI, ERD final, setup repo, staging, CI | Wajib | 1–2 minggu |
-| **1. Inti (MVP)** | Autentikasi dan RBAC, data anggota + impor, inventaris, peminjaman + PDF, audit log, backup | **Wajib** | 4–6 minggu |
-| **2. Operasional** | Penugasan dan posko, laporan lapangan realtime, kas dan ekspor, notifikasi | Tinggi | 3–4 minggu |
-| **3. Penyempurnaan** | Branding, Google Drive, slider, Custom Fields, unduh PRD, Danger Zone | Sedang | 2–3 minggu |
-| **4. Rilis** | UAT, uji beban, perbaikan, pelatihan admin, go-live, pendampingan hari-H | Wajib | 2 minggu |
-
-Durasi bersifat perkiraan untuk tim kecil (2–3 pengembang) dan perlu disesuaikan dengan tenggat acara. Fitur Tahap 3 dapat digeser ke setelah acara bila waktu terbatas.
+| **v1.0** | 24 Oktober 2026 | Tim Pengembang | Draf inisial sistem administrasi dan perancangan awal. |
+| **v2.0** | 24 Oktober 2026 | Tim Pengembang | Revisi menyeluruh: Penggantian autentikasi ke Laravel Sanctum, penambahan matriks RBAC 4 tingkat, spesifikasi peminjaman barang, dan perlindungan keamanan. |
+| **v3.0** | 02 November 2026 | Tim Pengembang | **Pembaruan Lengkap Terintegrasi Pra-Hosting:**<br>1. Pemisahan data & antarmuka Inventaris Internal vs. Pinjaman Lembaga Mitra (dengan integrasi katalog peminjaman).<br>2. Sistem Penugasan Posko & Pelaporan Lapangan Realtime terintegrasi dengan Beranda Publik (Read-Only).<br>3. Redesain total Portal Login bertema Vristo Auth-Cover dengan palet kontras tinggi dan logo resmi Rojabiyyah.<br>4. Implementasi dual-path registrasi mandiri publik (Formulir Panitia & Pendaftaran Akun).<br>5. Integrasi kustomisasi hero beranda dinamis dan proteksi sandi ganda untuk modul kas.<br>6. Penyusunan checklist kesiapan hosting & deployment. |
 
 ---
-
-## 10. Risiko dan Mitigasi
-
-| Risiko | Mitigasi |
-|---|---|
-| Cakupan terlalu besar untuk satu rilis | Pembagian tahap dan fokus MVP |
-| Kebocoran data pribadi anggota | RBAC ketat, HTTPS, audit log, batas ekspor |
-| Kehilangan data / reset tidak sengaja | Backup otomatis, Danger Zone hanya Super Admin |
-| Sinyal lemah di lokasi acara | Kompresi unggahan, percobaan ulang, mode ringan |
-| Server kelebihan beban saat puncak acara | Cache, antrean, uji beban, kapasitas cadangan |
-| Ketergantungan pada satu admin | Minimal 2 Super Admin, dokumentasi operasional |
-
----
-
-## 11. Kriteria Penerimaan
-
-- Anggota hasil impor dapat login dan wajib mengganti password awal.
-- Stok tidak pernah negatif dan selalu sinkron dengan status peminjaman.
-- Surat PDF dapat diverifikasi lewat kode QR.
-- Setiap aksi penting tercatat di audit log.
-- Danger Zone hanya dapat dijalankan Super Admin setelah backup sukses.
-- Seluruh halaman inti nyaman dipakai di layar ponsel.
-
----
-
-## 12. Daftar Perubahan dari Draf Awal
-
-1. Mengganti Helmet (Node.js) dan Dual-Token JWT dengan Laravel Sanctum; security headers lewat middleware/Nginx.
-2. Menambahkan peran Bendahara, Ketua Divisi, dan PIC Posko beserta matriks hak akses.
-3. Menambahkan ERD, daftar endpoint, dan standar API.
-4. Memperinci alur peminjaman (stok tidak cukup, terlambat, sebagian, rusak, batal).
-5. Memperketat Danger Zone (Super Admin, password, backup, pratinjau, audit).
-6. Menambahkan audit log, backup, notifikasi, perlindungan data pribadi, batasan unggahan, dan mekanisme realtime.
-7. Menambahkan kebutuhan non-fungsional, tahapan, risiko, dan kriteria penerimaan.
-8. Memperbaiki impor anggota: pratinjau, deteksi duplikat, password sementara wajib ganti.
+*Dokumen ini merupakan panduan resmi pengembangan dan operasional teknis Sistem Administrasi Media Rojabiyyah 2026.*
