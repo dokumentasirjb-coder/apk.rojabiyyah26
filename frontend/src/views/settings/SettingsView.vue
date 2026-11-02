@@ -518,12 +518,24 @@
                 </div>
 
                 <!-- Big Main Title -->
-                <h3 class="text-base sm:text-lg font-extrabold text-slate-900 leading-tight mb-4">
+                <h3 class="text-base sm:text-lg font-extrabold text-slate-900 leading-tight mb-2">
                   {{ systemForm.hero_title_white }}
-                  <span class="bg-gradient-to-r from-rose-400 to-amber-300 bg-clip-text text-transparent block sm:inline">
+                  <span class="bg-gradient-to-r from-emerald-500 to-teal-400 bg-clip-text text-transparent block sm:inline">
                     {{ systemForm.hero_title_gradient }}
                   </span>
                 </h3>
+
+                <!-- Subtitle Badge Mockup -->
+                <div v-if="systemForm.hero_subtitle" class="mb-2">
+                  <span class="inline-block text-[9px] font-mono font-bold px-2.5 py-0.5 rounded bg-black/75 text-emerald-300 border border-emerald-500/30">
+                    {{ systemForm.hero_subtitle }}
+                  </span>
+                </div>
+
+                <!-- Description Mockup -->
+                <p v-if="systemForm.hero_desc" class="text-[10px] text-slate-600 mb-3 max-w-xs mx-auto leading-relaxed">
+                  {{ systemForm.hero_desc }}
+                </p>
 
                 <!-- Buttons Mockup -->
                 <div class="flex items-center justify-center space-x-2 mb-4">

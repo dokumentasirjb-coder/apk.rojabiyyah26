@@ -195,15 +195,15 @@
         </h1>
 
         <!-- 3. Subtitle Badge (Badge Gelap) -->
-        <div v-if="currentSlideData.subtitle || settingsStore.settings?.hero_subtitle" class="mt-1.5 sm:mt-2 mb-2 sm:mb-3">
+        <div v-if="heroSubtitle" class="mt-1.5 sm:mt-2 mb-2 sm:mb-3">
           <span class="inline-block text-[11px] sm:text-sm font-extrabold tracking-widest text-emerald-300 uppercase font-mono px-3.5 py-1.5 rounded-xl bg-black/40 border border-emerald-400/30 backdrop-blur-md shadow-md">
-            {{ currentSlideData.subtitle || settingsStore.settings?.hero_subtitle || 'DOKUMENTASI HAUL & ROJABIYYAH 2026' }}
+            {{ heroSubtitle }}
           </span>
         </div>
 
         <!-- 4. Deskripsi / Keterangan Teks Bawah Hero -->
-        <p class="text-xs sm:text-sm text-slate-200 font-medium max-w-2xl mx-auto leading-relaxed drop-shadow px-2 mb-6">
-          {{ currentSlideData.subtext || settingsStore.settings?.hero_desc || 'Momen Kebersamaan & Khidmah Panitia' }}
+        <p v-if="heroDesc" class="text-xs sm:text-sm text-slate-200 font-medium max-w-2xl mx-auto leading-relaxed drop-shadow px-2 mb-6">
+          {{ heroDesc }}
         </p>
       </div>
     </section>
@@ -1236,6 +1236,20 @@ const defaultSlides = [
 const slides = ref([...defaultSlides]);
 const currentSlide = ref(0);
 const currentSlideData = computed(() => slides.value[currentSlide.value] || defaultSlides[0]);
+
+const heroSubtitle = computed(() => {
+  if (settingsStore.settings?.hero_subtitle && settingsStore.settings.hero_subtitle.trim() !== '') {
+    return settingsStore.settings.hero_subtitle;
+  }
+  return currentSlideData.value?.subtitle || '';
+});
+
+const heroDesc = computed(() => {
+  if (settingsStore.settings?.hero_desc && settingsStore.settings.hero_desc.trim() !== '') {
+    return settingsStore.settings.hero_desc;
+  }
+  return currentSlideData.value?.subtext || '';
+});
 let autoSlideTimer = null;
 
 const nextSlide = () => {
@@ -1354,6 +1368,10 @@ const fetchPublicOverview = async () => {
         calendar_events: res.data.calendar_events || [],
         field_reports: res.data.field_reports || publicData.value.field_reports || [],
       };
+    }
+
+    if (res.data?.settings) {
+      settingsStore.settings = { ...settingsStore.settings, ...res.data.settings };
     }
 
     if (res.data?.sliders && res.data.sliders.length > 0) {

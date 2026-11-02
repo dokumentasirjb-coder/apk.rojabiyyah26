@@ -487,6 +487,7 @@ class PublicEventController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->take(12)
                 ->get(),
+            'settings' => Setting::all()->pluck('value', 'key'),
             'event' => [
                 'title' => Setting::get('sub_theme', 'Haul ke-5 Al-Maghfurlah K.H. Moch. Djamaluddin Achmad & Rojabiyyah 2026'),
                 'theme' => 'Meneladani Jejak Perjuangan, Menjaga Sanad Keilmuan & Mempererat Ukhuwah Islamiyyah',
