@@ -18,32 +18,38 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
     Route::get('/health', fn () => response()->json(['status' => 'ok', 'app' => 'Administrasi Rojabiyyah 2026']));
-    // Public routes (Read-only for guests)
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::get('/public/overview', [PublicEventController::class, 'overview']);
-    Route::get('/public/landing', [PublicEventController::class, 'overview']);
-    Route::get('/public/sliders', [SliderController::class, 'publicSliders']);
-    Route::get('/public/reports', [FieldReportController::class, 'publicReports']);
-    Route::get('/public/loans/verify/{code}', [LoanController::class, 'verifyPublic']);
-    Route::get('/public/loans/{id}/pdf', [LoanController::class, 'generatePdf']);
-    Route::get('/settings/public', [SettingController::class, 'index']);
-    Route::get('/public/options', [MemberController::class, 'publicOptions']);
-    Route::post('/public/register-member', [MemberController::class, 'publicRegister']);
-    Route::post('/public/register-account', [MemberController::class, 'publicRegisterAccount']);
+    // Public routes (Read-only for guests with rate limiting)
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+    Route::get('/public/overview', [PublicEventController::class, 'overview'])->middleware('throttle:60,1');
+    Route::get('/public/landing', [PublicEventController::class, 'overview'])->middleware('throttle:60,1');
+    Route::get('/public/sliders', [SliderController::class, 'publicSliders'])->middleware('throttle:60,1');
+    Route::get('/public/reports', [FieldReportController::class, 'publicReports'])->middleware('throttle:60,1');
+    Route::get('/public/loans/verify/{code}', [LoanController::class, 'verifyPublic'])->middleware('throttle:30,1');
+    Route::get('/settings/public', [SettingController::class, 'index'])->middleware('throttle:60,1');
+    Route::get('/public/options', [MemberController::class, 'publicOptions'])->middleware('throttle:60,1');
+    Route::post('/public/register-member', [MemberController::class, 'publicRegister'])->middleware('throttle:10,1');
+    Route::post('/public/register-account', [MemberController::class, 'publicRegisterAccount'])->middleware('throttle:10,1');
 
     // Protected routes
     Route::middleware('auth:sanctum')->group(function () {
         // Super Admin & Admin: Landing Page Management
-        Route::post('/admin/landing/upload-denah', [PublicEventController::class, 'uploadDenah']);
-        Route::post('/admin/landing/delete-denah', [PublicEventController::class, 'deleteDenah']);
-        Route::post('/admin/landing/upload-jadwal', [PublicEventController::class, 'uploadJadwal']);
-        Route::post('/admin/landing/delete-jadwal', [PublicEventController::class, 'deleteJadwal']);
-        Route::post('/admin/landing/upload-proyektor-photo', [PublicEventController::class, 'uploadProyektorPhotos']);
-        Route::post('/admin/landing/delete-proyektor-photo', [PublicEventController::class, 'deleteProyektorPhoto']);
-        Route::post('/admin/landing/save-proyektor', [PublicEventController::class, 'saveProyektorTeams']);
-        Route::post('/admin/landing/save-jadwal', [PublicEventController::class, 'saveJadwalTim']);
-        Route::post('/admin/landing/save-hero', [PublicEventController::class, 'saveHeroSettings']);
-        Route::post('/admin/landing/save-calendar', [PublicEventController::class, 'saveCalendarEvents']);
+        Route::middleware(function ($request, $next) {
+            if (!$request->user() || !in_array($request->user()->role, ['super_admin', 'admin'])) {
+                return response()->json(['message' => 'Akses ditolak. Khusus Super Admin / Admin.'], 403);
+            }
+            return $next($request);
+        })->group(function () {
+            Route::post('/admin/landing/upload-denah', [PublicEventController::class, 'uploadDenah']);
+            Route::post('/admin/landing/delete-denah', [PublicEventController::class, 'deleteDenah']);
+            Route::post('/admin/landing/upload-jadwal', [PublicEventController::class, 'uploadJadwal']);
+            Route::post('/admin/landing/delete-jadwal', [PublicEventController::class, 'deleteJadwal']);
+            Route::post('/admin/landing/upload-proyektor-photo', [PublicEventController::class, 'uploadProyektorPhotos']);
+            Route::post('/admin/landing/delete-proyektor-photo', [PublicEventController::class, 'deleteProyektorPhoto']);
+            Route::post('/admin/landing/save-proyektor', [PublicEventController::class, 'saveProyektorTeams']);
+            Route::post('/admin/landing/save-jadwal', [PublicEventController::class, 'saveJadwalTim']);
+            Route::post('/admin/landing/save-hero', [PublicEventController::class, 'saveHeroSettings']);
+            Route::post('/admin/landing/save-calendar', [PublicEventController::class, 'saveCalendarEvents']);
+        });
 
         // Auth & Profile
         Route::post('/logout', [AuthController::class, 'logout']);
@@ -214,15 +220,21 @@ Route::prefix('v1')->group(function () {
         Route::get('/settings', [SettingController::class, 'index']);
         Route::put('/settings', [SettingController::class, 'update']);
 
-        // Admins Management
-        Route::get('/admins', function () {
+        // Admins Management (Super Admin ONLY)
+        Route::get('/admins', function (\Illuminate\Http\Request $request) {
+            if ($request->user()->role !== 'super_admin') {
+                return response()->json(['message' => 'Hanya Super Admin yang berhak melihat daftar pengelola admin.'], 403);
+            }
             $admins = \App\Models\User::whereIn('role', ['super_admin', 'admin', 'bendahara'])
                 ->orderBy('role', 'asc')
                 ->get();
             return response()->json($admins);
         });
 
-        Route::get('/admins/candidates', function () {
+        Route::get('/admins/candidates', function (\Illuminate\Http\Request $request) {
+            if ($request->user()->role !== 'super_admin') {
+                return response()->json(['message' => 'Hanya Super Admin yang berhak melihat kandidat pengelola admin.'], 403);
+            }
             $candidates = \App\Models\User::whereNotNull('email')
                 ->where('email', '!=', '')
                 ->where('role', '!=', 'super_admin')
@@ -232,11 +244,15 @@ Route::prefix('v1')->group(function () {
         });
 
         Route::post('/admins', function (\Illuminate\Http\Request $request) {
+            if ($request->user()->role !== 'super_admin') {
+                return response()->json(['message' => 'Hanya Super Admin yang berhak mengelola akun admin.'], 403);
+            }
+
             if ($request->filled('user_id')) {
                 $request->validate([
                     'user_id' => 'required|exists:users,id',
                     'role' => 'required|in:super_admin,admin,bendahara',
-                    'password' => 'nullable|string|min:6',
+                    'password' => 'nullable|string|min:8',
                 ]);
                 $user = \App\Models\User::findOrFail($request->user_id);
                 $updateData = [
@@ -265,7 +281,7 @@ Route::prefix('v1')->group(function () {
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|unique:users,email',
                 'role' => 'required|in:super_admin,admin,bendahara',
-                'password' => 'required|string|min:6',
+                'password' => 'required|string|min:8',
                 'phone_wa' => 'nullable|string',
             ]);
             $count = \App\Models\User::whereIn('role', ['super_admin', 'admin', 'bendahara'])->count() + 1;
@@ -280,7 +296,11 @@ Route::prefix('v1')->group(function () {
             ]);
             return response()->json(['message' => 'Akun pengelola admin berhasil ditambahkan.', 'admin' => $user], 201);
         });
-        Route::delete('/admins/{id}', function ($id) {
+
+        Route::delete('/admins/{id}', function (\Illuminate\Http\Request $request, $id) {
+            if ($request->user()->role !== 'super_admin') {
+                return response()->json(['message' => 'Hanya Super Admin yang berhak menghapus akun admin.'], 403);
+            }
             $user = \App\Models\User::findOrFail($id);
             if ($user->role === 'super_admin') {
                 $superAdminCount = \App\Models\User::where('role', 'super_admin')->where('is_active', true)->count();

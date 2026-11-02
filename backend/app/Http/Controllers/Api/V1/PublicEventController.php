@@ -513,22 +513,35 @@ class PublicEventController extends Controller
         $existing = $saved ? json_decode($saved, true) : [];
         if (!is_array($existing)) $existing = [];
 
+        if ($request->hasFile('photos')) {
+            $request->validate([
+                'photos.*' => 'image|mimes:jpeg,jpg,png,webp|max:5120',
+            ]);
+        }
+
         foreach ($request->photos as $photoData) {
             if (is_string($photoData) && str_starts_with($photoData, 'data:image')) {
-                // Base64
+                // Base64 image
                 $ext = 'jpg';
                 if (str_contains($photoData, 'image/png')) $ext = 'png';
                 elseif (str_contains($photoData, 'image/webp')) $ext = 'webp';
 
                 $cleaned = preg_replace('/^data:image\/\w+;base64,/', '', $photoData);
                 $decoded = base64_decode($cleaned);
+                if ($decoded === false || strlen($decoded) > 5 * 1024 * 1024) {
+                    continue; // Skip invalid or oversized files (>5MB)
+                }
                 $filename = 'denah_' . date('Ymd_His') . '_' . Str::random(6) . '.' . $ext;
                 file_put_contents($folder . '/' . $filename, $decoded);
                 $existing[] = '/uploads/denah/' . $filename;
             } elseif ($request->hasFile('photos')) {
                 // Uploaded files
                 foreach ($request->file('photos') as $file) {
-                    $filename = 'denah_' . date('Ymd_His') . '_' . Str::random(6) . '.' . $file->getClientOriginalExtension();
+                    $ext = strtolower($file->getClientOriginalExtension());
+                    if (!in_array($ext, ['jpg', 'jpeg', 'png', 'webp'])) {
+                        continue;
+                    }
+                    $filename = 'denah_' . date('Ymd_His') . '_' . Str::random(6) . '.' . $ext;
                     $file->move($folder, $filename);
                     $existing[] = '/uploads/denah/' . $filename;
                 }
@@ -584,6 +597,9 @@ class PublicEventController extends Controller
 
                 $cleaned = preg_replace('/^data:image\/\w+;base64,/', '', $photoData);
                 $decoded = base64_decode($cleaned);
+                if ($decoded === false || strlen($decoded) > 5 * 1024 * 1024) {
+                    continue;
+                }
                 $filename = 'jadwal_' . date('Ymd_His') . '_' . Str::random(6) . '.' . $ext;
                 file_put_contents($folder . '/' . $filename, $decoded);
                 $existing[] = '/uploads/jadwal/' . $filename;
@@ -638,6 +654,9 @@ class PublicEventController extends Controller
 
                 $cleaned = preg_replace('/^data:image\/\w+;base64,/', '', $photoData);
                 $decoded = base64_decode($cleaned);
+                if ($decoded === false || strlen($decoded) > 5 * 1024 * 1024) {
+                    continue;
+                }
                 $filename = 'proyektor_' . date('Ymd_His') . '_' . Str::random(6) . '.' . $ext;
                 file_put_contents($folder . '/' . $filename, $decoded);
                 $existing[] = '/uploads/proyektor/' . $filename;

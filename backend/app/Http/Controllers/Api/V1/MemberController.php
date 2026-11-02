@@ -241,8 +241,13 @@ class MemberController extends Controller
         ]);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
+        $currentUser = $request->user();
+        if (!$currentUser || !in_array($currentUser->role, ['super_admin', 'admin'])) {
+            return response()->json(['message' => 'Hanya Super Admin / Admin yang berhak menghapus data anggota.'], 403);
+        }
+
         $user = User::findOrFail($id);
 
         if ($user->role === 'super_admin') {
@@ -259,13 +264,22 @@ class MemberController extends Controller
 
     public function createAccount(Request $request, $id)
     {
+        $currentUser = $request->user();
+        if (!$currentUser || !in_array($currentUser->role, ['super_admin', 'admin'])) {
+            return response()->json(['message' => 'Hanya Super Admin / Admin yang berhak membuat atau mengatur akun anggota.'], 403);
+        }
+
         $user = User::findOrFail($id);
 
         $request->validate([
             'email' => 'required|email|unique:users,email,' . $user->id,
-            'password' => 'nullable|string|min:6',
+            'password' => 'nullable|string|min:8',
             'role' => 'nullable|string|in:super_admin,admin,bendahara,anggota,pic_posko,ketua_divisi',
         ]);
+
+        if ($request->role === 'super_admin' && $currentUser->role !== 'super_admin') {
+            return response()->json(['message' => 'Hanya Super Admin yang berhak mengangkat akun Super Admin.'], 403);
+        }
 
         $password = $request->filled('password') ? $request->password : Str::random(8);
 
@@ -297,6 +311,11 @@ class MemberController extends Controller
 
     public function revokeAccount(Request $request, $id)
     {
+        $currentUser = $request->user();
+        if (!$currentUser || !in_array($currentUser->role, ['super_admin', 'admin'])) {
+            return response()->json(['message' => 'Hanya Super Admin / Admin yang berhak mencabut akses login anggota.'], 403);
+        }
+
         $user = User::findOrFail($id);
 
         if ($user->role === 'super_admin') {

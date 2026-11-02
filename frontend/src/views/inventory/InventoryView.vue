@@ -1089,7 +1089,7 @@ const triggerItemPrint = () => {
 
   const printDiv = document.createElement('div');
   printDiv.id = 'directPrintContainer';
-  printDiv.innerHTML = printable.innerHTML;
+  printDiv.appendChild(printable.cloneNode(true));
   document.body.appendChild(printDiv);
   document.body.classList.add('is-printing-document');
 

@@ -22,9 +22,7 @@ return [
             env('APP_URL'),
         ]),
 
-    'allowed_origins_patterns' => [
-        '#^https?://.*#', // fallback pattern for production subdomains
-    ],
+    'allowed_origins_patterns' => [],
 
     'allowed_headers' => ['*'],
 

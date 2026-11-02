@@ -25,8 +25,8 @@ class DangerZoneController extends Controller
     public function preview(Request $request)
     {
         $user = $request->user();
-        if (!in_array($user->role, ['super_admin', 'admin'])) {
-            return response()->json(['message' => 'Hanya Super Admin/Admin yang berhak mengakses Danger Zone.'], 403);
+        if ($user->role !== 'super_admin') {
+            return response()->json(['message' => 'Hanya Super Admin yang berhak mengakses Danger Zone.'], 403);
         }
 
         return response()->json([
@@ -46,8 +46,8 @@ class DangerZoneController extends Controller
     public function execute(Request $request)
     {
         $user = $request->user();
-        if (!in_array($user->role, ['super_admin', 'admin'])) {
-            return response()->json(['message' => 'Hanya Super Admin/Admin yang berhak menjalankan reset.'], 403);
+        if ($user->role !== 'super_admin') {
+            return response()->json(['message' => 'Hanya Super Admin yang berhak menjalankan reset.'], 403);
         }
 
         $request->validate([

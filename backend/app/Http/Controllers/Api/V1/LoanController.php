@@ -128,9 +128,25 @@ class LoanController extends Controller
         });
     }
 
-    public function show($id)
+    public function show(Request $request, $id)
     {
         $loan = Loan::with(['borrower.member.division', 'approver', 'loanItems.item.partner'])->findOrFail($id);
+        $user = $request->user();
+
+        // RBAC: Anggota can only view their own loan, Ketua Divisi only their division
+        if ($user && !in_array($user->role, ['super_admin', 'admin'])) {
+            if ($user->role === 'anggota' && $loan->borrower_id !== $user->id) {
+                return response()->json(['message' => 'Akses ditolak. Anda hanya dapat melihat data peminjaman milik sendiri.'], 403);
+            }
+            if ($user->role === 'ketua_divisi') {
+                $userDivisionId = $user->member?->division_id;
+                $borrowerDivisionId = $loan->borrower?->member?->division_id;
+                if ($userDivisionId && $borrowerDivisionId && $userDivisionId !== $borrowerDivisionId && $loan->borrower_id !== $user->id) {
+                    return response()->json(['message' => 'Akses ditolak. Bukan anggota divisi Anda.'], 403);
+                }
+            }
+        }
+
         return response()->json($loan);
     }
 
@@ -444,9 +460,17 @@ class LoanController extends Controller
         });
     }
 
-    public function generatePdf($id)
+    public function generatePdf(Request $request, $id)
     {
         $loan = Loan::with(['borrower.member.division', 'approver', 'loanItems.item.partner'])->findOrFail($id);
+        $user = $request->user();
+
+        // RBAC: Anggota can only download their own loan receipt
+        if ($user && !in_array($user->role, ['super_admin', 'admin'])) {
+            if ($user->role === 'anggota' && $loan->borrower_id !== $user->id) {
+                return response()->json(['message' => 'Akses ditolak.'], 403);
+            }
+        }
 
         $letterhead = Setting::get('letterhead_text', "PANITIA PERINGATAN HARI BESAR ISLAM ROJABIYYAH 2026\nSekretariat Utama");
         $appName = Setting::get('app_name', 'Administrasi Rojabiyyah 2026');
