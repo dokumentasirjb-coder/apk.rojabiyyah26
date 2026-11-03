@@ -342,6 +342,22 @@
             </div>
             <h3 class="text-base font-bold text-slate-800">Data Titik A sampai Titik F (Format Google Sheet)</h3>
             <p class="text-xs text-slate-500 mt-1">Kelola nama Koordinator Wilayah (Korwil), Tim Kabel, dan penugasan per perangkat (LCD &amp; Proyektor) yang sinkron langsung dengan halaman utama publik.</p>
+            <div class="mt-2 flex flex-wrap items-center gap-2">
+              <span class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-semibold">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span>Terintegrasi otomatis dengan <strong>{{ uniqueMemberNames.length }} Anggota</strong> terdaftar (Akun Login &amp; Formulir)</span>
+              </span>
+              <button
+                type="button"
+                @click="refreshMembers"
+                :disabled="loadingMembers"
+                class="inline-flex items-center space-x-1 text-[11px] text-slate-500 hover:text-emerald-700 transition"
+                title="Muat ulang data anggota terbaru"
+              >
+                <svg class="w-3 h-3" :class="{ 'animate-spin': loadingMembers }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                <span>{{ loadingMembers ? 'Menyinkron...' : 'Sinkronkan Anggota' }}</span>
+              </button>
+            </div>
           </div>
 
           <div class="flex flex-wrap items-center gap-2.5">
@@ -397,6 +413,7 @@
                   <input
                     v-model="team.korwil"
                     type="text"
+                    list="registeredMembersList"
                     placeholder="Nama Korwil"
                     class="bg-transparent border-b border-white/60 focus:outline-none text-white font-semibold text-xs px-1 w-32 sm:w-40 placeholder-white/70"
                   />
@@ -407,6 +424,7 @@
                   <input
                     v-model="team.kabel"
                     type="text"
+                    list="registeredMembersList"
                     placeholder="Petugas Kabel"
                     class="bg-transparent border-b border-white/60 focus:outline-none text-white font-semibold text-xs px-1 w-36 sm:w-48 placeholder-white/70"
                   />
@@ -458,6 +476,7 @@
                       <input
                         v-model="item.petugas"
                         type="text"
+                        list="registeredMembersList"
                         placeholder="Nama Relawan / Petugas"
                         class="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-slate-800 text-xs focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                       />
@@ -629,6 +648,22 @@
               </div>
               <h3 class="text-base font-bold text-slate-800">Tabel Form Jadwal Kerja Tim Dokumentasi &amp; Shooting</h3>
               <p class="text-xs text-slate-500 mt-1">Isi dan sesuaikan jadwal tugas hari Rabu &amp; Kamis untuk Fotografer, Videografer, dan Kameramen Multicam.</p>
+              <div class="mt-2 flex flex-wrap items-center gap-2">
+                <span class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-semibold">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                  <span>Terintegrasi otomatis dengan <strong>{{ uniqueMemberNames.length }} Anggota</strong> terdaftar (Akun Login &amp; Formulir)</span>
+                </span>
+                <button
+                  type="button"
+                  @click="refreshMembers"
+                  :disabled="loadingMembers"
+                  class="inline-flex items-center space-x-1 text-[11px] text-slate-500 hover:text-emerald-700 transition"
+                  title="Muat ulang data anggota terbaru"
+                >
+                  <svg class="w-3 h-3" :class="{ 'animate-spin': loadingMembers }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                  <span>{{ loadingMembers ? 'Menyinkron...' : 'Sinkronkan Anggota' }}</span>
+                </button>
+              </div>
             </div>
 
             <div class="flex flex-wrap items-center gap-2.5 self-start md:self-auto">
@@ -740,16 +775,18 @@
                       <input
                         v-model="row.fotografer"
                         type="text"
+                        list="registeredMembersList"
                         placeholder="Nama fotografer..."
-                        class="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-emerald-700 text-xs focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                        class="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-emerald-700 text-xs focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 font-medium"
                       />
                     </td>
                     <td class="py-2.5 px-2">
                       <input
                         v-model="row.videografer"
                         type="text"
+                        list="registeredMembersList"
                         placeholder="Nama videografer..."
-                        class="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-teal-700 text-xs focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                        class="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-teal-700 text-xs focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 font-medium"
                       />
                     </td>
                     <td class="py-2.5 px-3 text-right">
@@ -845,6 +882,7 @@
                       <input
                         v-model="sRow.kameramen"
                         type="text"
+                        list="registeredMembersList"
                         placeholder="Nama kameramen..."
                         class="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-slate-800 font-semibold text-xs focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                       />
@@ -1088,6 +1126,17 @@
         </div>
       </div>
     </div>
+
+    <!-- Datalist Autocomplete Seluruh Anggota Terdaftar (Akun Login & Formulir) -->
+    <datalist id="registeredMembersList">
+      <option
+        v-for="mem in uniqueMemberNames"
+        :key="mem.id"
+        :value="mem.name"
+      >
+        {{ mem.label }}
+      </option>
+    </datalist>
   </DashboardLayout>
 </template>
 
@@ -1180,6 +1229,50 @@ const jadwalShooting = ref([]);
 const activeJadwalSubTab = ref('liputan');
 const savingJadwal = ref(false);
 
+// Integrasi Master Data Anggota (Akun Login & Formulir Pendaftaran)
+const registeredMembers = ref([]);
+const loadingMembers = ref(false);
+
+const memberOptions = computed(() => {
+  return registeredMembers.value
+    .filter((m) => m && m.name && m.name.trim().length > 0)
+    .map((m) => {
+      const divisionName = m.member?.division?.name || '';
+      const sourceLabel = m.registration_source === 'account' ? 'Akun Login' : 'Formulir';
+      return {
+        id: m.id,
+        name: m.name.trim(),
+        member_no: m.member_no || '',
+        division: divisionName,
+        source: sourceLabel,
+        label: `${m.name.trim()}${divisionName ? ' • ' + divisionName : ''} (${sourceLabel})`,
+      };
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
+});
+
+const uniqueMemberNames = computed(() => {
+  const map = new Map();
+  memberOptions.value.forEach((item) => {
+    if (!map.has(item.name)) {
+      map.set(item.name, item);
+    }
+  });
+  return Array.from(map.values());
+});
+
+const refreshMembers = async () => {
+  loadingMembers.value = true;
+  try {
+    const res = await api.get('/members', { params: { per_page: 1000 } });
+    registeredMembers.value = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+  } catch (e) {
+    console.error('Failed to refresh members list', e);
+  } finally {
+    loadingMembers.value = false;
+  }
+};
+
 const heroForm = ref({
   hero_title_white: 'Media Rojabiyyah',
   hero_title_gradient: 'Haul Ke-5 & Rojabiyyah 2026',
@@ -1244,11 +1337,18 @@ const compressImage = (file, maxWidth = 1600, quality = 0.85) => {
 
 const fetchData = async () => {
   try {
-    const [overviewRes, sliderRes, settingsRes] = await Promise.all([
+    const [overviewRes, sliderRes, settingsRes, membersRes] = await Promise.all([
       api.get('/public/overview'),
       api.get('/sliders'),
       api.get('/settings/public'),
+      api.get('/members', { params: { per_page: 1000 } }).catch(() => ({ data: { data: [] } })),
     ]);
+
+    if (membersRes?.data) {
+      registeredMembers.value = Array.isArray(membersRes.data)
+        ? membersRes.data
+        : (membersRes.data.data || []);
+    }
 
     denahList.value = overviewRes.data.denah_photos || ['/uploads/denah/denah_proyektor_1.jpg'];
     jadwalPhotos.value = overviewRes.data.jadwal_photos || [];
