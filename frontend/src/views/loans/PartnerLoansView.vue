@@ -54,14 +54,7 @@
               <span>Mitra Baru</span>
             </button>
 
-            <!-- Tambah Barang Pinjaman -->
-            <button
-              @click="openAddItemModal"
-              class="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-[#059669] to-[#10b981] hover:brightness-105 text-white text-xs font-bold shadow-md shadow-emerald-600/20 transition active:scale-95"
-            >
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-              <span>Tambah Barang</span>
-            </button>
+
           </template>
         </div>
       </div>
@@ -293,6 +286,10 @@
                 <div v-if="item.location" class="flex items-center justify-between">
                   <span class="text-slate-500 text-[11px]">Lokasi Simpan:</span>
                   <span class="font-semibold text-slate-800 text-[11px]">{{ item.location }}</span>
+                </div>
+                <div v-if="item.kelengkapan" class="flex items-start justify-between bg-emerald-50/70 p-1.5 rounded-lg border border-emerald-200/60">
+                  <span class="text-emerald-800 font-bold text-[10px] flex-shrink-0 mr-1.5">Kelengkapan:</span>
+                  <span class="font-semibold text-emerald-900 text-[10px] text-right leading-tight">{{ item.kelengkapan }}</span>
                 </div>
                 <div class="flex items-center justify-between pt-1 border-t border-slate-200">
                   <span class="text-slate-500 text-[11px]">Status Stok:</span>
@@ -614,6 +611,18 @@
               />
             </div>
 
+            <div>
+              <label class="block text-slate-700 font-bold mb-1">
+                Kelengkapan &amp; Aksesoris Unit <span class="text-slate-400 font-normal">(misal: Baterai 2 pcs, Kabel Cas, Tas, Memory Card)</span>
+              </label>
+              <textarea
+                v-model="itemForm.kelengkapan"
+                rows="2"
+                placeholder="Tuliskan kelengkapan tambahan barang pinjaman secara manual..."
+                class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-cyan-500 font-medium"
+              ></textarea>
+            </div>
+
             <div class="pt-3 border-t border-slate-200 flex items-center justify-end space-x-2">
               <button
                 type="button"
@@ -769,6 +778,7 @@ const itemForm = ref({
   condition: 'baik',
   location: '',
   photo_path: '',
+  kelengkapan: '',
 });
 
 // Partner Form
@@ -854,6 +864,7 @@ const openAddItemModal = () => {
     condition: 'baik',
     location: '',
     photo_path: '',
+    kelengkapan: '',
   };
   showItemModal.value = true;
 };
@@ -870,6 +881,7 @@ const openEditItemModal = (item) => {
     condition: item.condition || 'baik',
     location: item.location || '',
     photo_path: item.photo_path || '',
+    kelengkapan: item.kelengkapan || '',
   };
   showItemModal.value = true;
 };

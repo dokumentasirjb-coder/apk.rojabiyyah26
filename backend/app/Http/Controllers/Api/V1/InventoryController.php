@@ -59,6 +59,7 @@ class InventoryController extends Controller
             'qty_damaged' => 'nullable|integer|min:0',
             'condition' => 'nullable|in:baik,rusak_ringan,rusak_berat',
             'location' => 'nullable|string|max:255',
+            'kelengkapan' => 'nullable|string|max:1000',
             'photo_path' => 'nullable|string',
         ]);
 
@@ -78,6 +79,7 @@ class InventoryController extends Controller
             'qty_damaged' => $qtyDamaged,
             'condition' => $request->condition ?? 'baik',
             'location' => $request->location,
+            'kelengkapan' => $request->kelengkapan,
             'photo_path' => $request->photo_path,
         ]);
 
@@ -109,6 +111,7 @@ class InventoryController extends Controller
             'qty_damaged' => 'nullable|integer|min:0',
             'condition' => 'nullable|in:baik,rusak_ringan,rusak_berat',
             'location' => 'nullable|string|max:255',
+            'kelengkapan' => 'nullable|string|max:1000',
             'photo_path' => 'nullable|string',
         ]);
 
@@ -128,6 +131,7 @@ class InventoryController extends Controller
             'qty_damaged' => $qtyDamaged,
             'condition' => $request->condition ?? $item->condition,
             'location' => $request->location,
+            'kelengkapan' => $request->kelengkapan,
             'photo_path' => $request->has('photo_path') ? $request->photo_path : $item->photo_path,
         ]);
 

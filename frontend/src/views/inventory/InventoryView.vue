@@ -210,6 +210,10 @@
                   <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                   <span>{{ item.location || 'Gudang Inventaris Utama' }}</span>
                 </div>
+                <div v-if="item.kelengkapan" class="mt-1.5 p-1.5 rounded-lg bg-emerald-50/80 border border-emerald-200/80 text-[10px]">
+                  <span class="font-bold text-emerald-800">Kelengkapan:</span>
+                  <span class="text-emerald-900 font-semibold ml-1">{{ item.kelengkapan }}</span>
+                </div>
               </div>
 
               <!-- Stock metrics -->
@@ -333,6 +337,7 @@
             <div class="flex justify-between"><span class="text-slate-500">Kode Alat:</span><span class="font-mono text-cyan-400 font-bold">{{ selectedItem.code }}</span></div>
             <div class="flex justify-between"><span class="text-slate-500">Kategori:</span><span>{{ selectedItem.category?.name || '-' }}</span></div>
             <div class="flex justify-between"><span class="text-slate-500">Lokasi:</span><span>{{ selectedItem.location || 'Gudang Utama' }}</span></div>
+            <div v-if="selectedItem.kelengkapan" class="flex justify-between items-start pt-1 border-t border-slate-100"><span class="text-slate-500 flex-shrink-0 mr-2">Kelengkapan:</span><span class="font-bold text-emerald-800 text-right">{{ selectedItem.kelengkapan }}</span></div>
             <div class="flex justify-between"><span class="text-slate-500">Total Stok Fisik:</span><span class="font-mono font-bold">{{ selectedItem.qty_total }} Unit</span></div>
             <div class="flex justify-between"><span class="text-slate-500">Stok Siap Pakai:</span><span class="font-mono font-bold text-emerald-400">{{ selectedItem.qty_available }} Unit</span></div>
             <div class="flex justify-between"><span class="text-slate-500">Kondisi Fisik:</span><span class="capitalize">{{ selectedItem.condition }}</span></div>
@@ -440,6 +445,19 @@
                 <option value="__new__">+ Tambah Lembaga / Sumber Baru...</option>
               </select>
             </div>
+          </div>
+
+          <!-- Kelengkapan & Aksesoris Tambahan (Manual) -->
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">
+              Kelengkapan &amp; Aksesoris Unit <span class="text-slate-400 font-normal">(misal: Baterai 2 pcs, Kabel Cas, Tas, Memory Card 64GB, Charger)</span>
+            </label>
+            <textarea
+              v-model="form.kelengkapan"
+              rows="2"
+              placeholder="Tuliskan rincian kelengkapan barang ini secara manual..."
+              class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 focus:outline-none focus:border-emerald-600 font-medium"
+            ></textarea>
           </div>
 
           <!-- Quick Add Partner / Lembaga Form -->
@@ -1015,6 +1033,7 @@ const form = ref({
   source: 'internal',
   partner_id: null,
   photo_path: null,
+  kelengkapan: '',
 });
 
 const selectedSourceKey = ref('internal');
@@ -1212,6 +1231,7 @@ const openAddItemModal = () => {
     location: 'Gudang Inventaris Utama',
     source: 'internal',
     photo_path: null,
+    kelengkapan: '',
   };
   selectedSourceKey.value = 'internal';
   showModal.value = true;
@@ -1231,6 +1251,7 @@ const openEditModal = (item) => {
     location: item.location || 'Gudang Inventaris Utama',
     source: item.source || 'internal',
     photo_path: item.photo_path || null,
+    kelengkapan: item.kelengkapan || '',
   };
   syncSelectedSourceKey();
   showModal.value = true;

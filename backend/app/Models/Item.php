@@ -23,6 +23,7 @@ class Item extends Model
         'condition',
         'photo_path',
         'location',
+        'kelengkapan',
     ];
 
     public function partner()
