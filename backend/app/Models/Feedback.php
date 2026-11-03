@@ -25,3 +25,4 @@ class Feedback extends Model
         'rating' => 'integer',
     ];
 }
+

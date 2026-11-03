@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\AiChatController;
 use App\Http\Controllers\Api\V1\AuditLogController;
 use App\Http\Controllers\Api\V1\CashController;
 use App\Http\Controllers\Api\V1\DangerZoneController;
@@ -31,6 +32,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/public/register-member', [MemberController::class, 'publicRegister'])->middleware('throttle:10,1');
     Route::post('/public/register-account', [MemberController::class, 'publicRegisterAccount'])->middleware('throttle:10,1');
     Route::post('/public/feedback', [FeedbackController::class, 'publicStore'])->middleware('throttle:15,1');
+    Route::post('/public/ai-chat', [AiChatController::class, 'chat'])->middleware('throttle:30,1');
 
     // Protected routes
     Route::middleware('auth:sanctum')->group(function () {
@@ -51,6 +53,9 @@ Route::prefix('v1')->group(function () {
             Route::get('/admin/feedbacks', [FeedbackController::class, 'index']);
             Route::patch('/admin/feedbacks/{id}/read', [FeedbackController::class, 'markAsRead']);
             Route::delete('/admin/feedbacks/{id}', [FeedbackController::class, 'destroy']);
+
+            // Google Gemini AI Test & Setup
+            Route::post('/admin/ai/test-gemini', [AiChatController::class, 'testGemini']);
         });
 
         // Auth & Profile

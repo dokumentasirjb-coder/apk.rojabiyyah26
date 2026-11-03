@@ -116,6 +116,16 @@
               <span>WhatsApp Gateway (3x Otomatis)</span>
             </button>
 
+            <!-- Tab Google Gemini AI Gateway -->
+            <button
+              @click="adminTab = 'gemini'"
+              :class="adminTab === 'gemini' ? 'bg-emerald-600 text-white border-emerald-600 shadow' : 'bg-slate-50 text-slate-600 border-slate-200 hover:text-slate-900 hover:bg-slate-100'"
+              class="px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center space-x-1.5 whitespace-nowrap cursor-pointer"
+            >
+              <svg class="w-3.5 h-3.5" :class="adminTab === 'gemini' ? 'text-white' : 'text-blue-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              <span>Google Gemini AI</span>
+            </button>
+
             <!-- Tab 7: Reset -->
             <button
               @click="adminTab = 'reset'"
@@ -1340,6 +1350,117 @@
         <!-- ===================================================================== -->
         <!-- TAB 7: RESET DATA OPERASIONAL & PEMBERSIHAN DATA (DANGER ZONE)         -->
         <!-- ===================================================================== -->
+        <!-- ===================================================================== -->
+        <!-- TAB: GOOGLE GEMINI AI (CHATBOT GATEWAY)                               -->
+        <!-- ===================================================================== -->
+        <div v-if="adminTab === 'gemini'" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <div class="lg:col-span-7 bg-white rounded-3xl border border-slate-200 p-6 sm:p-7 shadow-sm space-y-6">
+            <div>
+              <div class="flex items-center space-x-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <h3 class="text-sm font-bold text-slate-900">Integrasi Google Gemini AI (Pintar Menjawab Umum &amp; Acara)</h3>
+              </div>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                Hubungkan API Key Google Gemini agar Chat Bot AI dapat menjawab pertanyaan umum (tips fotografi, videografi, audio, adab majelis, kelistrikan) dengan kecerdasan Gemini, sekaligus paham seluruh konteks proyektor dan jadwal acara Haul 2026.
+              </p>
+            </div>
+
+            <!-- Form Gemini API Key -->
+            <form @submit.prevent="saveGeminiSettings" class="space-y-4 text-xs">
+              <!-- Switch Gemini AI -->
+              <div class="p-4 bg-emerald-50/60 border border-emerald-200 rounded-2xl flex items-center justify-between">
+                <div>
+                  <div class="font-bold text-slate-900 text-xs">Aktifkan Mesin Google Gemini AI</div>
+                  <div class="text-[11px] text-slate-600">Jika dinonaktifkan atau offline, bot otomatis beralih ke basis pengetahuan lokal.</div>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" v-model="geminiSettings.enabled" class="sr-only peer" />
+                  <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                </label>
+              </div>
+
+              <!-- API Key Field -->
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1">Google Gemini API Key *</label>
+                <div class="relative">
+                  <input
+                    v-model="geminiSettings.apiKey"
+                    :type="showGeminiKey ? 'text' : 'password'"
+                    placeholder="AIzaSy..."
+                    class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 font-mono transition text-xs pr-10"
+                  />
+                  <button
+                    type="button"
+                    @click="showGeminiKey = !showGeminiKey"
+                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer"
+                  >
+                    <svg v-if="!showGeminiKey" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                    <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"/></svg>
+                  </button>
+                </div>
+                <div class="mt-2 p-3 bg-slate-50 border border-slate-200 rounded-xl text-[11px] text-slate-600 space-y-1">
+                  <p class="font-semibold text-slate-700">📌 Cara mendapatkan API Key Google Gemini (Gratis):</p>
+                  <ol class="list-decimal list-inside space-y-0.5 text-slate-500">
+                    <li>Kunjungi <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-emerald-600 font-bold underline">Google AI Studio (aistudio.google.com)</a></li>
+                    <li>Login dengan akun Google Anda</li>
+                    <li>Klik tombol <strong>"Create API key"</strong></li>
+                    <li>Salin (*copy*) kunci API yang diawali dengan <code>AIzaSy...</code> dan tempelkan di form atas.</li>
+                  </ol>
+                </div>
+              </div>
+
+              <!-- Model info -->
+              <div class="p-3 bg-blue-50 border border-blue-200 rounded-xl text-[11px] text-blue-800 flex items-center space-x-2">
+                <span>🤖</span>
+                <span>Model Aktif: <strong>gemini-1.5-flash</strong> (Respon sangat cepat, cerdas &amp; kuota gratis luas).</span>
+              </div>
+
+              <div class="flex justify-end pt-2">
+                <button
+                  type="submit"
+                  :disabled="savingGemini"
+                  class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold transition shadow-sm disabled:opacity-50 flex items-center space-x-1.5 cursor-pointer"
+                >
+                  <span>{{ savingGemini ? 'Menyimpan...' : 'Simpan Kunci API Gemini' }}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Right Column: Card Verifikasi & Uji Coba Gemini -->
+          <div class="lg:col-span-5 bg-white rounded-3xl border border-slate-200 p-6 sm:p-7 shadow-sm space-y-4">
+            <div>
+              <h3 class="text-sm font-bold text-slate-900 flex items-center space-x-2">
+                <span>⚡</span>
+                <span>Uji Coba &amp; Tes Koneksi Gemini</span>
+              </h3>
+              <p class="text-xs text-slate-500 mt-1">
+                Kirim pesan tes ke Google Gemini untuk memastikan API Key aktif dan merespon dengan benar.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              @click="testGeminiConnection"
+              :disabled="testingGemini || !geminiSettings.apiKey"
+              class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:brightness-105 text-white font-bold transition flex items-center justify-center space-x-1.5 shadow-sm disabled:opacity-50 cursor-pointer"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              <span>{{ testingGemini ? 'Menghubungi Gemini AI...' : 'Tes Koneksi Gemini AI Sekarang' }}</span>
+            </button>
+
+            <div v-if="testGeminiResult" :class="testGeminiResult.success ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-rose-50 text-rose-800 border-rose-200'" class="p-3.5 rounded-2xl border text-[11px] leading-relaxed space-y-2">
+              <div class="font-bold flex items-center space-x-1">
+                <span>{{ testGeminiResult.success ? '✅' : '❌' }}</span>
+                <span>{{ testGeminiResult.message }}</span>
+              </div>
+              <div v-if="testGeminiResult.sample_reply" class="p-2.5 bg-white/80 rounded-xl border border-emerald-200 text-slate-700 italic font-mono text-[10px]">
+                "{{ testGeminiResult.sample_reply }}"
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div v-if="adminTab === 'reset'" class="space-y-6">
           <!-- Danger Header & Security Notice -->
           <div class="p-5 bg-rose-950/30 border border-rose-800/60 rounded-3xl text-rose-200 text-xs space-y-2 shadow-lg">
@@ -2250,6 +2371,12 @@ const fetchSettings = async () => {
       if (res.data.wa_gateway_url) {
         waSettings.value.custom_url = res.data.wa_gateway_url;
       }
+      if (res.data.gemini_enabled !== undefined) {
+        geminiSettings.value.enabled = res.data.gemini_enabled === '1' || res.data.gemini_enabled === 'true' || res.data.gemini_enabled === true;
+      }
+      if (res.data.gemini_api_key) {
+        geminiSettings.value.apiKey = res.data.gemini_api_key;
+      }
     }
   } catch (err) {
     console.error('Gagal mengambil pengaturan sistem:', err);
@@ -2329,6 +2456,59 @@ const sendTestWhatsApp = async () => {
     testWaResult.value = { success: false, message: err.response?.data?.message || 'Gagal mengirim pesan tes. Pastikan token WhatsApp Anda valid.' };
   } finally {
     testingWa.value = false;
+  }
+};
+
+// =========================================================================
+// TAB GOOGLE GEMINI AI
+// =========================================================================
+const geminiSettings = ref({
+  enabled: true,
+  apiKey: '',
+});
+const showGeminiKey = ref(false);
+const savingGemini = ref(false);
+const testingGemini = ref(false);
+const testGeminiResult = ref(null);
+
+const saveGeminiSettings = async () => {
+  savingGemini.value = true;
+  try {
+    await api.put('/settings', {
+      gemini_enabled: geminiSettings.value.enabled ? '1' : '0',
+      gemini_api_key: geminiSettings.value.apiKey,
+    });
+    alert('Pengaturan Google Gemini AI berhasil disimpan!\\n\\nChatbot sekarang terhubung dengan Gemini dan siap menjawab pertanyaan umum maupun khusus seputar acara.');
+  } catch (err) {
+    alert(err.response?.data?.message || 'Gagal menyimpan pengaturan Gemini AI.');
+  } finally {
+    savingGemini.value = false;
+  }
+};
+
+const testGeminiConnection = async () => {
+  if (!geminiSettings.value.apiKey) {
+    alert('Silakan masukkan API Key Google Gemini terlebih dahulu.');
+    return;
+  }
+  testingGemini.value = true;
+  testGeminiResult.value = null;
+  try {
+    const res = await api.post('/admin/ai/test-gemini', {
+      api_key: geminiSettings.value.apiKey,
+    });
+    testGeminiResult.value = {
+      success: true,
+      message: res.data.message || 'Koneksi ke Google Gemini AI berhasil!',
+      sample_reply: res.data.sample_reply,
+    };
+  } catch (err) {
+    testGeminiResult.value = {
+      success: false,
+      message: err.response?.data?.message || 'Gagal terhubung ke Google Gemini. Pastikan API Key valid.',
+    };
+  } finally {
+    testingGemini.value = false;
   }
 };
 

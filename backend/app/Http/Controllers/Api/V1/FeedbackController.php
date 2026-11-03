@@ -82,3 +82,4 @@ class FeedbackController extends Controller
         return response()->json(['message' => 'Kritik & saran berhasil dihapus.']);
     }
 }
+

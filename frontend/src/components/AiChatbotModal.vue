@@ -27,11 +27,14 @@
             <div>
               <div class="flex items-center space-x-1.5">
                 <h3 class="font-bold text-sm text-white tracking-wide">Asisten AI Rojabiyyah</h3>
-                <span class="px-1.5 py-0.2 text-[9px] font-bold bg-emerald-400/20 text-emerald-200 rounded border border-emerald-400/30">AI 2026</span>
+                <span class="px-1.5 py-0.2 text-[9px] font-bold bg-white/20 text-white rounded border border-white/30 flex items-center space-x-1">
+                  <span>✨</span>
+                  <span>Gemini AI</span>
+                </span>
               </div>
               <p class="text-[11px] text-emerald-100 flex items-center space-x-1">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse"></span>
-                <span>Siap bantu Proyektor, Dokumentasi &amp; FAQ</span>
+                <span>Tanya Umum, Proyektor &amp; Dokumentasi</span>
               </p>
             </div>
           </div>
@@ -165,11 +168,16 @@
 
               <div
                 :class="[
-                  'text-[9px] pt-0.5 text-right',
-                  msg.role === 'user' ? 'text-emerald-100' : 'text-slate-400'
+                  'text-[9px] pt-1 flex items-center justify-between',
+                  msg.role === 'user' ? 'text-emerald-100 justify-end' : 'text-slate-400'
                 ]"
               >
-                {{ msg.time }}
+                <span v-if="msg.role === 'bot' && msg.provider === 'gemini'" class="inline-flex items-center space-x-1 px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-700 font-bold border border-emerald-200 text-[9px]">
+                  <span>✨</span>
+                  <span>Google Gemini AI</span>
+                </span>
+                <span v-else-if="msg.role === 'bot'"></span>
+                <span>{{ msg.time }}</span>
               </div>
             </div>
           </div>
@@ -564,6 +572,7 @@ const sendMessage = async () => {
   const now = new Date();
   const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
+  // Push user message
   messages.value.push({
     role: 'user',
     text: query,
@@ -574,17 +583,38 @@ const sendMessage = async () => {
   isTyping.value = true;
   await scrollToBottom();
 
-  setTimeout(async () => {
+  try {
+    // Call backend API (Gemini AI + live context)
+    const res = await api.post('/public/ai-chat', {
+      message: query,
+      history: messages.value.slice(-6).map((m) => ({
+        role: m.role === 'user' ? 'user' : 'model',
+        text: m.text,
+      })),
+    });
+
+    isTyping.value = false;
+    messages.value.push({
+      role: 'bot',
+      text: res.data.reply,
+      provider: res.data.provider || 'gemini',
+      action: res.data.action,
+      time: timeStr,
+    });
+    await scrollToBottom();
+  } catch (err) {
+    // If backend or network is slow/offline, seamlessly fall back to local AI engine
     const answer = generateBotAnswer(query);
     isTyping.value = false;
     messages.value.push({
       role: 'bot',
       text: answer.text,
+      provider: 'local_ai',
       action: answer.action,
       time: timeStr,
     });
     await scrollToBottom();
-  }, 450);
+  }
 };
 
 const clearChat = () => {
@@ -713,3 +743,4 @@ onMounted(() => {
   }
 });
 </script>
+
