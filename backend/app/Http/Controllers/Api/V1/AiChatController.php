@@ -44,6 +44,23 @@ class AiChatController extends Controller
         // 2. Check for Gemini API Key
         $apiKey = Setting::get('gemini_api_key') ?: env('GEMINI_API_KEY');
 
+        // Dynamic FAQs from settings
+        $savedFaqs = Setting::get('chatbot_faqs');
+        $faqContext = '';
+        if (!empty($savedFaqs)) {
+            $decodedFaqs = json_decode($savedFaqs, true);
+            if (is_array($decodedFaqs) && count($decodedFaqs) > 0) {
+                $faqContext = "\n7. FAQ & Panduan Khusus Tambahan yang Ditetapkan Pengelola:\n";
+                foreach ($decodedFaqs as $df) {
+                    $fq = $df['q'] ?? '';
+                    $fa = $df['a'] ?? '';
+                    if (!empty($fq) && !empty($fa)) {
+                        $faqContext .= "- Pertanyaan: {$fq}\n  Jawaban SOP: {$fa}\n";
+                    }
+                }
+            }
+        }
+
         if (!empty($apiKey)) {
             try {
                 $systemInstruction = "Kamu adalah Asisten AI Media Rojabiyyah 2026 (Haul Ke-5 & Harlah Rojabiyyah Pondok Pesantren Al-Muhibbin Tambakberas Jombang).
@@ -62,7 +79,7 @@ PENGETAHUAN KHUSUS APLIKASI & ACARA:
    - Jadwal penugasan: Shift hari Rabu (persiapan & tawasul) dan Kamis (puncak haul).
 4. Pendaftaran Anggota/Relawan: Terbuka untuk umum di /register-member (termasuk pendataan ukuran seragam panitia) tanpa wajib punya akun login.
 5. Google Drive Resmi: Berisi logo resmi, denah proyektor, dan berkas juknis ({$gdriveUrl}).
-6. Kritik & Saran: Pengunjung dan panitia dapat memberikan kritik, saran, maupun evaluasi langsung di tab Kritik & Saran aplikasi.
+6. Kritik & Saran: Pengunjung dan panitia dapat memberikan kritik, saran, maupun evaluasi langsung di tab Kritik & Saran aplikasi.{$faqContext}
 
 PERAN UMUM (PENTING):
 Selain informasi khusus acara di atas, kamu dapat dan sangat dipersilakan untuk menjawab pertanyaan UMUM apa pun dari pengguna (misalnya tips teknik fotografi, pengaturan ISO/shutter speed kamera, kabel audio/mixer, etika/adab bermajelis, doa, translate bahasa, maupun pengetahuan umum lainnya). Berikan jawaban yang cerdas, terstruktur dengan poin-poin yang mudah dipahami, dan tetap santun.";

@@ -1127,9 +1127,43 @@
         </div>
       </div>
 
-      <!-- TAB 7: KRITIK & SARAN MASUK DARI CHATBOT / PUBLIK -->
+      <!-- TAB 7: KRITIK, SARAN & KELOLA FAQ CHATBOT -->
       <div v-if="activeTab === 'feedback'" class="space-y-6">
-        <div class="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-xs space-y-4">
+        <!-- Sub-Tabs Switcher -->
+        <div class="flex items-center space-x-2 bg-slate-100/80 p-1.5 rounded-2xl border border-slate-200/80 text-xs font-semibold w-fit">
+          <button
+            @click="activeFeedbackSubTab = 'inbox'"
+            :class="[
+              'px-4 py-2 rounded-xl transition cursor-pointer flex items-center space-x-2',
+              activeFeedbackSubTab === 'inbox'
+                ? 'bg-white text-emerald-800 shadow-sm font-bold'
+                : 'text-slate-600 hover:text-slate-900'
+            ]"
+          >
+            <span>📥 Kotak Masuk Kritik &amp; Saran</span>
+            <span v-if="feedbacksList.length" class="px-2 py-0.5 rounded-full text-[10px] bg-emerald-100 text-emerald-800 font-bold">
+              {{ feedbacksList.length }}
+            </span>
+          </button>
+
+          <button
+            @click="activeFeedbackSubTab = 'faq'"
+            :class="[
+              'px-4 py-2 rounded-xl transition cursor-pointer flex items-center space-x-2',
+              activeFeedbackSubTab === 'faq'
+                ? 'bg-white text-emerald-800 shadow-sm font-bold'
+                : 'text-slate-600 hover:text-slate-900'
+            ]"
+          >
+            <span>❓ Editor FAQ &amp; SOP Chatbot</span>
+            <span class="px-2 py-0.5 rounded-full text-[10px] bg-slate-200 text-slate-700 font-bold">
+              {{ chatbotFaqsList.length }} Butir
+            </span>
+          </button>
+        </div>
+
+        <!-- SUBTAB 1: KOTAK MASUK KRITIK & SARAN -->
+        <div v-if="activeFeedbackSubTab === 'inbox'" class="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-xs space-y-4">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
             <div>
               <div class="flex items-center space-x-2">
@@ -1203,6 +1237,105 @@
             </div>
           </div>
         </div>
+
+        <!-- SUBTAB 2: EDITOR FAQ & SOP CHATBOT -->
+        <div v-else-if="activeFeedbackSubTab === 'faq'" class="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-xs space-y-5">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+            <div>
+              <div class="flex items-center space-x-2">
+                <span class="p-2 rounded-xl bg-teal-50 text-teal-700">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </span>
+                <div>
+                  <h3 class="text-base font-bold text-slate-800">Editor FAQ &amp; SOP Asisten AI</h3>
+                  <p class="text-xs text-slate-500">Pertanyaan dan jawaban di sini tampil langsung di tab "FAQ &amp; SOP" Chat Bot publik serta dipelajari oleh Google Gemini AI.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+              <button
+                @click="resetChatbotFaqsDefault"
+                class="px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-semibold transition active:scale-95 cursor-pointer"
+              >
+                Reset Default
+              </button>
+              <button
+                @click="addChatbotFaqItem"
+                class="px-3.5 py-2 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 text-xs font-semibold transition active:scale-95 flex items-center space-x-1 cursor-pointer"
+              >
+                <span>+</span>
+                <span>Tambah Tanya-Jawab</span>
+              </button>
+              <button
+                @click="saveChatbotFaqs"
+                :disabled="savingChatbotFaqs"
+                class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-xs active:scale-95 flex items-center space-x-1.5 cursor-pointer disabled:opacity-50"
+              >
+                <span v-if="savingChatbotFaqs" class="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                <span>{{ savingChatbotFaqs ? 'Menyimpan...' : 'Simpan FAQ &amp; SOP' }}</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- FAQ Cards List -->
+          <div class="space-y-4">
+            <div
+              v-for="(faq, fIdx) in chatbotFaqsList"
+              :key="fIdx"
+              class="p-4 sm:p-5 rounded-2xl border border-slate-200/90 bg-slate-50/40 hover:bg-white hover:border-teal-200 transition space-y-3"
+            >
+              <div class="flex items-center justify-between gap-3">
+                <div class="flex items-center space-x-2">
+                  <span class="w-6 h-6 rounded-lg bg-teal-100 text-teal-800 text-xs font-bold flex items-center justify-center">
+                    #{{ fIdx + 1 }}
+                  </span>
+                  <input
+                    v-model="faq.icon"
+                    type="text"
+                    class="w-12 text-center text-sm px-2 py-1 rounded-lg border border-slate-200 bg-white"
+                    title="Emoji / Ikon"
+                    placeholder="Ikon"
+                  />
+                  <span class="text-xs text-slate-400">Pilih Ikon / Emoji</span>
+                </div>
+
+                <button
+                  @click="removeChatbotFaqItem(fIdx)"
+                  class="text-rose-500 hover:text-rose-700 text-xs font-semibold hover:underline cursor-pointer"
+                >
+                  Hapus Butir Ini
+                </button>
+              </div>
+
+              <!-- Pertanyaan Input -->
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">Pertanyaan (Tanya):</label>
+                <input
+                  v-model="faq.q"
+                  type="text"
+                  placeholder="Contoh: Bagaimana cara mengatasi kabel FO putus atau tertekuk?"
+                  class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 font-medium text-slate-800"
+                />
+              </div>
+
+              <!-- Jawaban SOP Textarea -->
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">Jawaban SOP &amp; Instruksi Teknis (Jawab):</label>
+                <textarea
+                  v-model="faq.a"
+                  rows="3"
+                  placeholder="Tuliskan instruksi langkah demi langkah yang jelas dan mudah dipahami panitia atau umum..."
+                  class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 font-normal text-slate-700 leading-relaxed"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div v-if="chatbotFaqsList.length === 0" class="text-center py-10 text-xs text-slate-400">
+            Belum ada butir FAQ. Klik <b>"+ Tambah Tanya-Jawab"</b> atau <b>"Reset Default"</b> di atas.
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1234,7 +1367,7 @@ const tabs = [
   { id: 'proyektor', name: 'Pembagian Tim Proyektor' },
   { id: 'jadwal', name: 'Jadwal Kerja Tim' },
   { id: 'hero', name: 'Teks Hero & Tema' },
-  { id: 'feedback', name: 'Kritik & Saran Masuk' },
+  { id: 'feedback', name: 'Kritik, Saran & FAQ Bot' },
 ];
 
 const denahList = ref([]);
@@ -1447,6 +1580,18 @@ const fetchData = async () => {
     }
 
     if (settingsRes.data) {
+    if (settingsRes.data.chatbot_faqs) {
+      try {
+        const parsed = typeof settingsRes.data.chatbot_faqs === 'string'
+          ? JSON.parse(settingsRes.data.chatbot_faqs)
+          : settingsRes.data.chatbot_faqs;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          chatbotFaqsList.value = parsed;
+        }
+      } catch (e) {
+        // keep default
+      }
+    }
       heroForm.value.hero_title_white = settingsRes.data.hero_title_white || 'Media Rojabiyyah';
       heroForm.value.hero_title_gradient = settingsRes.data.hero_title_gradient || 'Haul Ke-5 & Rojabiyyah 2026';
       heroForm.value.sub_theme = settingsRes.data.sub_theme || 'PERINGATAN HAUL MASYAYIKH & ISRO\' MI\'ROJ 1447 H / 2026 M';
@@ -1681,6 +1826,77 @@ const saveCalendarToServer = async () => {
     alert(err.response?.data?.message || 'Gagal menyimpan data agenda kalender.');
   } finally {
     savingCalendar.value = false;
+  }
+};
+
+
+const activeFeedbackSubTab = ref('inbox'); // 'inbox' | 'faq'
+
+const defaultChatbotFaqs = [
+  {
+    icon: '📽️',
+    q: 'Bagaimana cara mengatasi proyektor yang bertuliskan No Signal?',
+    a: '1. Pastikan receiver HDMI Extender FO di pos Anda dalam kondisi menyala.\n2. Cek apakah kabel HDMI tercolok kencang di port yang sesuai (HDMI 1 / HDMI 2).\n3. Ganti source input pada proyektor ke port HDMI yang aktif.\n4. Jika lampu fiber optik mati, segera laporkan ke Tim Kabel atau Korwil Pos.',
+  },
+  {
+    icon: '⚡',
+    q: 'Apa yang harus dilakukan jika proyektor mendadak mati / lampu merah menyala?',
+    a: 'Jangan mencabut kabel colokan listrik! Proyektor memerlukan daya untuk memutar kipas pendingin lampu. Tunggu 5-10 menit hingga dingin, periksa apakah lubang ventilasi tertutup, lalu nyalakan kembali.',
+  },
+  {
+    icon: '📍',
+    q: 'Di mana saja pembagian Titik Pos Proyektor A sampai F?',
+    a: 'Titik Pos ditempatkan di:\n• Titik A: Area Utama & Panggung Depan (Korwil: Alfani, Kabel: Habib)\n• Titik B: Sayap Kanan & KJA Center\n• Titik C & D: Sayap Kiri dan Koridor Penghubung\n• Titik E & F: Halaman Luar Jamaah dan Area Parkir Utama.',
+  },
+  {
+    icon: '📸',
+    q: 'Kapan jam kerja dan shift Tim Dokumentasi (Foto & Video)?',
+    a: 'Tim Dokumentasi dibagi menjadi dua agenda utama:\n• Hari Rabu: Shift Pagi/Sore (Persiapan & Penataan) dan Shift Malam (Tawasul & Ratib).\n• Hari Kamis: Shift Pagi hingga Selesai (Puncak Acara Haul Akbar).\nSetiap pergantian sesi, memory card diserahkan ke Posko Media Center untuk backup.',
+  },
+  {
+    icon: '📁',
+    q: 'Di mana saya bisa melihat dan mengunduh berkas resmi Google Drive?',
+    a: 'Anda dapat mengklik ikon Google Drive di sudut kanan bawah beranda untuk melihat folder resmi yang berisi logo resolusi tinggi, rundown, skema jalur kabel, dan denah posko.',
+  },
+  {
+    icon: '👕',
+    q: 'Apakah pendaftaran anggota relawan mendapatkan seragam?',
+    a: 'Ya, formulir pendaftaran anggota di halaman /register-member mencakup pendataan ukuran baju/seragam (S, M, L, XL, XXL, XXXL) untuk keperluan logistik panitia.',
+  },
+];
+
+const chatbotFaqsList = ref([...defaultChatbotFaqs]);
+const savingChatbotFaqs = ref(false);
+
+const addChatbotFaqItem = () => {
+  chatbotFaqsList.value.push({
+    icon: '💡',
+    q: '',
+    a: '',
+  });
+};
+
+const removeChatbotFaqItem = (idx) => {
+  chatbotFaqsList.value.splice(idx, 1);
+};
+
+const resetChatbotFaqsDefault = () => {
+  if (confirm('Kembalikan butir FAQ & SOP ke pengaturan bawaan awal?')) {
+    chatbotFaqsList.value = JSON.parse(JSON.stringify(defaultChatbotFaqs));
+  }
+};
+
+const saveChatbotFaqs = async () => {
+  savingChatbotFaqs.value = true;
+  try {
+    await api.post('/settings', {
+      chatbot_faqs: JSON.stringify(chatbotFaqsList.value),
+    });
+    alert('Alhamdulillah, seluruh butir FAQ & SOP Chatbot berhasil disimpan!');
+  } catch (err) {
+    alert('Gagal menyimpan FAQ Chatbot: ' + (err.response?.data?.message || err.message));
+  } finally {
+    savingChatbotFaqs.value = false;
   }
 };
 

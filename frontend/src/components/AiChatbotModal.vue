@@ -637,7 +637,7 @@ const openDriveModal = () => {
 const faqSearch = ref('');
 const expandedFaqs = ref([0, 1]);
 
-const faqs = ref([
+const defaultFaqs = [
   {
     icon: '📽️',
     q: 'Bagaimana cara mengatasi proyektor yang bertuliskan No Signal?',
@@ -668,7 +668,29 @@ const faqs = ref([
     q: 'Apakah pendaftaran anggota relawan mendapatkan seragam?',
     a: 'Ya, formulir pendaftaran anggota di halaman /register-member mencakup pendataan ukuran baju/seragam (S, M, L, XL, XXL, XXXL) untuk keperluan logistik panitia.',
   },
-]);
+];
+
+const faqs = ref([...defaultFaqs]);
+
+const loadCustomFaqs = async () => {
+  try {
+    const res = await api.get('/settings/public');
+    if (res.data?.chatbot_faqs) {
+      const parsed = typeof res.data.chatbot_faqs === 'string'
+        ? JSON.parse(res.data.chatbot_faqs)
+        : res.data.chatbot_faqs;
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        faqs.value = parsed;
+      }
+    }
+  } catch (e) {
+    // Keep default faqs
+  }
+};
+
+onMounted(() => {
+  loadCustomFaqs();
+});
 
 const filteredFaqs = computed(() => {
   if (!faqSearch.value.trim()) return faqs.value;
