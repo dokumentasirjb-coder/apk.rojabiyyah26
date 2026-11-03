@@ -17,8 +17,12 @@
           <div class="h-6 w-px bg-slate-200 hidden sm:block"></div>
 
           <router-link to="/" class="flex items-center space-x-2 sm:space-x-3 group min-w-0">
-            <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center shadow-xs overflow-hidden group-hover:border-emerald-500 transition flex-shrink-0">
-              <svg class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <div class="h-8 sm:h-10 w-auto flex items-center justify-center group-hover:scale-105 transition flex-shrink-0">
+              <img
+                :src="settingsStore.settings?.logo_url || '/logo.png'"
+                alt="Logo RJB"
+                class="h-8 sm:h-10 w-auto object-contain drop-shadow-sm"
+              />
             </div>
             <div class="min-w-0">
               <div class="font-extrabold text-xs sm:text-sm tracking-wider uppercase text-slate-900 flex items-center space-x-1.5 truncate">

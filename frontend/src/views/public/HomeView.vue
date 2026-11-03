@@ -7,14 +7,10 @@
         <router-link to="/" class="flex items-center space-x-3 group flex-shrink-0">
           <div class="h-9 sm:h-11 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition">
             <img
-              v-if="settingsStore.settings?.logo_url && settingsStore.settings?.logo_url !== '/logo.png'"
-              :src="settingsStore.settings.logo_url"
-              alt="Logo"
-              class="h-8 sm:h-10 w-auto object-contain"
+              :src="settingsStore.settings?.logo_url || '/logo.png'"
+              alt="Logo RJB"
+              class="h-8 sm:h-10 w-auto object-contain drop-shadow-sm"
             />
-            <div v-else class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-[#059669] to-[#10b981] flex items-center justify-center text-white shadow-sm">
-              <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-            </div>
           </div>
           <div class="flex flex-col">
             <div class="font-black text-sm sm:text-base tracking-wide uppercase text-slate-900 leading-tight whitespace-nowrap">

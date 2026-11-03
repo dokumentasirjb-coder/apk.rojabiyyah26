@@ -11,10 +11,10 @@
 
       <!-- Brand Logo & Title -->
       <div class="text-center mb-5">
-        <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 mb-3 shadow-sm text-emerald-600">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-white border border-slate-200 mb-3 shadow-xs p-1.5 overflow-hidden">
+          <img :src="settingsStore.settings?.logo_url || '/logo.png'" alt="Logo RJB" class="w-full h-full object-contain" />
         </div>
-        <h4 class="text-xs font-extrabold text-slate-900 tracking-widest uppercase">Media Rojabiyyah</h4>
+        <h4 class="text-xs font-extrabold text-slate-900 tracking-widest uppercase">{{ settingsStore.settings?.app_name || 'Media Rojabiyyah' }}</h4>
         <p class="text-[11px] text-slate-500 mt-0.5">Masuk sebagai Super Admin atau Anggota yang memiliki akun</p>
       </div>
 
@@ -67,31 +67,8 @@
         </button>
       </form>
 
-      <!-- Quick Demo Selector -->
-      <div class="mt-5 pt-4 border-t border-slate-100 text-center">
-        <p class="text-[10px] text-slate-500 mb-2">Pilih akun demo untuk pengujian cepat:</p>
-        <div class="grid grid-cols-2 gap-2 text-[11px]">
-          <button
-            type="button"
-            @click="quickFill('superadmin@rojabiyyah.id', 'password123')"
-            class="py-1.5 px-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 font-semibold flex items-center justify-center space-x-1.5 transition"
-          >
-            <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
-            <span>Super Admin</span>
-          </button>
-          <button
-            type="button"
-            @click="quickFill('ahmad', 'password123')"
-            class="py-1.5 px-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 font-semibold flex items-center justify-center space-x-1.5 transition"
-          >
-            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-            <span>Anggota (Ahmad)</span>
-          </button>
-        </div>
-      </div>
-
       <!-- Register Link -->
-      <div class="mt-4 text-center text-[11px] text-slate-500">
+      <div class="mt-5 pt-4 border-t border-slate-100 text-center text-[11px] text-slate-500">
         Belum memiliki akun login?
         <router-link to="/register-account" @click="$emit('close')" class="text-emerald-600 hover:underline font-semibold ml-1">
           Daftar Akun Anggota
@@ -105,6 +82,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
+import { useSettingsStore } from '../stores/settings';
 
 defineProps({
   show: {
@@ -116,16 +94,12 @@ defineProps({
 const emit = defineEmits(['close']);
 const router = useRouter();
 const authStore = useAuthStore();
+const settingsStore = useSettingsStore();
 
 const form = ref({ login: '', password: '' });
 const showPassword = ref(false);
 const loading = ref(false);
 const error = ref('');
-
-const quickFill = (login, password) => {
-  form.value.login = login;
-  form.value.password = password;
-};
 
 const handleLogin = async () => {
   loading.value = true;

@@ -20,16 +20,12 @@
 
         <!-- 1. Top Brand Header -->
         <div class="relative z-10 flex items-center space-x-3.5">
-          <div class="w-12 h-12 rounded-2xl bg-white p-2 flex items-center justify-center shadow-xl shadow-black/20 flex-shrink-0 group hover:scale-105 transition">
+          <div class="w-12 h-12 rounded-2xl bg-white p-1.5 flex items-center justify-center shadow-xl shadow-black/20 flex-shrink-0 group hover:scale-105 transition overflow-hidden">
             <img
-              v-if="settingsStore.settings?.logo_url && settingsStore.settings?.logo_url !== '/logo.png'"
-              :src="settingsStore.settings.logo_url"
+              :src="settingsStore.settings?.logo_url || '/logo.png'"
               alt="Logo Rojabiyyah"
               class="w-full h-full object-contain"
             />
-            <div v-else class="w-full h-full rounded-xl bg-gradient-to-br from-[#059669] to-[#10b981] flex items-center justify-center text-white">
-              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-            </div>
           </div>
           <div>
             <div class="text-base sm:text-lg font-black tracking-wider uppercase leading-tight text-white flex items-center space-x-2">
@@ -224,44 +220,8 @@
             </button>
           </form>
 
-          <!-- OR Divider (Vristo Style) -->
-          <div class="relative flex items-center justify-center my-4">
-            <div class="absolute inset-0 flex items-center">
-              <div class="w-full border-t border-slate-200"></div>
-            </div>
-            <div class="relative bg-white px-3 text-[10px] uppercase font-bold text-slate-400 tracking-wider">
-              OR
-            </div>
-          </div>
-
-          <!-- Quick Test Demo & Fast Action Buttons -->
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-mono">Uji Coba Kredensial Cepat:</span>
-              <span class="text-[10px] text-slate-400">1-Klik Isi Form</span>
-            </div>
-            <div class="grid grid-cols-2 gap-2 text-[11px]">
-              <button
-                type="button"
-                @click="quickFill('superadmin@rojabiyyah.id', 'password123')"
-                class="py-2 px-3 rounded-xl bg-slate-50 hover:bg-emerald-50 hover:border-emerald-300 border border-slate-200 text-slate-700 hover:text-emerald-800 font-semibold flex items-center justify-center space-x-1.5 transition active:scale-95 shadow-2xs group"
-              >
-                <span class="w-2 h-2 rounded-full bg-emerald-500 group-hover:scale-125 transition-transform"></span>
-                <span>Super Admin</span>
-              </button>
-              <button
-                type="button"
-                @click="quickFill('ahmad', 'password123')"
-                class="py-2 px-3 rounded-xl bg-slate-50 hover:bg-emerald-50 hover:border-emerald-300 border border-slate-200 text-slate-700 hover:text-emerald-800 font-semibold flex items-center justify-center space-x-1.5 transition active:scale-95 shadow-2xs group"
-              >
-                <span class="w-2 h-2 rounded-full bg-amber-500 group-hover:scale-125 transition-transform"></span>
-                <span>Anggota (Ahmad)</span>
-              </button>
-            </div>
-          </div>
-
           <!-- Registration Links -->
-          <div class="pt-2 text-center text-xs text-slate-500 space-y-1.5">
+          <div class="pt-4 text-center text-xs text-slate-500 space-y-2 border-t border-slate-100">
             <p>
               Belum memiliki akun login?
               <router-link to="/register-account" class="text-emerald-700 hover:text-emerald-800 font-bold ml-1 hover:underline">
@@ -303,11 +263,6 @@ const rememberMe = ref(true);
 const showPassword = ref(false);
 const loading = ref(false);
 const error = ref('');
-
-const quickFill = (login, password) => {
-  form.value.login = login;
-  form.value.password = password;
-};
 
 const handleLogin = async () => {
   loading.value = true;

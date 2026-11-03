@@ -37,14 +37,10 @@
             ]"
           >
             <img
-              v-if="settingsStore.settings?.logo_url && settingsStore.settings?.logo_url !== '/logo.png'"
-              :src="settingsStore.settings.logo_url"
+              :src="settingsStore.settings?.logo_url || '/logo.png'"
               alt="Logo"
-              class="h-8 sm:h-9 w-auto max-w-[48px] object-contain"
+              class="h-8 sm:h-9 w-auto max-w-[48px] object-contain drop-shadow-sm"
             />
-            <div v-else class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#059669] to-[#10b981] flex items-center justify-center text-white">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-            </div>
           </div>
           <div v-show="!sidebarCollapsed" class="min-w-0 transition-opacity duration-200">
             <div class="text-xs font-black text-slate-900 tracking-wider uppercase truncate max-w-[145px]">
