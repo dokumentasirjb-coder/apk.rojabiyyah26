@@ -83,6 +83,11 @@ class MemberController extends Controller
 
     public function store(Request $request)
     {
+        $currentUser = $request->user();
+        if (!$currentUser || !in_array($currentUser->role, ['super_admin', 'admin'])) {
+            return response()->json(['message' => 'Hanya Super Admin / Admin yang berhak menambah data anggota.'], 403);
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
             'member_no' => 'nullable|string|max:50|unique:users,member_no',
@@ -99,19 +104,28 @@ class MemberController extends Controller
             'is_active' => 'nullable|boolean',
         ]);
 
-        return DB::transaction(function () use ($request) {
+        return DB::transaction(function () use ($request, $currentUser) {
             $memberNo = $request->filled('member_no') ? $request->member_no : $this->generateNextMemberNo();
             $tempPassword = $request->filled('password') ? $request->password : Str::random(8);
             $isActive = $request->has('is_active') ? filter_var($request->is_active, FILTER_VALIDATE_BOOLEAN) : true;
             $hasAccount = $request->boolean('has_account') || $request->filled('email');
             $regSource = $hasAccount ? 'account' : $request->input('registration_source', 'google_form');
 
+            $role = 'anggota';
+            if ($request->filled('role')) {
+                if ($currentUser->role === 'super_admin') {
+                    $role = $request->role;
+                } elseif ($currentUser->role === 'admin' && in_array($request->role, ['anggota', 'pic_posko', 'ketua_divisi'])) {
+                    $role = $request->role;
+                }
+            }
+
             $user = User::create([
                 'member_no' => $memberNo,
                 'name' => $request->name,
                 'email' => $hasAccount ? $request->email : null,
                 'password' => Hash::make($tempPassword),
-                'role' => $request->role ?? 'anggota',
+                'role' => $role,
                 'registration_source' => $regSource,
                 'phone_wa' => $request->phone_wa,
                 'is_active' => $isActive,
@@ -155,6 +169,11 @@ class MemberController extends Controller
 
     public function update(Request $request, $id)
     {
+        $currentUser = $request->user();
+        if (!$currentUser || !in_array($currentUser->role, ['super_admin', 'admin'])) {
+            return response()->json(['message' => 'Hanya Super Admin / Admin yang berhak memperbarui data anggota.'], 403);
+        }
+
         $user = User::with('member')->findOrFail($id);
 
         $request->validate([
@@ -182,12 +201,25 @@ class MemberController extends Controller
             }
         }
 
+        // Strict role update rules
+        $targetRole = $user->role;
+        if ($request->filled('role')) {
+            if ($currentUser->role === 'super_admin') {
+                $targetRole = $request->role;
+            } elseif ($currentUser->role === 'admin') {
+                if (in_array($request->role, ['super_admin', 'bendahara', 'admin']) && $user->role !== $request->role) {
+                    return response()->json(['message' => 'Hanya Super Admin yang berhak menetapkan peran admin atau bendahara.'], 403);
+                }
+                $targetRole = $request->role;
+            }
+        }
+
         $oldValues = $user->toArray();
 
         $updateData = [
             'name' => $request->name,
             'member_no' => $request->filled('member_no') ? $request->member_no : $user->member_no,
-            'role' => $request->role ?? $user->role,
+            'role' => $targetRole,
             'phone_wa' => $request->phone_wa,
             'is_active' => $request->has('is_active') ? filter_var($request->is_active, FILTER_VALIDATE_BOOLEAN) : $user->is_active,
         ];

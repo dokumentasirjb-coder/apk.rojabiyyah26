@@ -466,11 +466,23 @@ const scrollToBottom = async () => {
   }
 };
 
+const escapeHtml = (unsafe) => {
+  if (!unsafe) return '';
+  return String(unsafe)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+};
+
 const formatMessage = (text) => {
   if (!text) return '';
-  // Convert **bold** to <strong>
-  let html = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-  // Convert bullet points • to neat styled bullets
+  // 1. Strictly escape raw HTML tags first to eliminate XSS risks
+  let html = escapeHtml(text);
+  // 2. Convert **bold** to <strong> (safe because inner text is escaped)
+  html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  // 3. Convert bullet points • to neat styled bullets
   html = html.replace(/^• (.*)$/gm, '<span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 align-middle"></span>$1');
   return html;
 };

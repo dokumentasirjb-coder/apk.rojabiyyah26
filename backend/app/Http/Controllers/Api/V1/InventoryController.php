@@ -49,6 +49,11 @@ class InventoryController extends Controller
 
     public function store(Request $request)
     {
+        $user = $request->user();
+        if (!$user || !in_array($user->role, ['super_admin', 'admin'])) {
+            return response()->json(['message' => 'Akses ditolak. Hanya Admin yang berhak menambah inventaris.'], 403);
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
             'code' => 'nullable|string|max:50|unique:items,code',
@@ -99,6 +104,11 @@ class InventoryController extends Controller
 
     public function update(Request $request, $id)
     {
+        $user = $request->user();
+        if (!$user || !in_array($user->role, ['super_admin', 'admin'])) {
+            return response()->json(['message' => 'Akses ditolak. Hanya Admin yang berhak memperbarui inventaris.'], 403);
+        }
+
         $item = Item::findOrFail($id);
 
         $request->validate([
@@ -143,8 +153,13 @@ class InventoryController extends Controller
         ]);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
+        $user = $request->user();
+        if (!$user || !in_array($user->role, ['super_admin', 'admin'])) {
+            return response()->json(['message' => 'Akses ditolak. Hanya Admin yang berhak menghapus inventaris.'], 403);
+        }
+
         $item = Item::withCount(['loanItems as active_loans_count' => function ($q) {
             $q->whereHas('loan', function ($lq) {
                 $lq->whereIn('status', ['diajukan', 'disetujui', 'diserahkan']);

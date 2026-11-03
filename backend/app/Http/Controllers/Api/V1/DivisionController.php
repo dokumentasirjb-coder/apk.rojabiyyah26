@@ -26,6 +26,11 @@ class DivisionController extends Controller
      */
     public function store(Request $request)
     {
+        $user = $request->user();
+        if (!$user || !in_array($user->role, ['super_admin', 'admin'])) {
+            return response()->json(['message' => 'Akses ditolak. Hanya Admin yang berhak mengelola divisi.'], 403);
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:150|unique:divisions,name',
             'description' => 'nullable|string|max:500',
@@ -60,6 +65,11 @@ class DivisionController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $user = $request->user();
+        if (!$user || !in_array($user->role, ['super_admin', 'admin'])) {
+            return response()->json(['message' => 'Akses ditolak. Hanya Admin yang berhak mengedit divisi.'], 403);
+        }
+
         $division = Division::findOrFail($id);
 
         $validated = $request->validate([
@@ -86,8 +96,13 @@ class DivisionController extends Controller
     /**
      * Remove the specified division.
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
+        $user = $request->user();
+        if (!$user || !in_array($user->role, ['super_admin', 'admin'])) {
+            return response()->json(['message' => 'Akses ditolak. Hanya Admin yang berhak menghapus divisi.'], 403);
+        }
+
         $division = Division::withCount('members')->findOrFail($id);
 
         $memberCount = $division->members_count;

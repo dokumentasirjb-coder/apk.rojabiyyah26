@@ -22,6 +22,11 @@ class RegionController extends Controller
 
     public function store(Request $request)
     {
+        $user = $request->user();
+        if (!$user || !in_array($user->role, ['super_admin', 'admin'])) {
+            return response()->json(['message' => 'Akses ditolak. Hanya Admin yang berhak menambah posko.'], 403);
+        }
+
         $request->validate([
             'name' => 'required|string|unique:regions,name',
             'code' => 'nullable|string|max:50',
@@ -40,6 +45,11 @@ class RegionController extends Controller
 
     public function update(Request $request, $id)
     {
+        $user = $request->user();
+        if (!$user || !in_array($user->role, ['super_admin', 'admin'])) {
+            return response()->json(['message' => 'Akses ditolak. Hanya Admin yang berhak memperbarui posko.'], 403);
+        }
+
         $region = Region::findOrFail($id);
         $request->validate([
             'name' => 'required|string|unique:regions,name,' . $region->id,
@@ -57,8 +67,13 @@ class RegionController extends Controller
         ]);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
+        $user = $request->user();
+        if (!$user || !in_array($user->role, ['super_admin', 'admin'])) {
+            return response()->json(['message' => 'Akses ditolak. Hanya Admin yang berhak menghapus posko.'], 403);
+        }
+
         $region = Region::findOrFail($id);
         $region->delete();
         AuditLog::log('delete', 'Region', $id);
@@ -99,6 +114,11 @@ class RegionController extends Controller
 
     public function storeAssignment(Request $request)
     {
+        $user = $request->user();
+        if (!$user || !in_array($user->role, ['super_admin', 'admin'])) {
+            return response()->json(['message' => 'Akses ditolak. Hanya Admin yang berhak membuat penugasan anggota.'], 403);
+        }
+
         $request->validate([
             'region_id' => 'required|exists:regions,id',
             'user_id' => 'required|exists:users,id',
@@ -160,8 +180,13 @@ class RegionController extends Controller
         ]);
     }
 
-    public function destroyAssignment($id)
+    public function destroyAssignment(Request $request, $id)
     {
+        $user = $request->user();
+        if (!$user || !in_array($user->role, ['super_admin', 'admin'])) {
+            return response()->json(['message' => 'Akses ditolak. Hanya Admin yang berhak menghapus penugasan.'], 403);
+        }
+
         $assignment = Assignment::findOrFail($id);
         $assignment->delete();
         return response()->json(['message' => 'Penugasan berhasil dihapus.']);

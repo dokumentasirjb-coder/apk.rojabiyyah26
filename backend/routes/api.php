@@ -27,7 +27,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/public/sliders', [SliderController::class, 'publicSliders'])->middleware('throttle:60,1');
     Route::get('/public/reports', [FieldReportController::class, 'publicReports'])->middleware('throttle:60,1');
     Route::get('/public/loans/verify/{code}', [LoanController::class, 'verifyPublic'])->middleware('throttle:30,1');
-    Route::get('/settings/public', [SettingController::class, 'index'])->middleware('throttle:60,1');
+    Route::get('/settings/public', [SettingController::class, 'publicSettings'])->middleware('throttle:60,1');
     Route::get('/public/options', [MemberController::class, 'publicOptions'])->middleware('throttle:60,1');
     Route::post('/public/register-member', [MemberController::class, 'publicRegister'])->middleware('throttle:10,1');
     Route::post('/public/register-account', [MemberController::class, 'publicRegisterAccount'])->middleware('throttle:10,1');
@@ -36,334 +36,330 @@ Route::prefix('v1')->group(function () {
 
     // Protected routes
     Route::middleware('auth:sanctum')->group(function () {
-        // Super Admin & Admin: Landing Page Management
-        Route::middleware('role:super_admin,admin')->group(function () {
-            Route::post('/admin/landing/upload-denah', [PublicEventController::class, 'uploadDenah']);
-            Route::post('/admin/landing/delete-denah', [PublicEventController::class, 'deleteDenah']);
-            Route::post('/admin/landing/upload-jadwal', [PublicEventController::class, 'uploadJadwal']);
-            Route::post('/admin/landing/delete-jadwal', [PublicEventController::class, 'deleteJadwal']);
-            Route::post('/admin/landing/upload-proyektor-photo', [PublicEventController::class, 'uploadProyektorPhotos']);
-            Route::post('/admin/landing/delete-proyektor-photo', [PublicEventController::class, 'deleteProyektorPhoto']);
-            Route::post('/admin/landing/save-proyektor', [PublicEventController::class, 'saveProyektorTeams']);
-            Route::post('/admin/landing/save-jadwal', [PublicEventController::class, 'saveJadwalTim']);
-            Route::post('/admin/landing/save-hero', [PublicEventController::class, 'saveHeroSettings']);
-            Route::post('/admin/landing/save-calendar', [PublicEventController::class, 'saveCalendarEvents']);
+        // Global Rate Limiting for Authenticated Endpoints (60 req/min)
+        Route::middleware('throttle:60,1')->group(function () {
+            // Auth & Profile (All authenticated users)
+            Route::post('/logout', [AuthController::class, 'logout']);
+            Route::get('/me', [AuthController::class, 'me']);
+            Route::post('/password/change', [AuthController::class, 'changePassword']);
 
-            // Kritik & Saran Management
-            Route::get('/admin/feedbacks', [FeedbackController::class, 'index']);
-            Route::patch('/admin/feedbacks/{id}/read', [FeedbackController::class, 'markAsRead']);
-            Route::delete('/admin/feedbacks/{id}', [FeedbackController::class, 'destroy']);
+            // Dashboard Stats
+            Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
 
-            // Google Gemini AI Test & Setup
-            Route::post('/admin/ai/test-gemini', [AiChatController::class, 'testGemini']);
-        });
+            // Read-only Shared Catalogues for Authenticated Users
+            Route::get('/members', [MemberController::class, 'index']);
+            Route::get('/members/{id}', [MemberController::class, 'show']);
+            Route::get('/divisions', [DivisionController::class, 'index']);
+            Route::get('/divisions/{id}', [DivisionController::class, 'show']);
+            Route::get('/items', [InventoryController::class, 'index']);
+            Route::get('/items/{id}', [InventoryController::class, 'show']);
+            Route::get('/inventory-categories', [InventoryController::class, 'categories']);
+            Route::get('/categories', [InventoryController::class, 'categories']);
+            Route::get('/partners', [InventoryController::class, 'partners']);
+            Route::get('/regions', [RegionController::class, 'index']);
+            Route::get('/regions/{id}/assignments', [RegionController::class, 'regionAssignments']);
+            Route::get('/assignments', [RegionController::class, 'assignments']);
+            Route::get('/sliders', [SliderController::class, 'index']);
 
-        // Auth & Profile
-        Route::post('/logout', [AuthController::class, 'logout']);
-        Route::get('/me', [AuthController::class, 'me']);
-        Route::post('/password/change', [AuthController::class, 'changePassword']);
+            // Loans & Circulation (Members submit loan, Admins review/handover)
+            Route::get('/loans', [LoanController::class, 'index']);
+            Route::post('/loans', [LoanController::class, 'store']);
+            Route::get('/loans/{id}', [LoanController::class, 'show']);
+            Route::post('/loans/{id}/approve', [LoanController::class, 'approve']);
+            Route::post('/loans/{id}/reject', [LoanController::class, 'reject']);
+            Route::post('/loans/{id}/handover', [LoanController::class, 'handover']);
+            Route::post('/loans/{id}/return', [LoanController::class, 'returnLoan']);
+            Route::post('/loans/{id}/cancel', [LoanController::class, 'cancel']);
+            Route::get('/loans/{id}/pdf', [LoanController::class, 'generatePdf']);
 
-        // Dashboard Stats
-        Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
+            // Field Reports (Members submit, Admins followup)
+            Route::get('/reports', [FieldReportController::class, 'index']);
+            Route::post('/reports', [FieldReportController::class, 'store']);
+            Route::get('/reports/{id}', [FieldReportController::class, 'show']);
+            Route::post('/reports/{id}/followups', [FieldReportController::class, 'addFollowup']);
+            Route::patch('/reports/{id}/status', [FieldReportController::class, 'updateStatus']);
 
-        // Members & Divisions
-        Route::get('/members', [MemberController::class, 'index']);
-        Route::post('/members', [MemberController::class, 'store']);
-        Route::get('/members/export', [MemberController::class, 'export']);
-        Route::get('/members/template', [MemberController::class, 'template']);
-        Route::post('/members/import/preview', [MemberController::class, 'importPreview']);
-        Route::post('/members/import', [MemberController::class, 'importExecute']);
-        Route::post('/members/{id}/create-account', [MemberController::class, 'createAccount']);
-        Route::post('/members/{id}/revoke-account', [MemberController::class, 'revokeAccount']);
-        Route::get('/members/{id}', [MemberController::class, 'show']);
-        Route::put('/members/{id}', [MemberController::class, 'update']);
-        Route::delete('/members/{id}', [MemberController::class, 'destroy']);
-        Route::get('/divisions', [DivisionController::class, 'index']);
-        Route::post('/divisions', [DivisionController::class, 'store']);
-        Route::get('/divisions/{id}', [DivisionController::class, 'show']);
-        Route::put('/divisions/{id}', [DivisionController::class, 'update']);
-        Route::delete('/divisions/{id}', [DivisionController::class, 'destroy']);
+            // Notifications
+            Route::get('/notifications', function (\Illuminate\Http\Request $request) {
+                \App\Services\NotificationService::syncForUser($request->user());
 
-        // Inventory & Logistics
-        Route::get('/items', [InventoryController::class, 'index']);
-        Route::post('/items', [InventoryController::class, 'store']);
-        Route::get('/items/export', [InventoryController::class, 'export']);
-        Route::get('/items/template', [InventoryController::class, 'template']);
-        Route::post('/items/import/preview', [InventoryController::class, 'importPreview']);
-        Route::post('/items/import', [InventoryController::class, 'importExecute']);
-        Route::get('/items/{id}', [InventoryController::class, 'show']);
-        Route::put('/items/{id}', [InventoryController::class, 'update']);
-        Route::delete('/items/{id}', [InventoryController::class, 'destroy']);
-        Route::get('/inventory-categories', [InventoryController::class, 'categories']);
-        Route::get('/categories', [InventoryController::class, 'categories']);
-        Route::post('/inventory-categories', [InventoryController::class, 'storeCategory']);
-        Route::delete('/inventory-categories/{id}', [InventoryController::class, 'destroyCategory']);
-        Route::delete('/categories/{id}', [InventoryController::class, 'destroyCategory']);
+                $notifications = \Illuminate\Support\Facades\DB::table('notifications')
+                    ->where('user_id', $request->user()->id)
+                    ->orderBy('created_at', 'desc')
+                    ->limit(30)
+                    ->get()
+                    ->map(function ($n) {
+                        $n->data = json_decode($n->data, true);
+                        return $n;
+                    });
+                $unreadCount = \Illuminate\Support\Facades\DB::table('notifications')
+                    ->where('user_id', $request->user()->id)
+                    ->whereNull('read_at')
+                    ->count();
 
-        // Partners / Lembaga Mitra
-        Route::get('/partners', [InventoryController::class, 'partners']);
-        Route::post('/partners', [InventoryController::class, 'storePartner']);
-        Route::put('/partners/{id}', [InventoryController::class, 'updatePartner']);
-        Route::delete('/partners/{id}', [InventoryController::class, 'destroyPartner']);
-
-        // Loans & Circulation
-        Route::get('/loans', [LoanController::class, 'index']);
-        Route::post('/loans', [LoanController::class, 'store']);
-        Route::get('/loans/{id}', [LoanController::class, 'show']);
-        Route::post('/loans/{id}/approve', [LoanController::class, 'approve']);
-        Route::post('/loans/{id}/reject', [LoanController::class, 'reject']);
-        Route::post('/loans/{id}/handover', [LoanController::class, 'handover']);
-        Route::post('/loans/{id}/return', [LoanController::class, 'returnLoan']);
-        Route::post('/loans/{id}/cancel', [LoanController::class, 'cancel']);
-        Route::get('/loans/{id}/pdf', [LoanController::class, 'generatePdf']);
-
-        // Regions / Posko & Assignments
-        Route::get('/regions', [RegionController::class, 'index']);
-        Route::post('/regions', [RegionController::class, 'store']);
-        Route::put('/regions/{id}', [RegionController::class, 'update']);
-        Route::delete('/regions/{id}', [RegionController::class, 'destroy']);
-        Route::get('/regions/{id}/assignments', [RegionController::class, 'regionAssignments']);
-        Route::post('/regions/{id}/assignments', [RegionController::class, 'storeRegionAssignment']);
-        Route::get('/assignments', [RegionController::class, 'assignments']);
-        Route::post('/assignments', [RegionController::class, 'storeAssignment']);
-        Route::post('/assignments/check-reminders', [RegionController::class, 'checkReminders']);
-        Route::delete('/assignments/{id}', [RegionController::class, 'destroyAssignment']);
-
-        // Field Reports
-        Route::get('/reports', [FieldReportController::class, 'index']);
-        Route::post('/reports', [FieldReportController::class, 'store']);
-        Route::get('/reports/{id}', [FieldReportController::class, 'show']);
-        Route::post('/reports/{id}/followups', [FieldReportController::class, 'addFollowup']);
-        Route::patch('/reports/{id}/status', [FieldReportController::class, 'updateStatus']);
-
-        // Cash Management (Khusus Super Admin & Bendahara)
-        // Verifikasi password akses kas
-        Route::post('/cash/verify-password', function (\Illuminate\Http\Request $request) {
-            if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
-                return response()->json(['message' => 'Akses ditolak.'], 403);
-            }
-            $request->validate(['password' => 'required|string']);
-            $correct = \App\Models\Setting::get('cash_password', env('CASH_DEFAULT_PIN', 'kas2026'));
-            if ($request->password === $correct) {
-                return response()->json(['valid' => true, 'message' => 'Akses kas berhasil diverifikasi.']);
-            }
-            return response()->json(['valid' => false, 'message' => 'Kata sandi salah. Silakan coba lagi.'], 401);
-        })->middleware('throttle:5,1');
-
-        Route::get('/cash', function (\Illuminate\Http\Request $request) {
-            if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
-                return response()->json(['message' => 'Akses ditolak. Hanya Super Admin dan Bendahara.'], 403);
-            }
-            return app(\App\Http\Controllers\Api\V1\CashController::class)->index($request);
-        });
-        Route::post('/cash', [CashController::class, 'store']);
-        Route::put('/cash/{id}', function (\Illuminate\Http\Request $request, $id) {
-            if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
-                return response()->json(['message' => 'Akses ditolak.'], 403);
-            }
-            return app(\App\Http\Controllers\Api\V1\CashController::class)->update($request, $id);
-        });
-        Route::delete('/cash/{id}', function (\Illuminate\Http\Request $request, $id) {
-            if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
-                return response()->json(['message' => 'Akses ditolak.'], 403);
-            }
-            return app(\App\Http\Controllers\Api\V1\CashController::class)->destroy($request, $id);
-        });
-        Route::post('/cash/{id}/void', function (\Illuminate\Http\Request $request, $id) {
-            if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
-                return response()->json(['message' => 'Akses ditolak.'], 403);
-            }
-            return app(\App\Http\Controllers\Api\V1\CashController::class)->voidTransaction($request, $id);
-        });
-        Route::get('/cash/summary', function (\Illuminate\Http\Request $request) {
-            if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
-                return response()->json(['message' => 'Akses ditolak.'], 403);
-            }
-            return app(\App\Http\Controllers\Api\V1\CashController::class)->summary($request);
-        });
-        Route::get('/cash/categories', function (\Illuminate\Http\Request $request) {
-            if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
-                return response()->json(['message' => 'Akses ditolak.'], 403);
-            }
-            return app(\App\Http\Controllers\Api\V1\CashController::class)->categories($request);
-        });
-        Route::post('/cash/categories', function (\Illuminate\Http\Request $request) {
-            if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
-                return response()->json(['message' => 'Akses ditolak.'], 403);
-            }
-            return app(\App\Http\Controllers\Api\V1\CashController::class)->storeCategory($request);
-        });
-        Route::get('/cash/export', function (\Illuminate\Http\Request $request) {
-            if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
-                return response()->json(['message' => 'Akses ditolak.'], 403);
-            }
-            return app(\App\Http\Controllers\Api\V1\CashController::class)->export($request);
-        });
-        Route::get('/cash/template', function (\Illuminate\Http\Request $request) {
-            if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
-                return response()->json(['message' => 'Akses ditolak.'], 403);
-            }
-            return app(\App\Http\Controllers\Api\V1\CashController::class)->template($request);
-        });
-        Route::post('/cash/import/preview', function (\Illuminate\Http\Request $request) {
-            if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
-                return response()->json(['message' => 'Akses ditolak.'], 403);
-            }
-            return app(\App\Http\Controllers\Api\V1\CashController::class)->importPreview($request);
-        });
-        Route::post('/cash/import', function (\Illuminate\Http\Request $request) {
-            if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
-                return response()->json(['message' => 'Akses ditolak.'], 403);
-            }
-            return app(\App\Http\Controllers\Api\V1\CashController::class)->importExecute($request);
-        });
-
-        // Sliders
-        Route::get('/sliders', [SliderController::class, 'index']);
-        Route::post('/sliders', [SliderController::class, 'store']);
-        Route::put('/sliders/{id}', [SliderController::class, 'update']);
-        Route::delete('/sliders/{id}', [SliderController::class, 'destroy']);
-
-        // Settings
-        Route::get('/settings', [SettingController::class, 'index']);
-        Route::put('/settings', [SettingController::class, 'update']);
-        Route::post('/settings/test-wa', [SettingController::class, 'testWhatsApp']);
-
-        // Admins Management (Super Admin ONLY)
-        Route::get('/admins', function (\Illuminate\Http\Request $request) {
-            if ($request->user()->role !== 'super_admin') {
-                return response()->json(['message' => 'Hanya Super Admin yang berhak melihat daftar pengelola admin.'], 403);
-            }
-            $admins = \App\Models\User::whereIn('role', ['super_admin', 'admin', 'bendahara'])
-                ->orderBy('role', 'asc')
-                ->get();
-            return response()->json($admins);
-        });
-
-        Route::get('/admins/candidates', function (\Illuminate\Http\Request $request) {
-            if ($request->user()->role !== 'super_admin') {
-                return response()->json(['message' => 'Hanya Super Admin yang berhak melihat kandidat pengelola admin.'], 403);
-            }
-            $candidates = \App\Models\User::whereNotNull('email')
-                ->where('email', '!=', '')
-                ->where('role', '!=', 'super_admin')
-                ->orderBy('name', 'asc')
-                ->get(['id', 'name', 'email', 'phone_wa', 'member_no', 'role']);
-            return response()->json($candidates);
-        });
-
-        Route::post('/admins', function (\Illuminate\Http\Request $request) {
-            if ($request->user()->role !== 'super_admin') {
-                return response()->json(['message' => 'Hanya Super Admin yang berhak mengelola akun admin.'], 403);
-            }
-
-            if ($request->filled('user_id')) {
-                $request->validate([
-                    'user_id' => 'required|exists:users,id',
-                    'role' => 'required|in:super_admin,admin,bendahara',
-                    'password' => 'nullable|string|min:8',
-                ]);
-                $user = \App\Models\User::findOrFail($request->user_id);
-                $updateData = [
-                    'role' => $request->role,
-                    'is_active' => true,
-                ];
-                if ($request->filled('name')) {
-                    $updateData['name'] = $request->name;
-                }
-                if ($request->filled('phone_wa')) {
-                    $updateData['phone_wa'] = $request->phone_wa;
-                }
-                if ($request->filled('password')) {
-                    $updateData['password'] = \Illuminate\Support\Facades\Hash::make($request->password);
-                }
-                $user->update($updateData);
-
-                $roleLabel = $request->role === 'super_admin' ? 'Super Admin' : ($request->role === 'bendahara' ? 'Bendahara' : 'Admin Operasional');
                 return response()->json([
-                    'message' => "Akun {$user->name} berhasil diangkat menjadi {$roleLabel}.",
-                    'admin' => $user,
-                ], 200);
-            }
+                    'notifications' => $notifications,
+                    'unread_count' => $unreadCount,
+                ]);
+            });
+            Route::post('/notifications/mark-read', function (\Illuminate\Http\Request $request) {
+                \Illuminate\Support\Facades\DB::table('notifications')
+                    ->where('user_id', $request->user()->id)
+                    ->whereNull('read_at')
+                    ->update(['read_at' => now(), 'updated_at' => now()]);
 
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'email' => 'required|email|unique:users,email',
-                'role' => 'required|in:super_admin,admin,bendahara',
-                'password' => 'required|string|min:8',
-                'phone_wa' => 'nullable|string',
-            ]);
-            $count = \App\Models\User::whereIn('role', ['super_admin', 'admin', 'bendahara'])->count() + 1;
-            $user = \App\Models\User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'role' => $request->role,
-                'password' => \Illuminate\Support\Facades\Hash::make($request->password),
-                'phone_wa' => $request->phone_wa,
-                'member_no' => sprintf('ADM-%03d', $count),
-                'is_active' => true,
-            ]);
-            return response()->json(['message' => 'Akun pengelola admin berhasil ditambahkan.', 'admin' => $user], 201);
-        });
+                return response()->json(['message' => 'Semua notifikasi ditandai dibaca.']);
+            });
+            Route::post('/notifications/{id}/read', function (\Illuminate\Http\Request $request, $id) {
+                \Illuminate\Support\Facades\DB::table('notifications')
+                    ->where('user_id', $request->user()->id)
+                    ->where('id', $id)
+                    ->update(['read_at' => now(), 'updated_at' => now()]);
 
-        Route::delete('/admins/{id}', function (\Illuminate\Http\Request $request, $id) {
-            if ($request->user()->role !== 'super_admin') {
-                return response()->json(['message' => 'Hanya Super Admin yang berhak menghapus akun admin.'], 403);
-            }
-            $user = \App\Models\User::findOrFail($id);
-            if ($user->role === 'super_admin') {
-                $superAdminCount = \App\Models\User::where('role', 'super_admin')->where('is_active', true)->count();
-                if ($superAdminCount <= 1) {
-                    return response()->json(['message' => 'Tidak dapat menghapus Super Admin terakhir.'], 422);
+                return response()->json(['message' => 'Notifikasi ditandai dibaca.']);
+            });
+
+            // Cash Management (Khusus Super Admin & Bendahara)
+            Route::post('/cash/verify-password', function (\Illuminate\Http\Request $request) {
+                if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
+                    return response()->json(['message' => 'Akses ditolak.'], 403);
                 }
-            }
-            $user->delete();
-            return response()->json(['message' => 'Pengelola admin berhasil dihapus.']);
-        });
+                $request->validate(['password' => 'required|string']);
+                $correct = \App\Models\Setting::get('cash_password', env('CASH_DEFAULT_PIN', 'kas2026'));
+                if ($request->password === $correct) {
+                    return response()->json(['valid' => true, 'message' => 'Akses kas berhasil diverifikasi.']);
+                }
+                return response()->json(['valid' => false, 'message' => 'Kata sandi salah. Silakan coba lagi.'], 401);
+            });
+            Route::post('/cash/change-password', function (\Illuminate\Http\Request $request) {
+                if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
+                    return response()->json(['message' => 'Akses ditolak.'], 403);
+                }
+                $request->validate(['new_password' => 'required|string|min:4']);
+                \App\Models\Setting::set('cash_password', $request->new_password);
+                return response()->json(['message' => 'Kata sandi akses kas berhasil diperbarui.']);
+            });
+            Route::get('/cash/transactions', function (\Illuminate\Http\Request $request) {
+                if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
+                    return response()->json(['message' => 'Akses ditolak.'], 403);
+                }
+                return app(\App\Http\Controllers\Api\V1\CashController::class)->index($request);
+            });
+            Route::post('/cash/transactions', function (\Illuminate\Http\Request $request) {
+                if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
+                    return response()->json(['message' => 'Akses ditolak.'], 403);
+                }
+                return app(\App\Http\Controllers\Api\V1\CashController::class)->store($request);
+            });
+            Route::put('/cash/transactions/{id}', function (\Illuminate\Http\Request $request, $id) {
+                if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
+                    return response()->json(['message' => 'Akses ditolak.'], 403);
+                }
+                return app(\App\Http\Controllers\Api\V1\CashController::class)->update($request, $id);
+            });
+            Route::delete('/cash/transactions/{id}', function (\Illuminate\Http\Request $request, $id) {
+                if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
+                    return response()->json(['message' => 'Akses ditolak.'], 403);
+                }
+                return app(\App\Http\Controllers\Api\V1\CashController::class)->destroy($request, $id);
+            });
+            Route::get('/cash/summary', function (\Illuminate\Http\Request $request) {
+                if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
+                    return response()->json(['message' => 'Akses ditolak.'], 403);
+                }
+                return app(\App\Http\Controllers\Api\V1\CashController::class)->summary($request);
+            });
+            Route::get('/cash/export', function (\Illuminate\Http\Request $request) {
+                if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
+                    return response()->json(['message' => 'Akses ditolak.'], 403);
+                }
+                return app(\App\Http\Controllers\Api\V1\CashController::class)->export($request);
+            });
+            Route::get('/cash/template', function (\Illuminate\Http\Request $request) {
+                if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
+                    return response()->json(['message' => 'Akses ditolak.'], 403);
+                }
+                return app(\App\Http\Controllers\Api\V1\CashController::class)->template($request);
+            });
+            Route::post('/cash/import/preview', function (\Illuminate\Http\Request $request) {
+                if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
+                    return response()->json(['message' => 'Akses ditolak.'], 403);
+                }
+                return app(\App\Http\Controllers\Api\V1\CashController::class)->importPreview($request);
+            });
+            Route::post('/cash/import', function (\Illuminate\Http\Request $request) {
+                if (!in_array($request->user()->role, ['super_admin', 'bendahara'])) {
+                    return response()->json(['message' => 'Akses ditolak.'], 403);
+                }
+                return app(\App\Http\Controllers\Api\V1\CashController::class)->importExecute($request);
+            });
 
-        // Notifications
-        Route::get('/notifications', function (\Illuminate\Http\Request $request) {
-            \App\Services\NotificationService::syncForUser($request->user());
+            // =========================================================
+            // ADMINISTRATIVE MUTATIONS (Super Admin & Admin ONLY)
+            // =========================================================
+            Route::middleware('role:super_admin,admin')->group(function () {
+                // Landing Page Management
+                Route::post('/admin/landing/upload-denah', [PublicEventController::class, 'uploadDenah']);
+                Route::post('/admin/landing/delete-denah', [PublicEventController::class, 'deleteDenah']);
+                Route::post('/admin/landing/upload-jadwal', [PublicEventController::class, 'uploadJadwal']);
+                Route::post('/admin/landing/delete-jadwal', [PublicEventController::class, 'deleteJadwal']);
+                Route::post('/admin/landing/upload-proyektor-photo', [PublicEventController::class, 'uploadProyektorPhotos']);
+                Route::post('/admin/landing/delete-proyektor-photo', [PublicEventController::class, 'deleteProyektorPhoto']);
+                Route::post('/admin/landing/save-proyektor', [PublicEventController::class, 'saveProyektorTeams']);
+                Route::post('/admin/landing/save-jadwal', [PublicEventController::class, 'saveJadwalTim']);
+                Route::post('/admin/landing/save-hero', [PublicEventController::class, 'saveHeroSettings']);
+                Route::post('/admin/landing/save-calendar', [PublicEventController::class, 'saveCalendarEvents']);
 
-            $notifications = \Illuminate\Support\Facades\DB::table('notifications')
-                ->where('user_id', $request->user()->id)
-                ->orderBy('created_at', 'desc')
-                ->limit(30)
-                ->get()
-                ->map(function ($n) {
-                    $n->data = json_decode($n->data, true);
-                    return $n;
+                // Kritik & Saran Management
+                Route::get('/admin/feedbacks', [FeedbackController::class, 'index']);
+                Route::patch('/admin/feedbacks/{id}/read', [FeedbackController::class, 'markAsRead']);
+                Route::delete('/admin/feedbacks/{id}', [FeedbackController::class, 'destroy']);
+
+                // Google Gemini AI Test & Setup
+                Route::post('/admin/ai/test-gemini', [AiChatController::class, 'testGemini']);
+
+                // Members Mutations
+                Route::post('/members', [MemberController::class, 'store']);
+                Route::get('/members/export', [MemberController::class, 'export']);
+                Route::get('/members/template', [MemberController::class, 'template']);
+                Route::post('/members/import/preview', [MemberController::class, 'importPreview']);
+                Route::post('/members/import', [MemberController::class, 'importExecute']);
+                Route::post('/members/{id}/create-account', [MemberController::class, 'createAccount']);
+                Route::post('/members/{id}/revoke-account', [MemberController::class, 'revokeAccount']);
+                Route::put('/members/{id}', [MemberController::class, 'update']);
+                Route::delete('/members/{id}', [MemberController::class, 'destroy']);
+
+                // Divisions Mutations
+                Route::post('/divisions', [DivisionController::class, 'store']);
+                Route::put('/divisions/{id}', [DivisionController::class, 'update']);
+                Route::delete('/divisions/{id}', [DivisionController::class, 'destroy']);
+
+                // Inventory & Categories Mutations
+                Route::post('/items', [InventoryController::class, 'store']);
+                Route::get('/items/export', [InventoryController::class, 'export']);
+                Route::get('/items/template', [InventoryController::class, 'template']);
+                Route::post('/items/import/preview', [InventoryController::class, 'importPreview']);
+                Route::post('/items/import', [InventoryController::class, 'importExecute']);
+                Route::put('/items/{id}', [InventoryController::class, 'update']);
+                Route::delete('/items/{id}', [InventoryController::class, 'destroy']);
+                Route::post('/inventory-categories', [InventoryController::class, 'storeCategory']);
+                Route::delete('/inventory-categories/{id}', [InventoryController::class, 'destroyCategory']);
+                Route::delete('/categories/{id}', [InventoryController::class, 'destroyCategory']);
+
+                // Partners Mutations
+                Route::post('/partners', [InventoryController::class, 'storePartner']);
+                Route::put('/partners/{id}', [InventoryController::class, 'updatePartner']);
+                Route::delete('/partners/{id}', [InventoryController::class, 'destroyPartner']);
+
+                // Regions & Assignments Mutations
+                Route::post('/regions', [RegionController::class, 'store']);
+                Route::put('/regions/{id}', [RegionController::class, 'update']);
+                Route::delete('/regions/{id}', [RegionController::class, 'destroy']);
+                Route::post('/regions/{id}/assignments', [RegionController::class, 'storeRegionAssignment']);
+                Route::post('/assignments', [RegionController::class, 'storeAssignment']);
+                Route::post('/assignments/check-reminders', [RegionController::class, 'checkReminders']);
+                Route::delete('/assignments/{id}', [RegionController::class, 'destroyAssignment']);
+
+                // Sliders Mutations
+                Route::post('/sliders', [SliderController::class, 'store']);
+                Route::put('/sliders/{id}', [SliderController::class, 'update']);
+                Route::delete('/sliders/{id}', [SliderController::class, 'destroy']);
+
+                // Internal Settings
+                Route::get('/settings', [SettingController::class, 'index']);
+                Route::put('/settings', [SettingController::class, 'update']);
+                Route::post('/settings/test-wa', [SettingController::class, 'testWhatsApp']);
+
+                // Audit Logs
+                Route::get('/audit-logs', [AuditLogController::class, 'index']);
+            });
+
+            // =========================================================
+            // SUPER ADMIN EXCLUSIVE (Role: super_admin ONLY)
+            // =========================================================
+            Route::middleware('role:super_admin')->group(function () {
+                // Admins Management
+                Route::get('/admins', function (\Illuminate\Http\Request $request) {
+                    $admins = \App\Models\User::whereIn('role', ['super_admin', 'admin', 'bendahara'])
+                        ->orderBy('role', 'asc')
+                        ->get();
+                    return response()->json($admins);
                 });
-            $unreadCount = \Illuminate\Support\Facades\DB::table('notifications')
-                ->where('user_id', $request->user()->id)
-                ->whereNull('read_at')
-                ->count();
 
-            return response()->json([
-                'notifications' => $notifications,
-                'unread_count' => $unreadCount,
-            ]);
+                Route::get('/admins/candidates', function (\Illuminate\Http\Request $request) {
+                    $candidates = \App\Models\User::whereNotNull('email')
+                        ->where('email', '!=', '')
+                        ->where('role', '!=', 'super_admin')
+                        ->orderBy('name', 'asc')
+                        ->get();
+                    return response()->json($candidates);
+                });
+
+                Route::post('/admins', function (\Illuminate\Http\Request $request) {
+                    if ($request->filled('existing_user_id')) {
+                        $request->validate([
+                            'existing_user_id' => 'required|exists:users,id',
+                            'role' => 'required|in:super_admin,admin,bendahara',
+                        ]);
+                        $user = \App\Models\User::findOrFail($request->existing_user_id);
+                        $updateData = [
+                            'role' => $request->role,
+                            'is_active' => true,
+                        ];
+                        if ($request->filled('name')) {
+                            $updateData['name'] = $request->name;
+                        }
+                        if ($request->filled('phone_wa')) {
+                            $updateData['phone_wa'] = $request->phone_wa;
+                        }
+                        if ($request->filled('password')) {
+                            $updateData['password'] = \Illuminate\Support\Facades\Hash::make($request->password);
+                        }
+                        $user->update($updateData);
+
+                        $roleLabel = $request->role === 'super_admin' ? 'Super Admin' : ($request->role === 'bendahara' ? 'Bendahara' : 'Admin Operasional');
+                        return response()->json([
+                            'message' => "Akun {$user->name} berhasil diangkat menjadi {$roleLabel}.",
+                            'admin' => $user,
+                        ], 200);
+                    }
+
+                    $request->validate([
+                        'name' => 'required|string|max:255',
+                        'email' => 'required|email|unique:users,email',
+                        'role' => 'required|in:super_admin,admin,bendahara',
+                        'password' => 'required|string|min:8',
+                        'phone_wa' => 'nullable|string',
+                    ]);
+                    $count = \App\Models\User::whereIn('role', ['super_admin', 'admin', 'bendahara'])->count() + 1;
+                    $user = \App\Models\User::create([
+                        'name' => $request->name,
+                        'email' => $request->email,
+                        'role' => $request->role,
+                        'password' => \Illuminate\Support\Facades\Hash::make($request->password),
+                        'phone_wa' => $request->phone_wa,
+                        'member_no' => sprintf('ADM-%03d', $count),
+                        'is_active' => true,
+                    ]);
+                    return response()->json(['message' => 'Akun pengelola admin berhasil ditambahkan.', 'admin' => $user], 201);
+                });
+
+                Route::delete('/admins/{id}', function (\Illuminate\Http\Request $request, $id) {
+                    $user = \App\Models\User::findOrFail($id);
+                    if ($user->role === 'super_admin') {
+                        $superAdminCount = \App\Models\User::where('role', 'super_admin')->where('is_active', true)->count();
+                        if ($superAdminCount <= 1) {
+                            return response()->json(['message' => 'Tidak dapat menghapus Super Admin terakhir.'], 422);
+                        }
+                    }
+                    $user->delete();
+                    return response()->json(['message' => 'Pengelola admin berhasil dihapus.']);
+                });
+
+                // Danger Zone
+                Route::post('/danger-zone/preview', [DangerZoneController::class, 'preview']);
+                Route::post('/danger-zone/execute', [DangerZoneController::class, 'execute']);
+            });
         });
-        Route::post('/notifications/mark-read', function (\Illuminate\Http\Request $request) {
-            \Illuminate\Support\Facades\DB::table('notifications')
-                ->where('user_id', $request->user()->id)
-                ->whereNull('read_at')
-                ->update(['read_at' => now(), 'updated_at' => now()]);
-
-            return response()->json(['message' => 'Semua notifikasi ditandai dibaca.']);
-        });
-        Route::post('/notifications/{id}/read', function (\Illuminate\Http\Request $request, $id) {
-            \Illuminate\Support\Facades\DB::table('notifications')
-                ->where('user_id', $request->user()->id)
-                ->where('id', $id)
-                ->update(['read_at' => now(), 'updated_at' => now()]);
-
-            return response()->json(['message' => 'Notifikasi ditandai dibaca.']);
-        });
-
-        // Audit Logs & Danger Zone
-        Route::get('/audit-logs', [AuditLogController::class, 'index']);
-        Route::post('/danger-zone/preview', [DangerZoneController::class, 'preview']);
-        Route::post('/danger-zone/execute', [DangerZoneController::class, 'execute']);
     });
 });

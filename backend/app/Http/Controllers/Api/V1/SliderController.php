@@ -56,6 +56,11 @@ class SliderController extends Controller
 
     public function store(Request $request)
     {
+        $user = $request->user();
+        if (!$user || !in_array($user->role, ['super_admin', 'admin'])) {
+            return response()->json(['message' => 'Akses ditolak. Hanya Admin yang berhak mengunggah banner slider.'], 403);
+        }
+
         $request->validate([
             'title' => 'nullable|string',
             'description' => 'nullable|string',
@@ -87,6 +92,11 @@ class SliderController extends Controller
 
     public function update(Request $request, $id)
     {
+        $user = $request->user();
+        if (!$user || !in_array($user->role, ['super_admin', 'admin'])) {
+            return response()->json(['message' => 'Akses ditolak. Hanya Admin yang berhak memperbarui banner slider.'], 403);
+        }
+
         $slider = Slider::findOrFail($id);
 
         $request->validate([
@@ -116,8 +126,13 @@ class SliderController extends Controller
         ]);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
+        $user = $request->user();
+        if (!$user || !in_array($user->role, ['super_admin', 'admin'])) {
+            return response()->json(['message' => 'Akses ditolak. Hanya Admin yang berhak menghapus banner slider.'], 403);
+        }
+
         $slider = Slider::findOrFail($id);
         $slider->delete();
         AuditLog::log('delete', 'Slider', $id);

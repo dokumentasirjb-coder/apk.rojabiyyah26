@@ -9,8 +9,53 @@ use Illuminate\Http\Request;
 
 class SettingController extends Controller
 {
-    public function index()
+    /**
+     * Public read-only settings with strict key whitelisting.
+     * Sensitive secrets (API keys, WA tokens, credentials) are strictly NEVER exposed.
+     */
+    public function publicSettings()
     {
+        $allowedKeys = [
+            'app_title',
+            'logo_url',
+            'kop_name',
+            'kop_sub_theme',
+            'kop_logo_url',
+            'sub_theme',
+            'hero_title_white',
+            'hero_title_gradient',
+            'hero_subtitle',
+            'hero_desc',
+            'gdrive_folder_url',
+            'gdrive_preview_embed',
+            'gdrive_embed_active',
+            'chatbot_faqs',
+            'operational_regions',
+            'operational_partners',
+            'proyektor_teams',
+            'proyektor_sop',
+            'jadwal_tim',
+            'jadwal_shooting',
+            'jadwal_instruksi',
+            'calendar_events',
+            'denah_photos',
+            'custom_fields',
+        ];
+
+        $settings = Setting::whereIn('key', $allowedKeys)->pluck('value', 'key');
+        return response()->json($settings);
+    }
+
+    /**
+     * Admin internal settings.
+     */
+    public function index(Request $request)
+    {
+        $user = $request->user();
+        if (!$user || !in_array($user->role, ['super_admin', 'admin'])) {
+            return response()->json(['message' => 'Akses ditolak.'], 403);
+        }
+
         $settings = Setting::all()->pluck('value', 'key');
         return response()->json($settings);
     }
