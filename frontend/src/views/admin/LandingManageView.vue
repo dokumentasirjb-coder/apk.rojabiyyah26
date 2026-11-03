@@ -406,7 +406,7 @@
                 </div>
               </div>
 
-              <!-- Inline Korwil & Kabel Inputs & WhatsApp Triggers -->
+              <!-- Inline Korwil & Kabel Inputs -->
               <div class="flex flex-wrap items-center gap-2 text-xs">
                 <div class="flex items-center space-x-1.5 bg-black/20 px-3 py-1.5 rounded-xl border border-white/20">
                   <span class="text-white font-bold">Korwil:</span>
@@ -417,15 +417,6 @@
                     placeholder="Nama Korwil"
                     class="bg-transparent border-b border-white/60 focus:outline-none text-white font-semibold text-xs px-1 w-28 sm:w-36 placeholder-white/70"
                   />
-                  <button
-                    v-if="team.korwil"
-                    type="button"
-                    @click="notifyViaWhatsApp(team.korwil, `Koordinator Wilayah (Korwil) ${team.titik}`, { titik: team.titik, role: 'Korwil' })"
-                    class="p-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white transition flex items-center justify-center shadow-xs"
-                    :title="`Kirim Notifikasi WA ke Korwil (${team.korwil})`"
-                  >
-                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.652c1.746.951 3.71 1.452 5.711 1.453h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-                  </button>
                 </div>
 
                 <div class="flex items-center space-x-1.5 bg-black/20 px-3 py-1.5 rounded-xl border border-white/20">
@@ -437,27 +428,7 @@
                     placeholder="Petugas Kabel"
                     class="bg-transparent border-b border-white/60 focus:outline-none text-white font-semibold text-xs px-1 w-32 sm:w-44 placeholder-white/70"
                   />
-                  <button
-                    v-if="team.kabel"
-                    type="button"
-                    @click="notifyViaWhatsApp(team.kabel, `Tim Jalur Kabel & FO ${team.titik}`, { titik: team.titik, role: 'Tim Kabel & FO' })"
-                    class="p-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white transition flex items-center justify-center shadow-xs"
-                    :title="`Kirim Notifikasi WA ke Tim Kabel (${team.kabel})`"
-                  >
-                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.652c1.746.951 3.71 1.452 5.711 1.453h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-                  </button>
                 </div>
-
-                <!-- Quick Broadcast / Pilih Petugas di Titik -->
-                <button
-                  type="button"
-                  @click="notifyAllInTitik(team)"
-                  class="p-1.5 bg-white/20 hover:bg-white text-white hover:text-emerald-800 rounded-xl transition flex items-center space-x-1 text-[11px] font-bold"
-                  :title="`Kirim Notifikasi WA ke salah satu petugas di ${team.titik}`"
-                >
-                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.652c1.746.951 3.71 1.452 5.711 1.453h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-                  <span class="hidden md:inline">Kirim WA Titik</span>
-                </button>
 
                 <button
                   v-if="proyektorTeams.length > 1"
@@ -502,24 +473,13 @@
                       />
                     </td>
                     <td class="py-2.5 px-3">
-                      <div class="flex items-center space-x-1.5">
-                        <input
-                          v-model="item.petugas"
-                          type="text"
-                          list="registeredMembersList"
-                          placeholder="Nama Relawan / Petugas"
-                          class="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-slate-800 text-xs focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
-                        />
-                        <button
-                          v-if="item.petugas"
-                          type="button"
-                          @click="notifyViaWhatsApp(item.petugas, `Petugas Display Layar (${item.kode || 'Perangkat'})`, { titik: team.titik, lokasi: item.wilayah, kode: item.kode })"
-                          class="p-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-600 text-emerald-600 hover:text-white border border-emerald-200 transition flex items-center justify-center flex-shrink-0 shadow-xs"
-                          :title="`Kirim Notifikasi WA ke ${item.petugas}`"
-                        >
-                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.652c1.746.951 3.71 1.452 5.711 1.453h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-                        </button>
-                      </div>
+                      <input
+                        v-model="item.petugas"
+                        type="text"
+                        list="registeredMembersList"
+                        placeholder="Nama Relawan / Petugas"
+                        class="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-slate-800 text-xs focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                      />
                     </td>
                     <td class="py-2.5 px-3 text-right">
                       <button
@@ -812,44 +772,22 @@
                       />
                     </td>
                     <td class="py-2.5 px-2">
-                      <div class="flex items-center space-x-1">
-                        <input
-                          v-model="row.fotografer"
-                          type="text"
-                          list="registeredMembersList"
-                          placeholder="Nama fotografer..."
-                          class="w-full px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-emerald-700 text-xs focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 font-medium"
-                        />
-                        <button
-                          v-if="row.fotografer"
-                          type="button"
-                          @click="notifyViaWhatsApp(row.fotografer, 'Fotografer Liputan', { hari: row.hari, waktu: row.waktu, momen: row.momen, lokasi: row.wilayah, role: 'Fotografer' })"
-                          class="p-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-600 text-emerald-600 hover:text-white border border-emerald-200 transition flex items-center justify-center flex-shrink-0 shadow-xs"
-                          :title="`Kirim Notifikasi WA ke Fotografer (${row.fotografer})`"
-                        >
-                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.652c1.746.951 3.71 1.452 5.711 1.453h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-                        </button>
-                      </div>
+                      <input
+                        v-model="row.fotografer"
+                        type="text"
+                        list="registeredMembersList"
+                        placeholder="Nama fotografer..."
+                        class="w-full px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-emerald-700 text-xs focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 font-medium"
+                      />
                     </td>
                     <td class="py-2.5 px-2">
-                      <div class="flex items-center space-x-1">
-                        <input
-                          v-model="row.videografer"
-                          type="text"
-                          list="registeredMembersList"
-                          placeholder="Nama videografer..."
-                          class="w-full px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-teal-700 text-xs focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 font-medium"
-                        />
-                        <button
-                          v-if="row.videografer"
-                          type="button"
-                          @click="notifyViaWhatsApp(row.videografer, 'Videografer Liputan', { hari: row.hari, waktu: row.waktu, momen: row.momen, lokasi: row.wilayah, role: 'Videografer' })"
-                          class="p-1.5 rounded-lg bg-teal-50 hover:bg-teal-600 text-teal-600 hover:text-white border border-teal-200 transition flex items-center justify-center flex-shrink-0 shadow-xs"
-                          :title="`Kirim Notifikasi WA ke Videografer (${row.videografer})`"
-                        >
-                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.652c1.746.951 3.71 1.452 5.711 1.453h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-                        </button>
-                      </div>
+                      <input
+                        v-model="row.videografer"
+                        type="text"
+                        list="registeredMembersList"
+                        placeholder="Nama videografer..."
+                        class="w-full px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-teal-700 text-xs focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 font-medium"
+                      />
                     </td>
                     <td class="py-2.5 px-3 text-right">
                       <button
@@ -941,24 +879,13 @@
                       />
                     </td>
                     <td class="py-2.5 px-2">
-                      <div class="flex items-center space-x-1">
-                        <input
-                          v-model="sRow.kameramen"
-                          type="text"
-                          list="registeredMembersList"
-                          placeholder="Nama kameramen..."
-                          class="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-slate-800 font-semibold text-xs focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
-                        />
-                        <button
-                          v-if="sRow.kameramen"
-                          type="button"
-                          @click="notifyViaWhatsApp(sRow.kameramen, `Kameramen Shooting Multicam (${sRow.shooting || 'Kamera'})`, { hari: sRow.hari, waktu: sRow.waktu, momen: sRow.momen, lokasi: sRow.wilayah, posisi: sRow.shooting, role: 'Kameramen Multicam' })"
-                          class="p-1.5 rounded-lg bg-purple-50 hover:bg-purple-600 text-purple-600 hover:text-white border border-purple-200 transition flex items-center justify-center flex-shrink-0 shadow-xs"
-                          :title="`Kirim Notifikasi WA ke Kameramen (${sRow.kameramen})`"
-                        >
-                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.652c1.746.951 3.71 1.452 5.711 1.453h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-                        </button>
-                      </div>
+                      <input
+                        v-model="sRow.kameramen"
+                        type="text"
+                        list="registeredMembersList"
+                        placeholder="Nama kameramen..."
+                        class="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-slate-800 font-semibold text-xs focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                      />
                     </td>
                     <td class="py-2.5 px-3 text-right">
                       <button
@@ -1572,90 +1499,6 @@ const addProyektorItem = (tIdx) => {
 
 const removeProyektorItem = (tIdx, iIdx) => {
   proyektorTeams.value[tIdx].items.splice(iIdx, 1);
-};
-
-// ==========================================
-// Integrasi Notifikasi Tugas via WhatsApp (WA)
-// ==========================================
-const findMemberByName = (name) => {
-  if (!name || !name.trim()) return null;
-  const clean = name.trim().toLowerCase();
-  return registeredMembers.value.find((m) => {
-    if (!m) return false;
-    const mName = (m.name || '').trim().toLowerCase();
-    const mUsername = (m.username || '').trim().toLowerCase();
-    return mName === clean || mUsername === clean || mName.includes(clean) || clean.includes(mName);
-  });
-};
-
-const notifyViaWhatsApp = (personName, dutyType, details = {}) => {
-  if (!personName || !personName.trim()) {
-    alert('Nama petugas belum diisi.');
-    return;
-  }
-  const member = findMemberByName(personName);
-  let phone = member?.phone_wa || member?.member?.phone_wa || '';
-
-  if (!phone) {
-    phone = prompt(`Nomor WhatsApp untuk "${personName}" tidak ditemukan di database anggota.\nMasukkan nomor WhatsApp tujuan (contoh: 08123456789):`, '');
-    if (!phone) return;
-  }
-
-  const cleanPhone = phone.replace(/\D/g, '').replace(/^0/, '62');
-
-  let msg = `*PEMBERITAHUAN PENUGASAN RESMI*\n`;
-  msg += `*PANITIA ROJABIYYAH & HAUL 2026*\n`;
-  msg += `_Pondok Pesantren Al-Muhibbin Tambakberas_\n\n`;
-  msg += `Assalamu'alaikum Wr. Wb.\n`;
-  msg += `Yth. Sdr. *${personName}*\n\n`;
-  msg += `Anda telah ditugaskan secara resmi oleh Koordinator Media & IT:\n`;
-  msg += `📋 *Penugasan*: ${dutyType}\n`;
-  if (details.titik) msg += `📍 *Wilayah/Titik*: ${details.titik}\n`;
-  if (details.lokasi) msg += `📍 *Lokasi*: ${details.lokasi}\n`;
-  if (details.kode) msg += `📺 *Perangkat Display*: ${details.kode}\n`;
-  if (details.hari) msg += `📅 *Hari*: ${details.hari}\n`;
-  if (details.waktu) msg += `⏰ *Waktu/Sesi*: ${details.waktu}\n`;
-  if (details.momen) msg += `🎯 *Momen Acara*: ${details.momen}\n`;
-  if (details.posisi) msg += `🎥 *Posisi Kamera*: ${details.posisi}\n`;
-  if (details.role) msg += `🎖️ *Peran*: ${details.role}\n`;
-
-  msg += `\nMohon hadir dan standby di posko / lokasi 30 menit sebelum jadwal dimulai.\n`;
-  msg += `Silakan login dan cek penugasan Anda di Portal Panitia:\n`;
-  msg += `${window.location.origin}/dashboard\n\n`;
-  msg += `Terima kasih atas dedikasi dan khidmah panjenengan.\n_Wassalamu'alaikum Wr. Wb._\n_Media & IT Support Panitia Haul 2026_`;
-
-  window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
-};
-
-const notifyAllInTitik = (team) => {
-  const people = [];
-  if (team.korwil) people.push({ name: team.korwil, role: `Korwil ${team.titik}`, details: { titik: team.titik, role: 'Koordinator Wilayah' } });
-  if (team.kabel) people.push({ name: team.kabel, role: `Tim Kabel ${team.titik}`, details: { titik: team.titik, role: 'Jalur Kabel & FO' } });
-  if (team.items && Array.isArray(team.items)) {
-    team.items.forEach((item) => {
-      if (item.petugas) {
-        people.push({
-          name: item.petugas,
-          role: `Petugas Display ${item.kode || ''}`,
-          details: { titik: team.titik, lokasi: item.wilayah, kode: item.kode }
-        });
-      }
-    });
-  }
-
-  if (people.length === 0) {
-    alert(`Belum ada petugas yang diisi pada ${team.titik}.`);
-    return;
-  }
-
-  const listNames = people.map((p, idx) => `${idx + 1}. ${p.name} (${p.role})`).join('\n');
-  const pick = prompt(`Pilih nomor petugas di ${team.titik} untuk dikirim pesan WhatsApp:\n\n${listNames}\n\nKetik nomor (1-${people.length}):`, '1');
-  if (pick) {
-    const idx = parseInt(pick, 10) - 1;
-    if (people[idx]) {
-      notifyViaWhatsApp(people[idx].name, people[idx].role, people[idx].details);
-    }
-  }
 };
 
 const saveProyektorTeams = async () => {
