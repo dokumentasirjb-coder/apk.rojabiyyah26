@@ -462,52 +462,81 @@
 
         <!-- Kolom Kanan: Status Penugasan Posko & Peminjaman Saya -->
         <div class="lg:col-span-7 space-y-4 flex flex-col justify-between">
-          <!-- Card 1: Penugasan Posko Saya -->
+          <!-- Card 1: Seluruh Penugasan Saya (Posko, Proyektor, Liputan, Multicam) -->
           <div class="p-5 rounded-3xl bg-white border border-slate-200 shadow-sm">
             <div class="flex items-center justify-between mb-3 pb-3 border-b border-slate-100">
               <div class="flex items-center space-x-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
-                <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Titik Posko Tugas Anda</h3>
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                  Penugasan Resmi Anda ({{ allUserDuties.length }} Tugas)
+                </h3>
               </div>
-              <router-link to="/regions" class="text-xs text-amber-600 hover:text-amber-700 font-semibold">
-                Lihat Detail Peta &rarr;
-              </router-link>
+              <div class="flex items-center space-x-2">
+                <router-link to="/jadwal-kerja" class="text-xs text-emerald-600 hover:text-emerald-700 font-semibold hidden sm:inline">
+                  Jadwal Kerja &rarr;
+                </router-link>
+                <router-link to="/pembagian-proyektor" class="text-xs text-amber-600 hover:text-amber-700 font-semibold hidden sm:inline">
+                  Proyektor &rarr;
+                </router-link>
+              </div>
             </div>
 
-            <div v-if="myAssignments.length > 0" class="space-y-3">
+            <div v-if="allUserDuties.length > 0" class="space-y-3">
               <div
-                v-for="duty in myAssignments"
+                v-for="duty in allUserDuties"
                 :key="duty.id"
-                class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-start justify-between"
+                class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-start justify-between gap-3 hover:border-emerald-300 transition"
               >
-                <div class="space-y-1">
-                  <div class="flex items-center space-x-2">
-                    <svg class="w-4 h-4 text-purple-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><circle cx="12" cy="11" r="3" stroke-width="2"/></svg>
-                    <h4 class="font-bold text-slate-900 text-sm">{{ duty.region?.name }}</h4>
+                <div class="space-y-1.5 flex-1 min-w-0">
+                  <div class="flex items-center space-x-2 flex-wrap gap-y-1">
+                    <span
+                      :class="duty.badgeClass"
+                      class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider border shadow-xs"
+                    >
+                      {{ duty.badge }}
+                    </span>
+                    <span v-if="duty.titik" class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                      {{ duty.titik }}
+                    </span>
                   </div>
-                  <p class="text-xs text-slate-600">
-                    Peran: <strong class="text-amber-700">{{ duty.role_in_post || 'Petugas Jaga' }}</strong>
-                  </p>
-                  <p class="text-[11px] text-slate-500">
-                    Koordinator: <span class="text-slate-700">{{ duty.region?.coordinator_name || 'Koordinator Wilayah' }}</span>
-                  </p>
+
+                  <h4 class="font-extrabold text-slate-900 text-sm tracking-tight">{{ duty.title }}</h4>
+                  <p class="text-xs text-slate-600 leading-relaxed">{{ duty.detail }}</p>
+
+                  <div v-if="duty.picName" class="text-[11px] text-slate-500 flex items-center space-x-1">
+                    <span>Koordinator / PIC:</span>
+                    <strong class="text-slate-700">{{ duty.picName }}</strong>
+                  </div>
                 </div>
 
-                <a
-                  v-if="duty.region?.coordinator_phone"
-                  :href="'https://wa.me/' + cleanPhone(duty.region.coordinator_phone)"
-                  target="_blank"
-                  class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center space-x-1.5 transition shadow-sm"
-                >
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-                  <span>Hubungi PIC</span>
-                </a>
+                <!-- Action Buttons: Kirim ke WA Saya & Hubungi PIC -->
+                <div class="flex items-center space-x-2 flex-shrink-0 self-start sm:self-center">
+                  <button
+                    type="button"
+                    @click="sendDutyToMyWhatsApp(duty)"
+                    class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center space-x-1.5 transition shadow-sm active:scale-95"
+                    title="Simpan / Kirim rincian tugas ke nomor WhatsApp Anda"
+                  >
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.652c1.746.951 3.71 1.452 5.711 1.453h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                    <span>Kirim ke WA Saya</span>
+                  </button>
+
+                  <a
+                    v-if="duty.picPhone"
+                    :href="'https://wa.me/' + cleanPhone(duty.picPhone)"
+                    target="_blank"
+                    class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold flex items-center space-x-1 transition"
+                    title="Hubungi PIC / Koordinator via WhatsApp"
+                  >
+                    <span>PIC</span>
+                  </a>
+                </div>
               </div>
             </div>
 
             <div v-else class="p-6 text-center text-xs text-slate-500 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
               <svg class="w-8 h-8 mx-auto mb-2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><polyline stroke-linecap="round" stroke-linejoin="round" stroke-width="2" points="12 6 12 12 16 14"/></svg>
-              Anda belum diplot ke titik posko tertentu. Silakan hubungi Ketua Divisi Anda untuk konfirmasi jadwal jaga.
+              Anda belum memiliki plot penugasan di Posko, Proyektor, Liputan, atau Shooting Multicam. Hubungi admin/koordinator divisi untuk konfirmasi tugas.
             </div>
           </div>
 
@@ -612,6 +641,7 @@ const realtimeStore = useRealtimeStore();
 
 const myAssignments = ref([]);
 const myLoans = ref([]);
+const operationalDuties = ref([]);
 const memberStats = ref({ total: 0, account: 0, google_form: 0 });
 const currentTime = ref('');
 
@@ -619,6 +649,190 @@ const isAdminOrSuperAdmin = computed(() => {
   const r = authStore.user?.role;
   return ['super_admin', 'admin', 'bendahara'].includes(r);
 });
+
+const isUserMatch = (text) => {
+  if (!text) return false;
+  const raw = String(text).toLowerCase();
+  const name = (authStore.user?.name || '').trim().toLowerCase();
+  const username = (authStore.user?.username || '').trim().toLowerCase();
+  if (name && (raw === name || raw.includes(name) || name.includes(raw))) return true;
+  if (username && (raw === username || raw.includes(username) || username.includes(raw))) return true;
+  return false;
+};
+
+const allUserDuties = computed(() => {
+  const list = [];
+
+  // 1. Posko penugasan lapangan
+  myAssignments.value.forEach((asg) => {
+    list.push({
+      id: 'posko_' + asg.id,
+      module: 'posko',
+      badge: 'Posko Wilayah',
+      badgeClass: 'bg-amber-100 text-amber-800 border-amber-300',
+      title: asg.region?.name || 'Posko Wilayah',
+      role: asg.role_in_post || 'Petugas Jaga',
+      detail: `Wilayah: ${asg.region?.name || '-'} • Harap standby dan koordinasi dengan posko`,
+      picName: asg.region?.coordinator_name || 'Koordinator Posko',
+      picPhone: asg.region?.coordinator_phone || '',
+    });
+  });
+
+  // 2. Proyektor, Liputan, Multicam duties
+  operationalDuties.value.forEach((d) => {
+    list.push(d);
+  });
+
+  return list;
+});
+
+const fetchOperationalDuties = async () => {
+  try {
+    const res = await api.get('/public/overview');
+    const data = res.data;
+    const duties = [];
+
+    // 1. Proyektor Teams
+    if (Array.isArray(data.proyektor_teams)) {
+      data.proyektor_teams.forEach((team) => {
+        const titik = team.titik || 'Titik Proyektor';
+        if (team.korwil && isUserMatch(team.korwil)) {
+          duties.push({
+            id: 'proyektor_' + titik + '_korwil',
+            module: 'proyektor',
+            badge: 'Korwil Proyektor',
+            badgeClass: 'bg-amber-100 text-amber-800 border-amber-300',
+            title: `Koordinator Wilayah (Korwil) ${titik}`,
+            role: 'Koordinator Wilayah (Korwil)',
+            detail: `Memimpin display layar, kabel, dan koordinasi operasional ${titik}`,
+            titik,
+            picName: team.korwil,
+          });
+        }
+        if (team.kabel && isUserMatch(team.kabel)) {
+          duties.push({
+            id: 'proyektor_' + titik + '_kabel',
+            module: 'proyektor',
+            badge: 'Tim Kabel',
+            badgeClass: 'bg-blue-100 text-blue-800 border-blue-300',
+            title: `Tim Kabel & Transmisi ${titik}`,
+            role: 'Tim Kabel & FO',
+            detail: `Instalasi kabel display, jalur splitter, dan standby transmisi ${titik}`,
+            titik,
+            picName: team.korwil,
+          });
+        }
+        if (Array.isArray(team.items)) {
+          team.items.forEach((item) => {
+            if (item.petugas && isUserMatch(item.petugas)) {
+              duties.push({
+                id: 'proyektor_' + titik + '_' + (item.kode || 'screen'),
+                module: 'proyektor',
+                badge: 'Petugas Layar',
+                badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+                title: `${item.kode || 'Perangkat Display'} (${titik})`,
+                role: 'Petugas Monitor / Display',
+                detail: `Lokasi: ${item.wilayah || 'Area Pos'} • Standby di lokasi monitor`,
+                titik,
+                lokasi: item.wilayah,
+                kode: item.kode,
+                picName: team.korwil,
+              });
+            }
+          });
+        }
+      });
+    }
+
+    // 2. Jadwal Tim Liputan (Fotografer & Videografer)
+    if (Array.isArray(data.jadwal_tim)) {
+      data.jadwal_tim.forEach((row, idx) => {
+        if (row.fotografer && isUserMatch(row.fotografer)) {
+          duties.push({
+            id: 'liputan_foto_' + idx,
+            module: 'liputan',
+            badge: 'Fotografer',
+            badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+            title: `Fotografer: ${row.momen || 'Liputan'}`,
+            role: 'Fotografer Dokumentasi',
+            detail: `Hari ${row.hari || '-'} (${row.waktu || '-'}) • Lokasi: ${row.wilayah || '-'}`,
+            hari: row.hari,
+            waktu: row.waktu,
+            momen: row.momen,
+            lokasi: row.wilayah,
+          });
+        }
+        if (row.videografer && isUserMatch(row.videografer)) {
+          duties.push({
+            id: 'liputan_video_' + idx,
+            module: 'liputan',
+            badge: 'Videografer',
+            badgeClass: 'bg-teal-100 text-teal-800 border-teal-300',
+            title: `Videografer: ${row.momen || 'Liputan'}`,
+            role: 'Videografer Dokumentasi',
+            detail: `Hari ${row.hari || '-'} (${row.waktu || '-'}) • Lokasi: ${row.wilayah || '-'}`,
+            hari: row.hari,
+            waktu: row.waktu,
+            momen: row.momen,
+            lokasi: row.wilayah,
+          });
+        }
+      });
+    }
+
+    // 3. Jadwal Shooting Multicam (Kameramen)
+    if (Array.isArray(data.jadwal_shooting)) {
+      data.jadwal_shooting.forEach((sRow, idx) => {
+        if (sRow.kameramen && isUserMatch(sRow.kameramen)) {
+          duties.push({
+            id: 'shooting_' + idx,
+            module: 'shooting',
+            badge: 'Kameramen Multicam',
+            badgeClass: 'bg-purple-100 text-purple-800 border-purple-300',
+            title: `Kameramen: ${sRow.shooting || 'Kamera Multicam'}`,
+            role: 'Kameramen Multicam',
+            detail: `Hari ${sRow.hari || '-'} (${sRow.waktu || '-'}) • Acara: ${sRow.momen || '-'} • Lokasi: ${sRow.wilayah || '-'}`,
+            hari: sRow.hari,
+            waktu: sRow.waktu,
+            momen: sRow.momen,
+            lokasi: sRow.wilayah,
+            shooting: sRow.shooting,
+          });
+        }
+      });
+    }
+
+    operationalDuties.value = duties;
+  } catch (err) {
+    // Silent fail
+  }
+};
+
+const sendDutyToMyWhatsApp = (duty) => {
+  const userPhone = authStore.user?.phone_wa || authStore.user?.member?.phone_wa || '';
+  const clean = cleanPhone(userPhone);
+
+  let msg = `*PENGINGAT PENUGASAN SAYA*\n`;
+  msg += `*PANITIA ROJABIYYAH & HAUL 2026*\n`;
+  msg += `_Pondok Pesantren Al-Muhibbin Tambakberas_\n\n`;
+  msg += `Nama: *${authStore.user?.name || 'Panitia'}*\n`;
+  msg += `📋 *Tugas*: ${duty.title}\n`;
+  msg += `🎖️ *Peran*: ${duty.role}\n`;
+  if (duty.detail) msg += `📍 *Detail*: ${duty.detail}\n`;
+  if (duty.titik) msg += `📍 *Wilayah/Titik*: ${duty.titik}\n`;
+  if (duty.lokasi) msg += `📌 *Lokasi*: ${duty.lokasi}\n`;
+  if (duty.hari) msg += `📅 *Hari*: ${duty.hari}\n`;
+  if (duty.waktu) msg += `⏰ *Waktu*: ${duty.waktu}\n`;
+  if (duty.momen) msg += `🎯 *Momen*: ${duty.momen}\n`;
+  if (duty.shooting) msg += `🎥 *Kamera*: ${duty.shooting}\n`;
+  msg += `\nStandby di lokasi 30 menit sebelum jadwal dimulai.\nPortal Panitia: ${window.location.origin}/dashboard\n\nSemangat berkhidmah!`;
+
+  if (clean) {
+    window.open(`https://wa.me/${clean}?text=${encodeURIComponent(msg)}`, '_blank');
+  } else {
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+  }
+};
 
 const updateClock = () => {
   const now = new Date();
@@ -667,6 +881,7 @@ onMounted(() => {
   fetchMyAssignments();
   fetchMyLoans();
   fetchMemberStats();
+  fetchOperationalDuties();
 });
 
 const stats = computed(() => realtimeStore.stats);

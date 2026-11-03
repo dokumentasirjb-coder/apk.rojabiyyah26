@@ -162,3 +162,4 @@ Setelah sistem aktif online, lakukan uji coba singkat berikut:
 5. Akses menu **Rekap Uang** &rarr; Masukkan kata sandi kas `kas2026`.
 
 Sistem siap beroperasi untuk mendukung perhelatan Haul Ke-5 & Rojabiyyah 2026!
+

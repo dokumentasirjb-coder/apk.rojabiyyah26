@@ -85,6 +85,128 @@ class NotificationService
             }
         }
 
+        // 1b. Sync Proyektor Assignments (Titik A-F)
+        $proyektorRaw = \App\Models\Setting::get('proyektor_teams');
+        if ($proyektorRaw) {
+            $teams = json_decode($proyektorRaw, true);
+            if (is_array($teams)) {
+                foreach ($teams as $team) {
+                    $titik = $team['titik'] ?? 'Titik Proyektor';
+
+                    // Check Korwil
+                    if (!empty($team['korwil']) && self::isUserMentioned($team['korwil'], $user)) {
+                        $taskKey = 'proyektor_' . md5($titik . '_korwil');
+                        self::createTaskNotifIfNotExists(
+                            $user->id,
+                            'duty_proyektor',
+                            "🎯 Tugas Korwil Proyektor: {$titik}",
+                            "Anda ditugaskan sebagai Koordinator Wilayah (Korwil) {$titik}. Mohon pimpin koordinasi teknis dan pengecekan display.",
+                            '/pembagian-proyektor',
+                            ['task_key' => $taskKey, 'titik' => $titik, 'role' => 'Korwil']
+                        );
+                    }
+
+                    // Check Kabel
+                    if (!empty($team['kabel']) && self::isUserMentioned($team['kabel'], $user)) {
+                        $taskKey = 'proyektor_' . md5($titik . '_kabel');
+                        self::createTaskNotifIfNotExists(
+                            $user->id,
+                            'duty_proyektor',
+                            "🔌 Tugas Tim Kabel: {$titik}",
+                            "Anda ditugaskan di Tim Jalur Kabel & FO di {$titik}. Harap standby dan koordinasi dengan Korwil: " . ($team['korwil'] ?? 'Korwil'),
+                            '/pembagian-proyektor',
+                            ['task_key' => $taskKey, 'titik' => $titik, 'role' => 'Kabel']
+                        );
+                    }
+
+                    // Check Perangkat Items
+                    if (!empty($team['items']) && is_array($team['items'])) {
+                        foreach ($team['items'] as $item) {
+                            if (!empty($item['petugas']) && self::isUserMentioned($item['petugas'], $user)) {
+                                $kode = $item['kode'] ?? 'Perangkat Display';
+                                $lokasi = $item['wilayah'] ?? 'Area Acara';
+                                $taskKey = 'proyektor_' . md5($titik . '_' . $kode);
+                                self::createTaskNotifIfNotExists(
+                                    $user->id,
+                                    'duty_proyektor',
+                                    "📺 Tugas Petugas Layar: {$kode} ({$titik})",
+                                    "Anda bertugas mengawal {$kode} di {$lokasi} ({$titik}). Harap siap di lokasi 30 menit sebelum acara.",
+                                    '/pembagian-proyektor',
+                                    ['task_key' => $taskKey, 'titik' => $titik, 'kode' => $kode, 'wilayah' => $lokasi]
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // 1c. Sync Jadwal Kerja Tim Liputan (Fotografer & Videografer)
+        $jadwalTimRaw = \App\Models\Setting::get('jadwal_tim');
+        if ($jadwalTimRaw) {
+            $jadwalList = json_decode($jadwalTimRaw, true);
+            if (is_array($jadwalList)) {
+                foreach ($jadwalList as $row) {
+                    $hari = $row['hari'] ?? 'Hari Acara';
+                    $waktu = $row['waktu'] ?? 'Waktu Acara';
+                    $momen = $row['momen'] ?? 'Kegiatan';
+                    $lokasi = $row['wilayah'] ?? 'Lokasi';
+
+                    // Fotografer
+                    if (!empty($row['fotografer']) && self::isUserMentioned($row['fotografer'], $user)) {
+                        $taskKey = 'liputan_' . md5($hari . '_' . $waktu . '_' . $momen . '_foto');
+                        self::createTaskNotifIfNotExists(
+                            $user->id,
+                            'duty_liputan',
+                            "📸 Tugas Liputan: Fotografer ({$hari} {$waktu})",
+                            "Tugas Fotografer pada momen {$momen} di {$lokasi} (Hari {$hari}, sesi {$waktu}).",
+                            '/jadwal-kerja',
+                            ['task_key' => $taskKey, 'hari' => $hari, 'waktu' => $waktu, 'momen' => $momen, 'role' => 'Fotografer']
+                        );
+                    }
+
+                    // Videografer
+                    if (!empty($row['videografer']) && self::isUserMentioned($row['videografer'], $user)) {
+                        $taskKey = 'liputan_' . md5($hari . '_' . $waktu . '_' . $momen . '_video');
+                        self::createTaskNotifIfNotExists(
+                            $user->id,
+                            'duty_liputan',
+                            "🎥 Tugas Liputan: Videografer ({$hari} {$waktu})",
+                            "Tugas Videografer pada momen {$momen} di {$lokasi} (Hari {$hari}, sesi {$waktu}).",
+                            '/jadwal-kerja',
+                            ['task_key' => $taskKey, 'hari' => $hari, 'waktu' => $waktu, 'momen' => $momen, 'role' => 'Videografer']
+                        );
+                    }
+                }
+            }
+        }
+
+        // 1d. Sync Jadwal Tim Shooting Multicam (Kameramen)
+        $jadwalShootingRaw = \App\Models\Setting::get('jadwal_shooting');
+        if ($jadwalShootingRaw) {
+            $shootingList = json_decode($jadwalShootingRaw, true);
+            if (is_array($shootingList)) {
+                foreach ($shootingList as $sRow) {
+                    $hari = $sRow['hari'] ?? 'Hari Acara';
+                    $waktu = $sRow['waktu'] ?? 'Waktu Acara';
+                    $momen = $sRow['momen'] ?? 'Acara';
+                    $posisi = $sRow['shooting'] ?? 'Kamera';
+
+                    if (!empty($sRow['kameramen']) && self::isUserMentioned($sRow['kameramen'], $user)) {
+                        $taskKey = 'shooting_' . md5($hari . '_' . $waktu . '_' . $posisi . '_kamera');
+                        self::createTaskNotifIfNotExists(
+                            $user->id,
+                            'duty_shooting',
+                            "🎬 Tugas Multicam: Kameramen ({$hari} {$waktu})",
+                            "Tugas Kameramen Shooting posisi {$posisi} pada momen {$momen} (Hari {$hari}, sesi {$waktu}).",
+                            '/jadwal-kerja',
+                            ['task_key' => $taskKey, 'hari' => $hari, 'waktu' => $waktu, 'momen' => $momen, 'posisi' => $posisi]
+                        );
+                    }
+                }
+            }
+        }
+
         // 2. Sync loans for this user
         if ($user->role === 'anggota') {
             $loans = Loan::where('borrower_id', $user->id)->orderBy('created_at', 'desc')->limit(10)->get();
@@ -185,6 +307,53 @@ class NotificationService
                     );
                 }
             }
+        }
+    }
+
+    /**
+     * Check if a field string mentions the user by name or member_no.
+     */
+    private static function isUserMentioned(?string $fieldValue, User $user): bool
+    {
+        if (empty($fieldValue)) return false;
+        $val = strtolower(trim($fieldValue));
+        $userName = strtolower(trim($user->name));
+        $memberNo = strtolower(trim($user->member_no ?? ''));
+
+        if ($val === $userName || str_contains($val, $userName)) {
+            return true;
+        }
+
+        if (!empty($memberNo) && str_contains($val, $memberNo)) {
+            return true;
+        }
+
+        // If field is a short name (e.g. "Alfani") that matches user name "Alfani Ramadhani"
+        if (strlen($val) >= 4 && str_contains($userName, $val)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Helper to create task notification if not already existing.
+     */
+    private static function createTaskNotifIfNotExists($userId, $type, $title, $message, $url, $extra)
+    {
+        $taskKey = $extra['task_key'] ?? '';
+        $existing = DB::table('notifications')
+            ->where('user_id', $userId)
+            ->where('type', $type)
+            ->where(function ($query) use ($taskKey) {
+                $query->whereJsonContains('data->task_key', $taskKey)
+                      ->orWhere('data', 'like', '%"task_key":"' . $taskKey . '"%')
+                      ->orWhere('data', 'like', '%"task_key": "' . $taskKey . '"%');
+            })
+            ->exists();
+
+        if (!$existing) {
+            self::create($userId, $type, $title, $message, $url, $extra);
         }
     }
 }

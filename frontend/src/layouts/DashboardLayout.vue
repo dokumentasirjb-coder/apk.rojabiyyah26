@@ -609,6 +609,9 @@
                     :class="getNotifBadgeClass(n.type)"
                   >
                     <svg v-if="n.type === 'assignment_priority'" class="w-4 h-4 text-[#f97316]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polygon stroke-linecap="round" stroke-linejoin="round" stroke-width="2" points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <svg v-else-if="n.type === 'duty_proyektor'" class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    <svg v-else-if="n.type === 'duty_liputan'" class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><circle cx="12" cy="13" r="4" stroke-width="2"/></svg>
+                    <svg v-else-if="n.type === 'duty_shooting'" class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                     <svg v-else-if="n.type === 'loan_pending' || n.type === 'loan_diajukan'" class="w-4 h-4 text-[#0284c7]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><polyline stroke-linecap="round" stroke-linejoin="round" stroke-width="2" points="12 6 12 12 16 14"/></svg>
                     <svg v-else-if="n.type === 'loan_disetujui'" class="w-4 h-4 text-[#059669]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     <svg v-else-if="n.type === 'loan_diserahkan'" class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
@@ -731,6 +734,9 @@ const filteredNotifications = computed(() => {
 
 const getNotifBadgeClass = (type) => {
   if (type === 'assignment_priority') return 'bg-orange-100 text-[#f97316] border border-orange-200';
+  if (type === 'duty_proyektor') return 'bg-amber-100 text-amber-700 border border-amber-200';
+  if (type === 'duty_liputan') return 'bg-emerald-100 text-emerald-700 border border-emerald-200';
+  if (type === 'duty_shooting') return 'bg-purple-100 text-purple-700 border border-purple-200';
   if (type === 'loan_pending') return 'bg-sky-100 text-sky-600 border border-sky-200';
   if (type === 'loan_disetujui') return 'bg-emerald-100 text-emerald-700 border border-emerald-200';
   if (type === 'loan_diserahkan') return 'bg-teal-100 text-teal-700 border border-teal-200';
