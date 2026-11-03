@@ -32,3 +32,4 @@ class CheckDutyReminders extends Command
         return Command::SUCCESS;
     }
 }
+
