@@ -1001,6 +1001,137 @@
 
     <!-- Login Modal -->
     <LoginModal :show="showLoginModal" @close="showLoginModal = false" />
+
+    <!-- Floating Google Drive Small Icon Button (Lihat & Download untuk Umum) -->
+    <div class="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40 group">
+      <!-- Tooltip Hover -->
+      <div class="absolute right-full mr-2.5 top-1/2 -translate-y-1/2 hidden sm:group-hover:flex items-center pointer-events-none transition-all duration-200 opacity-0 group-hover:opacity-100">
+        <div class="bg-slate-900/95 backdrop-blur-md text-white text-[11px] font-semibold px-3 py-1.5 rounded-xl shadow-xl whitespace-nowrap border border-slate-700/80 flex items-center space-x-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          <span>Google Drive Berkas (Lihat &amp; Unduh)</span>
+        </div>
+        <div class="w-1.5 h-1.5 bg-slate-900 rotate-45 -ml-1 border-r border-t border-slate-700/80"></div>
+      </div>
+
+      <!-- Icon Button -->
+      <button
+        @click="showDriveModal = true"
+        type="button"
+        class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200/90 shadow-lg hover:shadow-xl hover:border-emerald-300 flex items-center justify-center p-2 sm:p-2.5 transition-all duration-300 hover:scale-110 active:scale-95 group/btn"
+        title="Buka Google Drive Berkas Resmi (Lihat & Unduh)"
+        aria-label="Google Drive Berkas Resmi"
+      >
+        <svg class="w-full h-full transition group-hover/btn:rotate-6" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg">
+          <path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
+          <path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44c-.8 1.4-1.2 2.95-1.2 4.5h27.5z" fill="#00ac47"/>
+          <path d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z" fill="#ea4335"/>
+          <path d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/>
+          <path d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/>
+          <path d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Google Drive Viewer Modal (Lihat & Download Berkas untuk Umum - Mode Pelihat / Read-Only) -->
+    <div
+      v-if="showDriveModal"
+      class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-in fade-in"
+      @click="showDriveModal = false"
+    >
+      <div
+        class="relative w-full max-w-5xl bg-white rounded-3xl border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[92vh]"
+        @click.stop
+      >
+        <!-- Modal Header -->
+        <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/80">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 p-2 shadow-xs flex items-center justify-center flex-shrink-0">
+              <svg class="w-full h-full" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg">
+                <path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
+                <path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44c-.8 1.4-1.2 2.95-1.2 4.5h27.5z" fill="#00ac47"/>
+                <path d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z" fill="#ea4335"/>
+                <path d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/>
+                <path d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/>
+                <path d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
+              </svg>
+            </div>
+            <div>
+              <div class="flex items-center space-x-2">
+                <h3 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">Berkas &amp; Dokumentasi Google Drive</h3>
+                <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold">
+                  Lihat &amp; Unduh Saja (Umum)
+                </span>
+              </div>
+              <p class="text-[11px] text-slate-500 mt-0.5">
+                Akses materi foto, video, desain publikasi, dan dokumen resmi Haul &amp; Rojabiyyah 2026.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <a
+              :href="gdriveFolderUrl"
+              target="_blank"
+              class="hidden sm:inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-xs transition"
+              title="Buka folder langsung di Google Drive"
+            >
+              <span>Buka di Google Drive</span>
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            </a>
+            <button
+              @click="showDriveModal = false"
+              class="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition"
+              title="Tutup"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+
+        <!-- Read-Only Notice Banner -->
+        <div class="px-5 py-2.5 bg-sky-50/80 border-b border-sky-100 flex items-center justify-between text-xs text-sky-900">
+          <div class="flex items-center space-x-2">
+            <svg class="w-4 h-4 text-sky-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span class="text-[11px]">
+              <strong>Hak Akses Publik:</strong> Pengunjung umum dapat melihat pratinjau dan mengunduh berkas. Tidak dapat mengunggah atau menghapus file.
+            </span>
+          </div>
+          <span class="text-[10px] font-mono text-sky-700 bg-white px-2 py-0.5 rounded border border-sky-200">Viewer Saja</span>
+        </div>
+
+        <!-- Embedded Google Drive Frame -->
+        <div class="flex-1 w-full bg-slate-100 min-h-[420px] sm:min-h-[520px] relative">
+          <iframe
+            :src="gdriveEmbedUrl"
+            class="w-full h-full min-h-[420px] sm:min-h-[520px] border-0 bg-white"
+            allow="autoplay"
+          ></iframe>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="px-5 py-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between text-xs">
+          <span class="text-[11px] text-slate-500">
+            Klik dua kali pada berkas di atas untuk pratinjau atau download langsung.
+          </span>
+          <div class="flex items-center space-x-2">
+            <a
+              :href="gdriveFolderUrl"
+              target="_blank"
+              class="sm:hidden inline-flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-emerald-600 text-white font-bold text-xs"
+            >
+              <span>Buka Drive</span>
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            </a>
+            <button
+              @click="showDriveModal = false"
+              class="px-4 py-1.5 bg-white border border-slate-300 rounded-xl text-slate-700 font-semibold hover:bg-slate-100 transition shadow-xs"
+            >
+              Tutup
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -1036,6 +1167,22 @@ const openLightbox = (url, title = 'Pratinjau Foto') => {
     title,
   };
 };
+
+const showDriveModal = ref(false);
+
+const gdriveFolderUrl = computed(() => {
+  return settingsStore.settings?.gdrive_folder_url || 'https://drive.google.com/drive/folders/1l91WsFBV_sZ89DlvzvSXlgedX0pOwsfa?usp=sharing';
+});
+
+const gdriveEmbedUrl = computed(() => {
+  const url = gdriveFolderUrl.value;
+  if (!url) return '';
+  const match = url.match(/\/folders\/([a-zA-Z0-9_-]+)/);
+  if (match && match[1]) {
+    return `https://drive.google.com/embeddedfolderview?id=${match[1]}#grid`;
+  }
+  return url;
+});
 
 const publicData = ref({
   stats: { total_volunteers: 0, total_regions: 0, total_items: 0 },
