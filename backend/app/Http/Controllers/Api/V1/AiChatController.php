@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Log;
 class AiChatController extends Controller
 {
     /**
-     * Public AI Chatbot endpoint (Gemini AI + Local Knowledge Fallback).
+     * Public AI Chatbot endpoint (Adaptive Gemini AI + Local Knowledge Fallback).
      */
     public function chat(Request $request)
     {
@@ -91,32 +91,77 @@ Selain informasi khusus acara di atas, kamu dapat dan sangat dipersilakan untuk 
                     'parts' => [['text' => $userMessage]],
                 ];
 
-                // Call Google Gemini API (gemini-1.5-flash)
-                $response = Http::timeout(12)
-                    ->withHeaders(['Content-Type' => 'application/json'])
-                    ->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={$apiKey}", [
-                        'system_instruction' => [
-                            'parts' => [['text' => $systemInstruction]],
-                        ],
-                        'contents' => $contents,
-                        'generationConfig' => [
-                            'temperature' => 0.7,
-                            'maxOutputTokens' => 800,
-                        ],
-                    ]);
+                // Models & versions to try
+                $savedModel = Setting::get('gemini_model', 'gemini-1.5-flash');
+                $savedVer = Setting::get('gemini_api_version', 'v1beta');
 
-                if ($response->successful()) {
-                    $json = $response->json();
-                    $replyText = $json['candidates'][0]['content']['parts'][0]['text'] ?? null;
+                $modelsToTry = array_unique([
+                    $savedModel,
+                    'gemini-1.5-flash',
+                    'gemini-1.5-flash-latest',
+                    'gemini-2.0-flash',
+                    'gemini-1.5-pro',
+                    'gemini-pro',
+                ]);
 
-                    if (!empty($replyText)) {
-                        return response()->json([
-                            'reply' => $replyText,
-                            'provider' => 'gemini',
-                        ]);
+                $versionsToTry = array_unique([$savedVer, 'v1beta', 'v1']);
+
+                foreach ($modelsToTry as $model) {
+                    foreach ($versionsToTry as $ver) {
+                        $url = "https://generativelanguage.googleapis.com/{$ver}/models/{$model}:generateContent?key={$apiKey}";
+
+                        // 1. Try with system_instruction
+                        $payload = [
+                            'system_instruction' => [
+                                'parts' => [['text' => $systemInstruction]],
+                            ],
+                            'contents' => $contents,
+                            'generationConfig' => [
+                                'temperature' => 0.7,
+                                'maxOutputTokens' => 800,
+                            ],
+                        ];
+
+                        $response = Http::timeout(12)
+                            ->withHeaders(['Content-Type' => 'application/json'])
+                            ->post($url, $payload);
+
+                        // 2. If system_instruction is not supported (400), try fallback payload
+                        if ($response->status() === 400 && str_contains($response->body(), 'system_instruction')) {
+                            $fallbackContents = $contents;
+                            if (!empty($fallbackContents)) {
+                                $fallbackContents[0]['parts'][0]['text'] = "[INSTRUKSI SISTEM: {$systemInstruction}]\n\n" . $fallbackContents[0]['parts'][0]['text'];
+                            }
+                            $response = Http::timeout(12)
+                                ->withHeaders(['Content-Type' => 'application/json'])
+                                ->post($url, [
+                                    'contents' => $fallbackContents,
+                                    'generationConfig' => [
+                                        'temperature' => 0.7,
+                                        'maxOutputTokens' => 800,
+                                    ],
+                                ]);
+                        }
+
+                        if ($response->successful()) {
+                            $json = $response->json();
+                            $replyText = $json['candidates'][0]['content']['parts'][0]['text'] ?? null;
+
+                            if (!empty($replyText)) {
+                                // Save working model/version for fast future calls
+                                if ($model !== $savedModel || $ver !== $savedVer) {
+                                    Setting::set('gemini_model', $model);
+                                    Setting::set('gemini_api_version', $ver);
+                                }
+
+                                return response()->json([
+                                    'reply' => $replyText,
+                                    'provider' => 'gemini',
+                                    'model' => $model,
+                                ]);
+                            }
+                        }
                     }
-                } else {
-                    Log::warning('Gemini API call returned non-200: ' . $response->body());
                 }
             } catch (\Exception $e) {
                 Log::error('Gemini API exception: ' . $e->getMessage());
@@ -134,7 +179,7 @@ Selain informasi khusus acara di atas, kamu dapat dan sangat dipersilakan untuk 
     }
 
     /**
-     * Test Gemini API Connection (Super Admin setting).
+     * Test Gemini API Connection & Auto-Discover Working Model (Super Admin setting).
      */
     public function testGemini(Request $request)
     {
@@ -144,43 +189,107 @@ Selain informasi khusus acara di atas, kamu dapat dan sangat dipersilakan untuk 
 
         $apiKey = trim($request->api_key);
 
-        try {
-            $response = Http::timeout(10)
-                ->withHeaders(['Content-Type' => 'application/json'])
-                ->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={$apiKey}", [
-                    'contents' => [
-                        [
-                            'role' => 'user',
-                            'parts' => [['text' => 'Halo Gemini, konfirmasi apakah API Key aktif dan berfungsi dengan baik dalam satu kalimat pendek!']],
-                        ],
-                    ],
-                ]);
+        // 1. Discover available models for this specific API key via ListModels
+        $discoveredModels = [];
+        $versionsToTry = ['v1beta', 'v1'];
 
-            if ($response->successful()) {
-                $json = $response->json();
-                $reply = $json['candidates'][0]['content']['parts'][0]['text'] ?? 'Koneksi Berhasil.';
-                
-                // Save key if valid
-                Setting::set('gemini_api_key', $apiKey);
+        foreach ($versionsToTry as $ver) {
+            try {
+                $listRes = Http::timeout(8)
+                    ->get("https://generativelanguage.googleapis.com/{$ver}/models?key={$apiKey}");
 
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Alhamdulillah, koneksi Google Gemini AI berhasil terhubung!',
-                    'sample_reply' => trim($reply),
-                ]);
+                if ($listRes->successful()) {
+                    $modelsData = $listRes->json()['models'] ?? [];
+                    foreach ($modelsData as $m) {
+                        $methods = $m['supportedGenerationMethods'] ?? [];
+                        if (in_array('generateContent', $methods)) {
+                            $name = str_replace('models/', '', $m['name']);
+                            $discoveredModels[] = $name;
+                        }
+                    }
+                    if (!empty($discoveredModels)) {
+                        break;
+                    }
+                }
+            } catch (\Exception $e) {
+                // Continue
             }
-
-            $errorMsg = $response->json()['error']['message'] ?? $response->body();
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal menghubungkan Gemini API: ' . $errorMsg,
-            ], 400);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Kendala jaringan saat menghubungi Google Gemini: ' . $e->getMessage(),
-            ], 500);
         }
+
+        // Preferred priority order
+        $priority = [
+            'gemini-1.5-flash',
+            'gemini-1.5-flash-latest',
+            'gemini-1.5-flash-8b',
+            'gemini-2.0-flash',
+            'gemini-2.0-flash-exp',
+            'gemini-1.5-pro',
+            'gemini-1.5-pro-latest',
+            'gemini-pro',
+        ];
+
+        $modelsToTry = [];
+        if (!empty($discoveredModels)) {
+            foreach ($priority as $p) {
+                if (in_array($p, $discoveredModels)) {
+                    $modelsToTry[] = $p;
+                }
+            }
+            // Append any other discovered models
+            foreach ($discoveredModels as $dm) {
+                if (!in_array($dm, $modelsToTry)) {
+                    $modelsToTry[] = $dm;
+                }
+            }
+        } else {
+            $modelsToTry = $priority;
+        }
+
+        $lastError = 'Tidak ada model yang merespon.';
+
+        foreach ($modelsToTry as $model) {
+            foreach ($versionsToTry as $ver) {
+                try {
+                    $url = "https://generativelanguage.googleapis.com/{$ver}/models/{$model}:generateContent?key={$apiKey}";
+                    $res = Http::timeout(10)
+                        ->withHeaders(['Content-Type' => 'application/json'])
+                        ->post($url, [
+                            'contents' => [
+                                [
+                                    'role' => 'user',
+                                    'parts' => [['text' => 'Halo Gemini, konfirmasi dalam satu kalimat pendek bahwa API aktif.']],
+                                ],
+                            ],
+                        ]);
+
+                    if ($res->successful()) {
+                        $json = $res->json();
+                        $reply = $json['candidates'][0]['content']['parts'][0]['text'] ?? 'Koneksi Berhasil.';
+
+                        // Save key and working model & version
+                        Setting::set('gemini_api_key', $apiKey);
+                        Setting::set('gemini_model', $model);
+                        Setting::set('gemini_api_version', $ver);
+
+                        return response()->json([
+                            'success' => true,
+                            'message' => "Alhamdulillah, koneksi Google Gemini AI berhasil terhubung menggunakan model [{$model}] ({$ver})!",
+                            'model' => $model,
+                            'sample_reply' => trim($reply),
+                        ]);
+                    } else {
+                        $lastError = $res->json()['error']['message'] ?? $res->body();
+                    }
+                } catch (\Exception $e) {
+                    $lastError = $e->getMessage();
+                }
+            }
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Gagal menghubungkan Gemini API: ' . $lastError,
+        ], 400);
     }
 
     /**
