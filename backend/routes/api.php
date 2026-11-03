@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\CashController;
 use App\Http\Controllers\Api\V1\DangerZoneController;
 use App\Http\Controllers\Api\V1\DashboardController;
 use App\Http\Controllers\Api\V1\DivisionController;
+use App\Http\Controllers\Api\V1\FeedbackController;
 use App\Http\Controllers\Api\V1\FieldReportController;
 use App\Http\Controllers\Api\V1\InventoryController;
 use App\Http\Controllers\Api\V1\LoanController;
@@ -29,6 +30,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/public/options', [MemberController::class, 'publicOptions'])->middleware('throttle:60,1');
     Route::post('/public/register-member', [MemberController::class, 'publicRegister'])->middleware('throttle:10,1');
     Route::post('/public/register-account', [MemberController::class, 'publicRegisterAccount'])->middleware('throttle:10,1');
+    Route::post('/public/feedback', [FeedbackController::class, 'publicStore'])->middleware('throttle:15,1');
 
     // Protected routes
     Route::middleware('auth:sanctum')->group(function () {
@@ -44,6 +46,11 @@ Route::prefix('v1')->group(function () {
             Route::post('/admin/landing/save-jadwal', [PublicEventController::class, 'saveJadwalTim']);
             Route::post('/admin/landing/save-hero', [PublicEventController::class, 'saveHeroSettings']);
             Route::post('/admin/landing/save-calendar', [PublicEventController::class, 'saveCalendarEvents']);
+
+            // Kritik & Saran Management
+            Route::get('/admin/feedbacks', [FeedbackController::class, 'index']);
+            Route::patch('/admin/feedbacks/{id}/read', [FeedbackController::class, 'markAsRead']);
+            Route::delete('/admin/feedbacks/{id}', [FeedbackController::class, 'destroy']);
         });
 
         // Auth & Profile

@@ -48,6 +48,7 @@
           <svg v-else-if="tab.id === 'proyektor'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
           <svg v-else-if="tab.id === 'jadwal'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg>
           <svg v-else-if="tab.id === 'hero'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+          <svg v-else-if="tab.id === 'feedback'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
 
           <span>{{ tab.name }}</span>
         </button>
@@ -1125,6 +1126,84 @@
           </form>
         </div>
       </div>
+
+      <!-- TAB 7: KRITIK & SARAN MASUK DARI CHATBOT / PUBLIK -->
+      <div v-if="activeTab === 'feedback'" class="space-y-6">
+        <div class="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-xs space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+            <div>
+              <div class="flex items-center space-x-2">
+                <span class="p-2 rounded-xl bg-emerald-50 text-emerald-700">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                </span>
+                <div>
+                  <h3 class="text-base font-bold text-slate-800">Daftar Kritik &amp; Saran Masuk</h3>
+                  <p class="text-xs text-slate-500">Evaluasi masukan yang dikirimkan jamaah &amp; panitia melalui Chat Bot AI / Formulir Beranda.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center space-x-2">
+              <button
+                @click="fetchFeedbacks"
+                class="px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-semibold transition active:scale-95 flex items-center space-x-1.5 cursor-pointer"
+              >
+                <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                <span>Segarkan Data</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Feedbacks List -->
+          <div v-if="loadingFeedbacks" class="py-12 text-center text-xs text-slate-400">
+            <span class="w-5 h-5 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin inline-block mr-2"></span>
+            Memuat kritik &amp; saran...
+          </div>
+
+          <div v-else-if="feedbacksList.length === 0" class="py-12 text-center text-slate-400 text-xs">
+            Belum ada kritik dan saran yang masuk.
+          </div>
+
+          <div v-else class="space-y-3">
+            <div
+              v-for="item in feedbacksList"
+              :key="item.id"
+              class="p-4 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-white transition space-y-2 text-xs"
+            >
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div class="flex items-center space-x-2">
+                  <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                    {{ item.category }}
+                  </span>
+                  <span class="font-bold text-slate-800 text-sm">
+                    {{ item.name || 'Anonim' }}
+                  </span>
+                  <span v-if="item.contact" class="text-slate-500 text-xs">
+                    ({{ item.contact }})
+                  </span>
+                </div>
+
+                <div class="flex items-center space-x-3 text-slate-400 text-[11px]">
+                  <span v-if="item.rating" class="text-amber-500 font-bold tracking-wider">
+                    {{ '★'.repeat(item.rating) }}
+                  </span>
+                  <span>{{ formatFeedbackDate(item.created_at) }}</span>
+                  <button
+                    @click="deleteFeedback(item.id)"
+                    class="text-rose-500 hover:text-rose-700 hover:underline cursor-pointer font-semibold ml-2"
+                  >
+                    Hapus
+                  </button>
+                </div>
+              </div>
+
+              <p class="text-slate-700 text-xs leading-relaxed whitespace-pre-line bg-white p-3 rounded-xl border border-slate-200/80">
+                {{ item.message }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Datalist Autocomplete Seluruh Anggota Terdaftar (Akun Login & Formulir) -->
@@ -1141,7 +1220,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import DashboardLayout from '../../layouts/DashboardLayout.vue';
 import VristoCalendar from '../../components/VristoCalendar.vue';
 import api from '../../services/api';
@@ -1155,6 +1234,7 @@ const tabs = [
   { id: 'proyektor', name: 'Pembagian Tim Proyektor' },
   { id: 'jadwal', name: 'Jadwal Kerja Tim' },
   { id: 'hero', name: 'Teks Hero & Tema' },
+  { id: 'feedback', name: 'Kritik & Saran Masuk' },
 ];
 
 const denahList = ref([]);
@@ -1603,6 +1683,48 @@ const saveCalendarToServer = async () => {
     savingCalendar.value = false;
   }
 };
+
+const feedbacksList = ref([]);
+const loadingFeedbacks = ref(false);
+
+const fetchFeedbacks = async () => {
+  loadingFeedbacks.value = true;
+  try {
+    const res = await api.get('/admin/feedbacks');
+    feedbacksList.value = res.data.data || res.data || [];
+  } catch (err) {
+    //
+  } finally {
+    loadingFeedbacks.value = false;
+  }
+};
+
+const deleteFeedback = async (id) => {
+  if (!confirm('Hapus masukan kritik & saran ini?')) return;
+  try {
+    await api.delete(`/admin/feedbacks/${id}`);
+    feedbacksList.value = feedbacksList.value.filter((f) => f.id !== id);
+  } catch (err) {
+    alert('Gagal menghapus masukan.');
+  }
+};
+
+const formatFeedbackDate = (d) => {
+  if (!d) return '';
+  return new Date(d).toLocaleString('id-ID', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+};
+
+watch(activeTab, (newTab) => {
+  if (newTab === 'feedback') {
+    fetchFeedbacks();
+  }
+});
 
 onMounted(() => {
   fetchData();

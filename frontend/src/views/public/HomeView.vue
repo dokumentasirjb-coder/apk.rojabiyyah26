@@ -998,35 +998,77 @@
     <!-- Login Modal -->
     <LoginModal :show="showLoginModal" @close="showLoginModal = false" />
 
-    <!-- Floating Google Drive Small Icon Button (Lihat & Download untuk Umum) -->
-    <div class="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40 group">
-      <!-- Tooltip Hover -->
-      <div class="absolute right-full mr-2.5 top-1/2 -translate-y-1/2 hidden sm:group-hover:flex items-center pointer-events-none transition-all duration-200 opacity-0 group-hover:opacity-100">
-        <div class="bg-slate-900/95 backdrop-blur-md text-white text-[11px] font-semibold px-3 py-1.5 rounded-xl shadow-xl whitespace-nowrap border border-slate-700/80 flex items-center space-x-1.5">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-          <span>Google Drive Berkas (Lihat &amp; Unduh)</span>
+    <!-- Floating Action Buttons Dock (Bottom-Right: AI Chatbot & Google Drive) -->
+    <div class="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40 flex flex-col items-end space-y-3">
+      <!-- 1. Chat Bot AI & FAQ Floating Button -->
+      <div class="group/ai relative flex items-center">
+        <!-- Tooltip Hover -->
+        <div class="absolute right-full mr-2.5 top-1/2 -translate-y-1/2 hidden sm:group-hover/ai:flex items-center pointer-events-none transition-all duration-200 opacity-0 group-hover/ai:opacity-100 z-50">
+          <div class="bg-slate-900/95 backdrop-blur-md text-white text-[11px] font-semibold px-3 py-1.5 rounded-xl shadow-xl whitespace-nowrap border border-slate-700/80 flex items-center space-x-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            <span>Tanya AI, SOP &amp; FAQ Rojabiyyah</span>
+          </div>
+          <div class="w-1.5 h-1.5 bg-slate-900 rotate-45 -ml-1 border-r border-t border-slate-700/80"></div>
         </div>
-        <div class="w-1.5 h-1.5 bg-slate-900 rotate-45 -ml-1 border-r border-t border-slate-700/80"></div>
+
+        <!-- Button -->
+        <button
+          @click="showAiModal = true"
+          type="button"
+          class="relative w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-400 text-white shadow-lg hover:shadow-2xl hover:shadow-emerald-600/40 flex items-center justify-center p-2.5 transition-all duration-300 hover:scale-110 active:scale-95 group/aibtn border border-emerald-300/40 cursor-pointer"
+          title="Buka Chat Bot AI, Panduan SOP & FAQ Rojabiyyah"
+          aria-label="Chat Bot AI & FAQ"
+        >
+          <!-- Glowing pulse dot -->
+          <span class="absolute -top-1 -right-1 flex h-3.5 w-3.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-300 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-400 border-2 border-white"></span>
+          </span>
+          <!-- Chat AI / Sparkle Icon -->
+          <svg class="w-full h-full text-white transition group-hover/aibtn:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+          </svg>
+        </button>
       </div>
 
-      <!-- Icon Button -->
-      <button
-        @click="showDriveModal = true"
-        type="button"
-        class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200/90 shadow-lg hover:shadow-xl hover:border-emerald-300 flex items-center justify-center p-2 sm:p-2.5 transition-all duration-300 hover:scale-110 active:scale-95 group/btn"
-        title="Buka Google Drive Berkas Resmi (Lihat & Unduh)"
-        aria-label="Google Drive Berkas Resmi"
-      >
-        <svg class="w-full h-full transition group-hover/btn:rotate-6" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg">
-          <path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
-          <path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44c-.8 1.4-1.2 2.95-1.2 4.5h27.5z" fill="#00ac47"/>
-          <path d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z" fill="#ea4335"/>
-          <path d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/>
-          <path d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/>
-          <path d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
-        </svg>
-      </button>
+      <!-- 2. Floating Google Drive Small Icon Button (Lihat & Download untuk Umum) -->
+      <div class="group/gdrive relative flex items-center">
+        <!-- Tooltip Hover -->
+        <div class="absolute right-full mr-2.5 top-1/2 -translate-y-1/2 hidden sm:group-hover/gdrive:flex items-center pointer-events-none transition-all duration-200 opacity-0 group-hover/gdrive:opacity-100 z-50">
+          <div class="bg-slate-900/95 backdrop-blur-md text-white text-[11px] font-semibold px-3 py-1.5 rounded-xl shadow-xl whitespace-nowrap border border-slate-700/80 flex items-center space-x-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            <span>Google Drive Berkas (Lihat &amp; Unduh)</span>
+          </div>
+          <div class="w-1.5 h-1.5 bg-slate-900 rotate-45 -ml-1 border-r border-t border-slate-700/80"></div>
+        </div>
+
+        <!-- Icon Button -->
+        <button
+          @click="showDriveModal = true"
+          type="button"
+          class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200/90 shadow-lg hover:shadow-xl hover:border-emerald-300 flex items-center justify-center p-2 sm:p-2.5 transition-all duration-300 hover:scale-110 active:scale-95 group/btn cursor-pointer"
+          title="Buka Google Drive Berkas Resmi (Lihat & Unduh)"
+          aria-label="Google Drive Berkas Resmi"
+        >
+          <svg class="w-full h-full transition group-hover/btn:rotate-6" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg">
+            <path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
+            <path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44c-.8 1.4-1.2 2.95-1.2 4.5h27.5z" fill="#00ac47"/>
+            <path d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z" fill="#ea4335"/>
+            <path d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/>
+            <path d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/>
+            <path d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
+          </svg>
+        </button>
+      </div>
     </div>
+
+    <!-- Chat Bot AI & FAQ Modal -->
+    <AiChatbotModal
+      :show="showAiModal"
+      :proyektor-teams="publicData.proyektor_teams"
+      @close="showAiModal = false"
+      @open-drive="showAiModal = false; showDriveModal = true"
+    />
 
     <!-- Google Drive Viewer Modal (Lihat & Download Berkas untuk Umum - Mode Pelihat / Read-Only) -->
     <div
@@ -1134,6 +1176,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import LoginModal from '../../components/LoginModal.vue';
+import AiChatbotModal from '../../components/AiChatbotModal.vue';
 import VristoCalendar from '../../components/VristoCalendar.vue';
 import { useSettingsStore } from '../../stores/settings';
 import api from '../../services/api';
@@ -1165,6 +1208,7 @@ const openLightbox = (url, title = 'Pratinjau Foto') => {
 };
 
 const showDriveModal = ref(false);
+const showAiModal = ref(false);
 
 const gdriveFolderUrl = computed(() => {
   return settingsStore.settings?.gdrive_folder_url || 'https://drive.google.com/drive/folders/1l91WsFBV_sZ89DlvzvSXlgedX0pOwsfa?usp=sharing';
