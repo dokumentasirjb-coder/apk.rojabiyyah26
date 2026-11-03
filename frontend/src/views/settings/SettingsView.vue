@@ -106,6 +106,16 @@
               <span>Kelola Pengelola Admin ({{ adminList.length || 3 }})</span>
             </button>
 
+            <!-- Tab WhatsApp Gateway Otomatis (3x Notif) -->
+            <button
+              @click="adminTab = 'whatsapp'"
+              :class="adminTab === 'whatsapp' ? 'bg-emerald-600 text-white border-emerald-600 shadow' : 'bg-slate-50 text-slate-600 border-slate-200 hover:text-slate-900 hover:bg-slate-100'"
+              class="px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center space-x-1.5 whitespace-nowrap"
+            >
+              <svg class="w-3.5 h-3.5" :class="adminTab === 'whatsapp' ? 'text-white' : 'text-emerald-500'" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.652c1.746.951 3.71 1.452 5.711 1.453h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+              <span>WhatsApp Gateway (3x Otomatis)</span>
+            </button>
+
             <!-- Tab 7: Reset -->
             <button
               @click="adminTab = 'reset'"
@@ -1541,6 +1551,162 @@
             </div>
           </form>
         </div>
+        <!-- ===================================================================== -->
+        <!-- TAB WHATSAPP GATEWAY OTOMATIS (3x Notif Tanpa Klik Manual)             -->
+        <!-- ===================================================================== -->
+        <div v-if="adminTab === 'whatsapp'" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <div class="lg:col-span-7 bg-white rounded-3xl border border-slate-200 p-6 sm:p-7 shadow-sm space-y-6">
+            <div>
+              <div class="flex items-center space-x-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <h3 class="text-sm font-bold text-slate-900">Pengaturan WhatsApp Gateway Otomatis (3 Tahap Notifikasi)</h3>
+              </div>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                Konfigurasikan token WhatsApp Gateway agar server secara mandiri mengirimkan pesan penugasan resmi ke nomor WhatsApp anggota <strong>tanpa admin perlu mengklik tombol kirim WA satu per satu</strong>.
+              </p>
+            </div>
+
+            <!-- Form Pengaturan Gateway -->
+            <form @submit.prevent="saveWhatsAppGateway" class="space-y-4 text-xs">
+              <!-- Switch On/Off -->
+              <div class="p-4 bg-emerald-50/60 border border-emerald-200 rounded-2xl flex items-center justify-between">
+                <div>
+                  <div class="font-bold text-slate-900 text-xs">Aktifkan Pengiriman WhatsApp Otomatis</div>
+                  <div class="text-[11px] text-slate-600">Pesan penugasan akan otomatis dikirim 3 kali (saat ditugaskan, H-10 menit, dan pas jam mulai).</div>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" v-model="waSettings.enabled" class="sr-only peer" />
+                  <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                </label>
+              </div>
+
+              <!-- Provider Selection -->
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1">Penyedia Layanan (Provider) *</label>
+                <select
+                  v-model="waSettings.provider"
+                  class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 focus:outline-none focus:border-emerald-500 transition"
+                >
+                  <option value="fonnte">Fonnte (Rekomendasi Indonesia - Cepat &amp; Praktis)</option>
+                  <option value="wablas">Wablas (Wablas.com)</option>
+                  <option value="custom">Custom Webhook Gateway (Baileys / Server Mandiri)</option>
+                </select>
+                <p class="text-[10px] text-slate-500 mt-1">
+                  Untuk mendaftar dan mendapatkan token Fonnte, kunjungi <a href="https://fonnte.com" target="_blank" class="text-emerald-600 underline font-semibold">fonnte.com</a>.
+                </p>
+              </div>
+
+              <!-- Token / API Key -->
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1">API Key / Token WhatsApp Gateway *</label>
+                <div class="relative">
+                  <input
+                    v-model="waSettings.token"
+                    :type="showWaToken ? 'text' : 'password'"
+                    placeholder="Contoh: oN78fks92mKsl9..."
+                    class="w-full px-3.5 py-2.5 pr-10 bg-white border border-slate-300 rounded-xl text-slate-800 font-mono focus:outline-none focus:border-emerald-500 transition"
+                  />
+                  <button
+                    type="button"
+                    @click="showWaToken = !showWaToken"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Custom URL (Opsional) -->
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1">Custom Endpoint URL (Opsional)</label>
+                <input
+                  v-model="waSettings.custom_url"
+                  type="text"
+                  placeholder="https://api.fonnte.com/send"
+                  class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 font-mono text-[11px] focus:outline-none focus:border-emerald-500 transition"
+                />
+                <p class="text-[10px] text-slate-500 mt-1">Kosongkan jika menggunakan server default Fonnte.</p>
+              </div>
+
+              <div class="pt-2 flex justify-end">
+                <button
+                  type="submit"
+                  :disabled="savingWaSettings"
+                  class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#059669] to-[#10b981] hover:from-[#047857] hover:to-[#059669] text-white font-bold shadow-md shadow-emerald-500/20 transition disabled:opacity-50"
+                >
+                  {{ savingWaSettings ? 'Menyimpan...' : 'Simpan Pengaturan Gateway' }}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Right Column: Card Verifikasi & Uji Coba -->
+          <div class="lg:col-span-5 space-y-6">
+            <!-- Penjelasan 3 Tahap Pengiriman -->
+            <div class="bg-gradient-to-br from-white via-emerald-50/40 to-slate-50 rounded-3xl border border-emerald-200/80 p-6 shadow-sm space-y-3.5 text-xs text-slate-700">
+              <h4 class="font-black text-emerald-900 text-sm flex items-center space-x-2">
+                <span>🤖 Alur Otomatis 3x Notifikasi</span>
+              </h4>
+              <div class="space-y-2 text-[11px]">
+                <div class="p-2.5 rounded-xl bg-white border border-emerald-200 flex items-start space-x-2.5">
+                  <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center flex-shrink-0 text-[10px]">1</span>
+                  <div>
+                    <strong class="text-slate-900">Saat Admin Menugaskan:</strong>
+                    <p class="text-slate-600 mt-0.5">Pesan rincian penugasan langsung dikirimkan ke nomor WA anggota detik itu juga.</p>
+                  </div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-white border border-amber-200 flex items-start space-x-2.5">
+                  <span class="w-5 h-5 rounded-full bg-amber-100 text-amber-800 font-bold flex items-center justify-center flex-shrink-0 text-[10px]">2</span>
+                  <div>
+                    <strong class="text-slate-900">H-10 Menit Sebelum Tugas:</strong>
+                    <p class="text-slate-600 mt-0.5">Pengingat otomatis untuk segera bersiap di titik posko dan cek alat.</p>
+                  </div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-white border border-purple-200 flex items-start space-x-2.5">
+                  <span class="w-5 h-5 rounded-full bg-purple-100 text-purple-800 font-bold flex items-center justify-center flex-shrink-0 text-[10px]">3</span>
+                  <div>
+                    <strong class="text-slate-900">Pas Jam Tugas Dimulai:</strong>
+                    <p class="text-slate-600 mt-0.5">Pemberitahuan bahwa jam kerja resmi aktif beserta arahan SOP lapangan.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Uji Coba WhatsApp -->
+            <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm space-y-4 text-xs">
+              <h4 class="font-bold text-slate-900 flex items-center space-x-1.5">
+                <span>📲 Uji Coba Pengiriman Pesan WhatsApp</span>
+              </h4>
+              <p class="text-[11px] text-slate-500">
+                Kirim pesan tes ke nomor Anda untuk memastikan token dan device WA Gateway Anda sudah aktif.
+              </p>
+
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1">Nomor WhatsApp Pengujian *</label>
+                <input
+                  v-model="testWaPhone"
+                  type="text"
+                  placeholder="08123456789"
+                  class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 font-mono focus:outline-none focus:border-emerald-500 transition"
+                />
+              </div>
+
+              <button
+                type="button"
+                @click="sendTestWhatsApp"
+                :disabled="testingWa"
+                class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition flex items-center justify-center space-x-1.5 shadow-sm disabled:opacity-50"
+              >
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.652c1.746.951 3.71 1.452 5.711 1.453h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                <span>{{ testingWa ? 'Mengirim Pesan...' : 'Kirim Pesan Tes' }}</span>
+              </button>
+
+              <div v-if="testWaResult" :class="testWaResult.success ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-rose-50 text-rose-800 border-rose-200'" class="p-3 rounded-2xl border text-[11px] leading-relaxed">
+                {{ testWaResult.message }}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- ========================================================================= -->
@@ -2071,6 +2237,18 @@ const fetchSettings = async () => {
           // ignore
         }
       }
+      if (res.data.wa_gateway_enabled !== undefined) {
+        waSettings.value.enabled = res.data.wa_gateway_enabled === '1' || res.data.wa_gateway_enabled === 'true' || res.data.wa_gateway_enabled === true;
+      }
+      if (res.data.wa_gateway_provider) {
+        waSettings.value.provider = res.data.wa_gateway_provider;
+      }
+      if (res.data.wa_gateway_token) {
+        waSettings.value.token = res.data.wa_gateway_token;
+      }
+      if (res.data.wa_gateway_url) {
+        waSettings.value.custom_url = res.data.wa_gateway_url;
+      }
     }
   } catch (err) {
     console.error('Gagal mengambil pengaturan sistem:', err);
@@ -2097,6 +2275,59 @@ const saveSystemSettings = async () => {
     alert(err.response?.data?.message || 'Gagal menyimpan pengaturan sistem.');
   } finally {
     savingSystem.value = false;
+  }
+};
+
+// =========================================================================
+// TAB WHATSAPP GATEWAY OTOMATIS (3x Notif)
+// =========================================================================
+const waSettings = ref({
+  enabled: true,
+  provider: 'fonnte',
+  token: '',
+  custom_url: '',
+});
+const showWaToken = ref(false);
+const savingWaSettings = ref(false);
+const testWaPhone = ref('');
+const testingWa = ref(false);
+const testWaResult = ref(null);
+
+const saveWhatsAppGateway = async () => {
+  savingWaSettings.value = true;
+  try {
+    await api.put('/settings', {
+      wa_gateway_enabled: waSettings.value.enabled ? '1' : '0',
+      wa_gateway_provider: waSettings.value.provider,
+      wa_gateway_token: waSettings.value.token,
+      wa_gateway_url: waSettings.value.custom_url,
+    });
+    alert('Pengaturan WhatsApp Gateway berhasil disimpan!\n\nSistem akan otomatis mengirimkan notifikasi 3 tahap (saat ditugaskan, H-10 menit, dan pas jam mulai) langsung ke nomor anggota tanpa perlu klik manual.');
+  } catch (err) {
+    alert(err.response?.data?.message || 'Gagal menyimpan pengaturan WhatsApp Gateway.');
+  } finally {
+    savingWaSettings.value = false;
+  }
+};
+
+const sendTestWhatsApp = async () => {
+  if (!testWaPhone.value) {
+    alert('Silakan masukkan nomor WhatsApp tujuan pengujian.');
+    return;
+  }
+  testingWa.value = true;
+  testWaResult.value = null;
+  try {
+    const res = await api.post('/settings/test-wa', {
+      phone: testWaPhone.value,
+      token: waSettings.value.token,
+      provider: waSettings.value.provider,
+    });
+    testWaResult.value = { success: true, message: res.data.message || 'Pesan tes berhasil dikirim! Silakan periksa WhatsApp Anda.' };
+  } catch (err) {
+    testWaResult.value = { success: false, message: err.response?.data?.message || 'Gagal mengirim pesan tes. Pastikan token WhatsApp Anda valid.' };
+  } finally {
+    testingWa.value = false;
   }
 };
 

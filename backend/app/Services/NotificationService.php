@@ -54,6 +54,9 @@ class NotificationService
      */
     public static function syncForUser(User $user)
     {
+        // 0. Auto-check & send H-10m and H-0 reminders in background
+        AssignmentReminderService::checkAndSendReminders();
+
         // 1. Sync active posko assignments
         $assignments = Assignment::with('region')->where('user_id', $user->id)->get();
         foreach ($assignments as $asg) {

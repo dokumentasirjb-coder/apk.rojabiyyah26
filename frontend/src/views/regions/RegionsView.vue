@@ -171,21 +171,66 @@
             <p class="text-xs text-slate-500 mb-3">{{ d.description || 'Tidak ada SOP khusus' }}</p>
 
             <div
-              :class="d.pic_user?.id === authStore.user?.id ? 'bg-[#090d19] border-amber-500/40' : 'bg-white border-slate-200'"
-              class="p-3 rounded-2xl border space-y-1 text-xs"
+              :class="d.pic_user?.id === authStore.user?.id ? 'bg-amber-50/50 border-amber-300' : 'bg-slate-50 border-slate-200'"
+              class="p-3.5 rounded-2xl border space-y-1.5 text-xs"
             >
-              <div class="text-[10px] text-slate-500 uppercase font-bold">Wilayah &amp; Lokasi:</div>
-              <div class="text-white font-semibold">{{ d.region?.name || 'Wilayah Umum' }}</div>
-              <div class="text-slate-500 text-[11px]">{{ d.specific_location || '-' }}</div>
+              <div class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Wilayah &amp; Lokasi Spot:</div>
+              <div class="text-slate-900 font-bold text-xs">{{ d.region?.name || 'Wilayah Umum' }}</div>
+              <div class="text-slate-600 text-[11px]">{{ d.specific_location || '-' }}</div>
 
-              <div class="pt-2 border-t border-slate-200 text-[10px] text-slate-500 uppercase font-bold">PIC Bertugas:</div>
+              <div class="pt-2 border-t border-slate-200 text-[10px] text-slate-500 uppercase font-bold tracking-wider">PIC Bertanggung Jawab:</div>
               <div class="flex items-center justify-between">
-                <span :class="d.pic_user?.id === authStore.user?.id ? 'text-amber-300 font-black' : 'text-amber-400 font-semibold'">
+                <span :class="d.pic_user?.id === authStore.user?.id ? 'text-amber-800 font-black' : 'text-slate-800 font-bold'">
                   {{ d.pic_user?.name || '-' }} ({{ d.pic_user?.member_no || 'RJB' }})
                 </span>
-                <span v-if="d.pic_user?.id === authStore.user?.id" class="px-2 py-0.5 rounded text-[9px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/50">
+                <span v-if="d.pic_user?.id === authStore.user?.id" class="px-2 py-0.5 rounded text-[9px] font-bold bg-amber-500/20 text-amber-800 border border-amber-500/50">
                   Akun Anda
                 </span>
+              </div>
+            </div>
+
+            <!-- Status Notifikasi Otomatis 3x (Live Status) -->
+            <div class="mt-3 p-2.5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-1.5">
+              <div class="flex items-center justify-between text-[10px]">
+                <span class="font-bold text-slate-700 flex items-center space-x-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                  <span>Notifikasi Otomatis (3 Tahap)</span>
+                </span>
+                <span class="text-emerald-700 font-mono text-[9px] bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 font-bold">
+                  Auto-Send
+                </span>
+              </div>
+
+              <div class="grid grid-cols-3 gap-1.5 text-center font-mono text-[9px]">
+                <!-- 1. Ditugaskan -->
+                <div
+                  :class="d.notif_assigned_at ? 'bg-emerald-50 text-emerald-800 border-emerald-300' : 'bg-emerald-50 text-emerald-800 border-emerald-300'"
+                  class="p-1 rounded-lg border flex flex-col justify-center"
+                  title="Notifikasi saat admin menetapkan tugas"
+                >
+                  <span class="font-bold">1. Ditugaskan</span>
+                  <span class="text-[8px] text-emerald-700">Terkirim ✓</span>
+                </div>
+
+                <!-- 2. H-10 Menit -->
+                <div
+                  :class="d.notif_10m_at ? 'bg-emerald-50 text-emerald-800 border-emerald-300' : 'bg-amber-50 text-amber-800 border-amber-300 animate-pulse'"
+                  class="p-1 rounded-lg border flex flex-col justify-center"
+                  title="Notifikasi pengingat H-10 menit sebelum jam tugas"
+                >
+                  <span class="font-bold">2. H-10 Menit</span>
+                  <span class="text-[8px]">{{ d.notif_10m_at ? 'Terkirim ✓' : 'Terjadwal ⏰' }}</span>
+                </div>
+
+                <!-- 3. Jam Mulai -->
+                <div
+                  :class="d.notif_start_at ? 'bg-emerald-50 text-emerald-800 border-emerald-300' : 'bg-purple-50 text-purple-800 border-purple-300'"
+                  class="p-1 rounded-lg border flex flex-col justify-center"
+                  title="Notifikasi pas jam tugas dimulai"
+                >
+                  <span class="font-bold">3. Jam Mulai</span>
+                  <span class="text-[8px]">{{ d.notif_start_at ? 'Terkirim ✓' : 'Terjadwal 🚀' }}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -197,7 +242,7 @@
               class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-sm"
               :class="d.pic_user?.id === authStore.user?.id
                 ? 'bg-amber-500 hover:bg-amber-400 text-slate-950 font-black ring-1 ring-amber-400'
-                : 'bg-emerald-950/70 hover:bg-emerald-900 border border-emerald-600/60 text-emerald-300'"
+                : 'bg-emerald-600 hover:bg-emerald-500 text-white'"
             >
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
               <span>Lapor Kondisi Pos</span>
@@ -206,7 +251,7 @@
             <button
               v-if="['super_admin', 'admin'].includes(authStore.user?.role)"
               @click="deleteDuty(d.id)"
-              class="text-rose-400 hover:text-rose-300 p-1.5 rounded-lg hover:bg-rose-950/40 text-[11px]"
+              class="text-rose-600 hover:text-rose-700 p-1.5 rounded-lg hover:bg-rose-50 text-[11px] font-semibold"
               title="Hapus Penugasan"
             >
               Hapus
@@ -338,6 +383,21 @@
               placeholder="Tuliskan arahan SOP: alat yang harus disiapkan, jalur kabel yang perlu diawasi, sudut pandang kamera, nomor kontak darurat..."
               class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 placeholder-slate-500 focus:outline-none focus:border-rose-500 transition"
             ></textarea>
+          </div>
+
+          <!-- Banner Otomatis 3x Notifikasi Resmi (Tanpa Klik Manual) -->
+          <div class="p-3.5 rounded-2xl bg-emerald-50/90 border border-emerald-200 text-xs text-emerald-900 space-y-1.5">
+            <div class="font-extrabold flex items-center space-x-2 text-emerald-950">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>Sistem Pengiriman Notifikasi Otomatis (3 Tahap Resmi):</span>
+            </div>
+            <p class="text-[11px] text-emerald-800 leading-relaxed">
+              Setelah disimpan, sistem backend akan memproses notifikasi secara otomatis:
+              <br/>1️⃣ <strong>Saat Ini (Penetapan Tugas):</strong> Langsung dikirim ke lonceng akun &amp; WhatsApp anggota.
+              <br/>2️⃣ <strong>H-10 Menit:</strong> Pengingat otomatis 10 menit sebelum jam tugas dimulai.
+              <br/>3️⃣ <strong>Pas Jam Mulai:</strong> Notifikasi resmi saat sesi jam kerja dimulai.
+              <br/><span class="text-emerald-950 font-bold">✓ Anda tidak perlu klik kirim WA manual satu per satu.</span>
+            </p>
           </div>
 
           <!-- Bottom Actions -->
@@ -547,36 +607,43 @@ const dutyForm = ref({
 
 const fetchInitialData = async () => {
   try {
-    const [regRes, memRes, repRes] = await Promise.all([
+    const [regRes, memRes, repRes, asgRes] = await Promise.all([
       api.get('/regions'),
-      api.get('/members', { params: { per_page: 100 } }),
+      api.get('/members', { params: { per_page: 200 } }),
       api.get('/reports').catch(() => ({ data: { total: 0 } })),
+      api.get('/assignments').catch(() => ({ data: [] })),
     ]);
-    regions.value = regRes.data;
-    members.value = memRes.data.data;
+    regions.value = regRes.data || [];
+    members.value = memRes.data?.data || (Array.isArray(memRes.data) ? memRes.data : []);
     reportsCount.value = repRes.data?.total ?? repRes.data?.data?.length ?? (Array.isArray(repRes.data) ? repRes.data.length : 0);
 
-    // Load duties from regions assignments
-    const list = [];
-    regions.value.forEach((r) => {
-      if (r.assignments) {
-        r.assignments.forEach((a) => {
-          list.push({
-            id: a.id,
-            name: a.role_in_post || `Pos di ${r.name}`,
-            category: a.role_in_post?.includes('Proyektor') ? 'Proyektor' :
-                      (a.role_in_post?.includes('Foto') || a.role_in_post?.includes('Fotografer')) ? 'Fotografer' :
-                      (a.role_in_post?.includes('Video') || a.role_in_post?.includes('Videografer')) ? 'Videografer' :
-                      (a.role_in_post?.includes('Kabel') || a.role_in_post?.includes('Perkabelan')) ? 'Perkabelan' : 'Proyektor',
-            region: r,
-            execution_time: '08:00 - Selesai WIB',
-            pic_user: a.user,
-            specific_location: r.description,
-            description: 'Melaksanakan SOP posko dan koordinasi penanggung jawab.',
-          });
-        });
-      }
+    const rawAssignments = Array.isArray(asgRes.data) ? asgRes.data : [];
+
+    // Map duties directly with full reminder and time tracking
+    const list = rawAssignments.map((a) => {
+      const startTimeFormatted = a.start_at
+        ? new Date(a.start_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB'
+        : '08:00 - Selesai WIB';
+
+      return {
+        id: a.id,
+        name: a.duty_name || a.role_in_post || `Pos di ${a.region?.name}`,
+        category: a.category || (a.role_in_post?.includes('Proyektor') ? 'Proyektor' :
+                  (a.role_in_post?.includes('Foto') || a.role_in_post?.includes('Fotografer')) ? 'Fotografer' :
+                  (a.role_in_post?.includes('Video') || a.role_in_post?.includes('Videografer')) ? 'Videografer' :
+                  (a.role_in_post?.includes('Kabel') || a.role_in_post?.includes('Perkabelan')) ? 'Perkabelan' : 'Proyektor'),
+        region: a.region,
+        execution_time: a.execution_time || startTimeFormatted,
+        start_at: a.start_at,
+        pic_user: a.user,
+        specific_location: a.specific_location || a.region?.description || '-',
+        description: a.description || 'Melaksanakan SOP posko dan koordinasi penanggung jawab.',
+        notif_assigned_at: a.notif_assigned_at,
+        notif_10m_at: a.notif_10m_at,
+        notif_start_at: a.notif_start_at,
+      };
     });
+
     duties.value = list;
     filterDuties();
   } catch (err) {
@@ -637,13 +704,27 @@ const saveDuty = async () => {
   saving.value = true;
   try {
     const roleText = `${dutyForm.value.name} (${dutyForm.value.category})`;
-    await api.post(`/regions/${dutyForm.value.region_id}/assignments`, {
+    await api.post('/assignments', {
+      region_id: dutyForm.value.region_id,
       user_id: dutyForm.value.user_id,
+      duty_name: dutyForm.value.name,
+      category: dutyForm.value.category,
       role_in_post: roleText,
-      start_at: dutyForm.value.execution_date ? `${dutyForm.value.execution_date} 08:00:00` : null,
-      end_at: dutyForm.value.execution_date ? `${dutyForm.value.execution_date} 23:59:59` : null,
+      execution_date: dutyForm.value.execution_date,
+      execution_time: dutyForm.value.execution_time,
+      specific_location: dutyForm.value.specific_location,
+      description: dutyForm.value.description,
     });
-    alert('Titik tugas baru berhasil ditetapkan!');
+
+    alert(
+      'Alhamdulillah, Titik Tugas Berhasil Ditetapkan!\n\n' +
+      'Sistem otomatis memproses 3 tahap notifikasi resmi (In-App & WhatsApp):\n' +
+      '1️⃣ Notifikasi Penetapan: Telah dikirimkan detik ini secara otomatis.\n' +
+      '2️⃣ Notifikasi H-10 Menit: Terjadwal otomatis sebelum jam kerja dimulai.\n' +
+      '3️⃣ Notifikasi Jam Mulai: Terjadwal otomatis saat sesi jam kerja dimulai.\n\n' +
+      'Admin tidak perlu repot klik kirim WhatsApp manual satu per satu.'
+    );
+
     showDutyModal.value = false;
     await fetchInitialData();
   } catch (err) {

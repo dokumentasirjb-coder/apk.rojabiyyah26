@@ -609,6 +609,8 @@
                     :class="getNotifBadgeClass(n.type)"
                   >
                     <svg v-if="n.type === 'assignment_priority'" class="w-4 h-4 text-[#f97316]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polygon stroke-linecap="round" stroke-linejoin="round" stroke-width="2" points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <svg v-else-if="n.type === 'duty_reminder_10m'" class="w-4 h-4 text-amber-600 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <svg v-else-if="n.type === 'duty_started'" class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                     <svg v-else-if="n.type === 'duty_proyektor'" class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                     <svg v-else-if="n.type === 'duty_liputan'" class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><circle cx="12" cy="13" r="4" stroke-width="2"/></svg>
                     <svg v-else-if="n.type === 'duty_shooting'" class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
@@ -734,6 +736,8 @@ const filteredNotifications = computed(() => {
 
 const getNotifBadgeClass = (type) => {
   if (type === 'assignment_priority') return 'bg-orange-100 text-[#f97316] border border-orange-200';
+  if (type === 'duty_reminder_10m') return 'bg-amber-100 text-amber-700 border border-amber-300 ring-2 ring-amber-400/50';
+  if (type === 'duty_started') return 'bg-emerald-100 text-emerald-800 border border-emerald-300 ring-2 ring-emerald-400/50';
   if (type === 'duty_proyektor') return 'bg-amber-100 text-amber-700 border border-amber-200';
   if (type === 'duty_liputan') return 'bg-emerald-100 text-emerald-700 border border-emerald-200';
   if (type === 'duty_shooting') return 'bg-purple-100 text-purple-700 border border-purple-200';

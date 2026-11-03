@@ -114,6 +114,7 @@ Route::prefix('v1')->group(function () {
         Route::post('/regions/{id}/assignments', [RegionController::class, 'storeRegionAssignment']);
         Route::get('/assignments', [RegionController::class, 'assignments']);
         Route::post('/assignments', [RegionController::class, 'storeAssignment']);
+        Route::post('/assignments/check-reminders', [RegionController::class, 'checkReminders']);
         Route::delete('/assignments/{id}', [RegionController::class, 'destroyAssignment']);
 
         // Field Reports
@@ -214,6 +215,7 @@ Route::prefix('v1')->group(function () {
         // Settings
         Route::get('/settings', [SettingController::class, 'index']);
         Route::put('/settings', [SettingController::class, 'update']);
+        Route::post('/settings/test-wa', [SettingController::class, 'testWhatsApp']);
 
         // Admins Management (Super Admin ONLY)
         Route::get('/admins', function (\Illuminate\Http\Request $request) {
