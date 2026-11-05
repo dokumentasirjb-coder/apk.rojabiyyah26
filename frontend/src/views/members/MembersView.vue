@@ -19,7 +19,7 @@
             @click="exportExcel"
             :disabled="exporting"
             class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-emerald-200 text-emerald-700 text-xs font-semibold shadow-sm transition disabled:opacity-50"
-            :title="'Unduh berkas Excel untuk: ' + (activeTab === 'account' ? 'Khusus Akun Login' : activeTab === 'google_form' ? 'Khusus Google Formulir' : 'Semua Panitia')"
+            title="Unduh berkas Excel Data Panitia"
           >
             <span v-if="exporting" class="inline-block w-3.5 h-3.5 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></span>
             <svg v-else class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
@@ -48,14 +48,14 @@
         </div>
       </div>
 
-      <!-- KONTROL & STATISTIK PEMISAHAN DATA (Modern Clean Glass Cards) -->
+      <!-- KONTROL & STATISTIK DATA ANGGOTA (Modern Clean Glass Cards) -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
         <!-- Card 1: Semua Panitia -->
         <div
-          @click="setTab('')"
+          @click="setStatusFilter('')"
           :class="[
             'p-4 rounded-3xl border transition-all cursor-pointer flex flex-col justify-between shadow-sm relative overflow-hidden group',
-            activeTab === ''
+            filters.is_active === ''
               ? 'bg-rose-50/60 border-rose-300 ring-2 ring-rose-400/30'
               : 'bg-white border-slate-200 hover:border-slate-300 hover:-translate-y-0.5'
           ]"
@@ -75,12 +75,12 @@
           </div>
         </div>
 
-        <!-- Card 2: Akun Login Anggota -->
+        <!-- Card 2: Panitia Aktif Bertugas -->
         <div
-          @click="setTab('account')"
+          @click="setStatusFilter('1')"
           :class="[
             'p-4 rounded-3xl border transition-all cursor-pointer flex flex-col justify-between shadow-sm relative overflow-hidden group',
-            activeTab === 'account'
+            filters.is_active === '1'
               ? 'bg-emerald-50/70 border-emerald-400 ring-2 ring-emerald-400/30'
               : 'bg-white border-slate-200 hover:border-slate-300 hover:-translate-y-0.5'
           ]"
@@ -88,99 +88,90 @@
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-1.5">
               <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span class="text-[10px] font-bold text-emerald-700 uppercase tracking-wider">Akun Login Portal</span>
+              <span class="text-[10px] font-bold text-emerald-700 uppercase tracking-wider">Panitia Aktif Bertugas</span>
             </div>
             <div class="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 text-base shadow-xs">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             </div>
           </div>
           <div class="my-2">
-            <div class="text-2xl sm:text-3xl font-black text-emerald-700 font-mono">{{ stats.account }}</div>
+            <div class="text-2xl sm:text-3xl font-black text-emerald-700 font-mono">{{ stats.active }}</div>
             <div class="text-[11px] text-emerald-700/80 mt-0.5">
-              {{ accountPercentage }}% panitia memiliki akses aplikasi
+              {{ activePercentage }}% relawan siap bertugas
             </div>
           </div>
           <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden mt-1">
-            <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-500" :style="{ width: accountPercentage + '%' }"></div>
+            <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-500" :style="{ width: activePercentage + '%' }"></div>
           </div>
         </div>
 
-        <!-- Card 3: Pendaftar Google Formulir -->
+        <!-- Card 3: Penugasan Divisi -->
         <div
-          @click="setTab('google_form')"
-          :class="[
-            'p-4 rounded-3xl border transition-all cursor-pointer flex flex-col justify-between shadow-sm relative overflow-hidden group',
-            activeTab === 'google_form'
-              ? 'bg-indigo-50/70 border-indigo-400 ring-2 ring-indigo-400/30'
-              : 'bg-white border-slate-200 hover:border-slate-300 hover:-translate-y-0.5'
-          ]"
+          class="p-4 rounded-3xl border border-slate-200 bg-white flex flex-col justify-between shadow-sm relative overflow-hidden group"
         >
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-1.5">
               <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
-              <span class="text-[10px] font-bold text-indigo-700 uppercase tracking-wider">Google Formulir</span>
+              <span class="text-[10px] font-bold text-indigo-700 uppercase tracking-wider">Penugasan Divisi</span>
             </div>
             <div class="w-9 h-9 rounded-xl bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600 text-base shadow-xs">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
             </div>
           </div>
           <div class="my-2">
-            <div class="text-2xl sm:text-3xl font-black text-indigo-700 font-mono">{{ stats.google_form }}</div>
+            <div class="text-2xl sm:text-3xl font-black text-indigo-700 font-mono">{{ stats.assigned }}</div>
             <div class="text-[11px] text-indigo-700/80 mt-0.5">
-              {{ googleFormPercentage }}% pendataan seragam (belum buat akun)
+              {{ assignedPercentage }}% panitia telah ditempatkan di divisi tugas
             </div>
           </div>
           <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden mt-1">
-            <div class="bg-gradient-to-r from-indigo-500 to-cyan-400 h-full rounded-full transition-all duration-500" :style="{ width: googleFormPercentage + '%' }"></div>
+            <div class="bg-gradient-to-r from-indigo-500 to-cyan-400 h-full rounded-full transition-all duration-500" :style="{ width: assignedPercentage + '%' }"></div>
           </div>
         </div>
       </div>
 
-      <!-- Tab Switcher Navigation -->
-      <!-- Tab Selector: Ringkas & Elegan -->
+      <!-- Tab Switcher Status Panitia: Ringkas & Elegan -->
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3">
         <div class="flex items-center space-x-2">
           <button
-            @click="setTab('')"
+            @click="setStatusFilter('')"
             :class="[
               'px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 shadow-xs',
-              activeTab === '' ? 'bg-gradient-to-r from-[#059669] to-[#10b981] text-white shadow-emerald-500/20' : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+              filters.is_active === '' ? 'bg-gradient-to-r from-[#059669] to-[#10b981] text-white shadow-emerald-500/20' : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
             ]"
           >
-            <span>Semua</span>
+            <span>Semua Panitia</span>
             <span class="px-1.5 py-0.2 rounded-full text-[10px] bg-slate-100 text-slate-700 font-mono">{{ stats.total }}</span>
           </button>
 
           <button
-            @click="setTab('account')"
+            @click="setStatusFilter('1')"
             :class="[
               'px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 shadow-xs',
-              activeTab === 'account' ? 'bg-emerald-600 text-white shadow-emerald-500/20' : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+              filters.is_active === '1' ? 'bg-emerald-600 text-white shadow-emerald-500/20' : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
             ]"
           >
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
-            <span>Akun Login</span>
-            <span class="px-1.5 py-0.2 rounded-full text-[10px] bg-emerald-100 text-emerald-800 font-mono">{{ stats.account }}</span>
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-300"></span>
+            <span>Panitia Aktif</span>
+            <span class="px-1.5 py-0.2 rounded-full text-[10px] bg-emerald-100 text-emerald-800 font-mono">{{ stats.active }}</span>
           </button>
 
           <button
-            @click="setTab('google_form')"
+            @click="setStatusFilter('0')"
             :class="[
               'px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 shadow-xs',
-              activeTab === 'google_form' ? 'bg-indigo-600 text-white shadow-indigo-500/20' : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+              filters.is_active === '0' ? 'bg-rose-600 text-white shadow-rose-500/20' : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
             ]"
           >
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
-            <span>Formulir</span>
-            <span class="px-1.5 py-0.2 rounded-full text-[10px] bg-indigo-100 text-indigo-800 font-mono">{{ stats.google_form }}</span>
+            <span class="w-1.5 h-1.5 rounded-full bg-rose-300"></span>
+            <span>Nonaktif</span>
+            <span class="px-1.5 py-0.2 rounded-full text-[10px] bg-rose-100 text-rose-800 font-mono">{{ Math.max(0, stats.total - stats.active) }}</span>
           </button>
         </div>
 
-        <!-- Info banner based on active tab -->
+        <!-- Info banner -->
         <div class="text-[11px] text-slate-500 flex items-center space-x-1.5">
-          <span v-if="activeTab === 'account'" class="text-emerald-700 font-semibold">Menampilkan panitia yang memiliki akun &amp; password login portal</span>
-          <span v-else-if="activeTab === 'google_form'" class="text-indigo-700 font-semibold">Menampilkan relawan dari Google Form (bisa dibuatkan akun dengan tombol 🔑)</span>
-          <span v-else class="text-slate-500">Menampilkan seluruh data anggota &amp; panitia</span>
+          <span class="text-slate-500">Direktori data seluruh panitia &amp; relawan Rojabiyyah 2026</span>
         </div>
       </div>
 
@@ -253,14 +244,14 @@
             <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 uppercase font-bold text-[10px] tracking-wider">
               <tr>
                 <th class="py-3.5 px-4 w-12 text-center">NO</th>
-                <th class="py-3.5 px-4 min-w-[200px]">NAMA &amp; STATUS LOGIN</th>
+                <th class="py-3.5 px-4 min-w-[200px]">NAMA ANGGOTA</th>
                 <th class="py-3.5 px-4">DEV (DIVISI)</th>
                 <th class="py-3.5 px-4">PENDIDIKAN</th>
                 <th class="py-3.5 px-4">KELAS</th>
                 <th class="py-3.5 px-4">DOMISILI</th>
                 <th class="py-3.5 px-4 text-center">SERAGAM</th>
                 <th class="py-3.5 px-4">NO WA</th>
-                <th v-if="['super_admin', 'admin'].includes(authStore.user?.role)" class="py-3.5 px-4 text-center min-w-[130px]">AKSI / KONTROL</th>
+                <th v-if="['super_admin', 'admin'].includes(authStore.user?.role)" class="py-3.5 px-4 text-center min-w-[100px]">AKSI / KONTROL</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
@@ -280,7 +271,7 @@
                     </div>
                     <div class="text-sm font-semibold text-slate-800">Tidak Ada Data Anggota</div>
                     <div class="text-xs text-slate-500">
-                      {{ activeTab === 'account' ? 'Belum ada anggota dengan akun login pada filter ini.' : activeTab === 'google_form' ? 'Belum ada pendaftar Google Formulir pada filter ini.' : 'Coba ubah kata kunci filter atau tambahkan anggota baru.' }}
+                      Coba ubah kata kunci filter pencarian atau tambahkan data anggota baru.
                     </div>
                   </div>
                 </td>
@@ -290,9 +281,9 @@
                   {{ (pagination.current_page - 1) * pagination.per_page + index + 1 }}
                 </td>
                 <td class="py-3.5 px-4">
-                  <div class="flex items-start space-x-3">
+                  <div class="flex items-center space-x-3">
                     <!-- Photo or Avatar Initial -->
-                    <div class="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center text-slate-700 font-bold flex-shrink-0 mt-0.5">
+                    <div class="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center text-slate-700 font-bold flex-shrink-0">
                       <img
                         v-if="user.member?.photo_path"
                         :src="user.member.photo_path"
@@ -309,24 +300,6 @@
 
                       <div class="flex items-center space-x-2 text-[11px] font-mono text-emerald-700 mt-0.5">
                         <span>{{ user.member_no || '-' }}</span>
-                      </div>
-
-                      <!-- LENCANA KONTROL SUMBER DATA (Akun Login vs Google Form) -->
-                      <div class="mt-1 flex items-center space-x-1.5 flex-wrap">
-                        <template v-if="hasLoginAccount(user)">
-                          <span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                            <span>🔑</span>
-                            <span>Akun Login ({{ user.role }})</span>
-                          </span>
-                          <span class="text-[10px] text-slate-500 font-mono">{{ user.email }}</span>
-                        </template>
-                        <template v-else>
-                          <span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
-                            <span>📋</span>
-                            <span>Google Formulir</span>
-                          </span>
-                          <span class="text-[10px] text-amber-600 italic font-sans">Tanpa Akun Login</span>
-                        </template>
                       </div>
                     </div>
                   </div>
@@ -369,27 +342,6 @@
                 </td>
                 <td v-if="['super_admin', 'admin'].includes(authStore.user?.role)" class="py-3.5 px-4 text-center">
                   <div class="flex items-center justify-center space-x-1.5 flex-wrap">
-                    <!-- Tombol Kontrol: Buatkan Akun Login jika dari Google Form -->
-                    <button
-                      v-if="!hasLoginAccount(user)"
-                      @click="openCreateAccountModal(user)"
-                      title="Aktifkan &amp; Buatkan Akun Login Portal"
-                      class="px-2 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-lg text-[10px] font-bold transition flex items-center space-x-1"
-                    >
-                      <span>🔑</span>
-                      <span>Beri Akun</span>
-                    </button>
-
-                    <!-- Tombol Kontrol: Cabut Akun Login jika sudah ada akun -->
-                    <button
-                      v-else-if="user.role !== 'super_admin'"
-                      @click="revokeAccount(user)"
-                      title="Cabut Akses Login (Ubah jadi pendaftar Google Formulir saja)"
-                      class="p-1.5 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg border border-transparent hover:border-amber-200 transition"
-                    >
-                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                    </button>
-
                     <!-- Tombol Edit Data -->
                     <button
                       @click="openEditModal(user)"
@@ -401,7 +353,6 @@
 
                     <!-- Tombol Hapus -->
                     <button
-                      v-if="user.role !== 'super_admin'"
                       @click="deleteMember(user)"
                       title="Hapus Data"
                       class="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
@@ -967,18 +918,22 @@ const copiedAccountLink = ref(false);
 const photoInputRef = ref(null);
 const importFileRef = ref(null);
 
-const activeTab = ref(''); // '' (semua), 'account', 'google_form'
-const stats = ref({ total: 0, account: 0, google_form: 0 });
+const stats = ref({ total: 0, active: 0, assigned: 0 });
 
-const accountPercentage = computed(() => {
+const activePercentage = computed(() => {
   if (!stats.value.total) return 0;
-  return Math.round((stats.value.account / stats.value.total) * 100);
+  return Math.round((stats.value.active / stats.value.total) * 100);
 });
 
-const googleFormPercentage = computed(() => {
+const assignedPercentage = computed(() => {
   if (!stats.value.total) return 0;
-  return Math.round((stats.value.google_form / stats.value.total) * 100);
+  return Math.round((stats.value.assigned / stats.value.total) * 100);
 });
+
+const setStatusFilter = (status) => {
+  filters.value.is_active = status;
+  fetchMembers(1);
+};
 
 const selectedMemberForAccount = ref(null);
 const createdCredentials = ref({ name: '', email: '', password: '', member_no: '' });
@@ -996,7 +951,6 @@ const filters = ref({
   division_id: '',
   domicile: '',
   is_active: '',
-  registration_source: '',
 });
 
 const hasActiveFilters = computed(() => {
@@ -1057,7 +1011,6 @@ const fetchMembers = async (page = 1) => {
       division_id: filters.value.division_id || undefined,
       domicile: filters.value.domicile || undefined,
       is_active: filters.value.is_active !== '' ? filters.value.is_active : undefined,
-      registration_source: filters.value.registration_source || undefined,
     };
     const res = await api.get('/members', { params });
     members.value = res.data.data;
@@ -1209,6 +1162,10 @@ const saveMember = async () => {
 };
 
 const deleteMember = async (user) => {
+  if (user.role === 'super_admin' || user.member_no === 'RJB-001') {
+    alert('Data Administrator Utama dilindungi dan tidak dapat dihapus.');
+    return;
+  }
   if (await window.$confirm(`Yakin ingin menghapus data panitia "${user.name}"?`)) {
     try {
       await api.delete(`/members/${user.id}`);
@@ -1233,11 +1190,6 @@ const cleanPhone = (phone) => {
   return cleaned;
 };
 
-const setTab = (source) => {
-  activeTab.value = source;
-  filters.value.registration_source = source;
-  fetchMembers(1);
-};
 
 const copyPublicFormLink = () => {
   const url = `${window.location.origin}/register-member`;
@@ -1367,15 +1319,9 @@ const exportExcel = async () => {
   exporting.value = true;
   try {
     const today = new Date().toISOString().slice(0, 10);
-    let prefix = 'Data_Semua_Panitia';
-    if (activeTab.value === 'account') {
-      prefix = 'Data_Panitia_Akun_Login';
-    } else if (activeTab.value === 'google_form') {
-      prefix = 'Data_Panitia_Google_Form';
-    }
     await downloadAuthenticatedFile(
       '/members/export',
-      `${prefix}_Rojabiyyah_${today}.xlsx`,
+      `Data_Panitia_Rojabiyyah_${today}.xlsx`,
       filters.value
     );
   } finally {

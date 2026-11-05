@@ -25,21 +25,8 @@ class MemberController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                   ->orWhere('member_no', 'like', "%{$search}%")
-                  ->orWhere('phone_wa', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                  ->orWhere('phone_wa', 'like', "%{$search}%");
             });
-        }
-
-        if ($request->filled('registration_source')) {
-            $src = $request->registration_source;
-            if ($src === 'account') {
-                $query->where('registration_source', 'account')->whereNotNull('email');
-            } elseif ($src === 'google_form') {
-                $query->where(function ($q) {
-                    $q->where('registration_source', 'google_form')
-                      ->orWhereNull('email');
-                });
-            }
         }
 
         if ($request->filled('division_id')) {
@@ -54,28 +41,30 @@ class MemberController extends Controller
             });
         }
 
-        if ($request->filled('role')) {
-            $query->where('role', $request->role);
-        }
-
         if ($request->filled('is_active')) {
             $query->where('is_active', filter_var($request->is_active, FILTER_VALIDATE_BOOLEAN));
         }
 
         $totalCount = User::count();
-        $accountCount = User::where('registration_source', 'account')->whereNotNull('email')->count();
-        $googleFormCount = User::where(function ($q) {
-            $q->where('registration_source', 'google_form')
-              ->orWhereNull('email');
+        $activeCount = User::where('is_active', true)->count();
+        $assignedCount = User::whereHas('member', function ($q) {
+            $q->whereNotNull('division_id');
         })->count();
 
         $paginated = $query->orderBy('member_no', 'asc')->paginate($request->input('per_page', 15));
 
+        // Data anggota global: sembunyikan informasi login, email, dan privilese role internal
+        $paginated->getCollection()->transform(function ($u) {
+            $u->makeHidden(['email', 'email_verified_at', 'remember_token', 'two_factor_secret', 'two_factor_recovery_codes', 'registration_source']);
+            $u->role = 'anggota';
+            return $u;
+        });
+
         $result = $paginated->toArray();
         $result['stats'] = [
             'total' => $totalCount,
-            'account' => $accountCount,
-            'google_form' => $googleFormCount,
+            'active' => $activeCount,
+            'assigned' => $assignedCount,
         ];
 
         return response()->json($result);
@@ -544,8 +533,7 @@ class MemberController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                   ->orWhere('member_no', 'like', "%{$search}%")
-                  ->orWhere('phone_wa', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                  ->orWhere('phone_wa', 'like', "%{$search}%");
             });
         }
 
@@ -561,60 +549,33 @@ class MemberController extends Controller
             });
         }
 
-        if ($request->filled('registration_source')) {
-            $src = $request->registration_source;
-            if ($src === 'account') {
-                $query->where('registration_source', 'account')->whereNotNull('email');
-            } elseif ($src === 'google_form') {
-                $query->where(function ($q) {
-                    $q->where('registration_source', 'google_form')
-                      ->orWhereNull('email');
-                });
-            }
-        }
-
-        if ($request->filled('role')) {
-            $query->where('role', $request->role);
-        }
-
         if ($request->filled('is_active')) {
             $query->where('is_active', filter_var($request->is_active, FILTER_VALIDATE_BOOLEAN));
         }
 
         $members = $query->orderBy('member_no', 'asc')->get();
 
-        $headers = ['NO', 'NO ANGGOTA', 'NAMA LENGKAP', 'SUMBER / TIPE DATA', 'EMAIL LOGIN', 'NO WHATSAPP', 'ROLE', 'DIVISI', 'PENDIDIKAN', 'KELAS / TINGKAT', 'DOMISILI', 'UKURAN SERAGAM', 'ALAMAT ASAL', 'STATUS'];
+        $headers = ['NO', 'NO ANGGOTA', 'NAMA LENGKAP', 'DIVISI', 'PENDIDIKAN', 'KELAS / TINGKAT', 'DOMISILI', 'UKURAN SERAGAM', 'NO WHATSAPP', 'ALAMAT ASAL', 'STATUS'];
 
         $rows = [];
         $no = 1;
         foreach ($members as $m) {
-            $hasLogin = (!empty($m->email) && $m->registration_source === 'account');
-            $sourceLabel = $hasLogin ? 'AKUN LOGIN APLIKASI' : 'GOOGLE FORMULIR';
-
             $rows[] = [
                 $no++,
                 $m->member_no ?? '-',
                 $m->name,
-                $sourceLabel,
-                $m->email ?? '-',
-                $m->phone_wa ?: '-',
-                strtoupper($m->role),
                 $m->member->division->name ?? '-',
                 $m->member->education ?? '-',
                 $m->member->class ?? '-',
                 $m->member->domicile ?? '-',
                 $m->member->uniform_size ?? '-',
+                $m->phone_wa ?: '-',
                 $m->member->address ?? '-',
                 $m->is_active ? 'AKTIF' : 'NONAKTIF',
             ];
         }
 
         $sub = 'Haul ke-5 Al-Maghfurlah K.H. Moch. Djamaluddin Achmad & Rojabiyyah 2026';
-        if ($request->registration_source === 'account') {
-            $sub .= ' • Kategori: Akun Login Anggota';
-        } elseif ($request->registration_source === 'google_form') {
-            $sub .= ' • Kategori: Pendaftar Google Formulir';
-        }
 
         return ExcelExportService::streamStyled(
             filename: 'Data_Anggota_Rojabiyyah_' . date('Ymd_His') . '.xlsx',
